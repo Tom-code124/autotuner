@@ -1,0 +1,26 @@
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.full_fit {
+  height: 100%;
+}
+
+html,
+body {
+  margin: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #eef0f8;
+}
+
+#header {
+  background-color: #ffffff;
+  justify-content: space-between;
+}
