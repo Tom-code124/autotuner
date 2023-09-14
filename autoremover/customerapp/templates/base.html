@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ page_title }}</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'customerapp/styles/common.css' %}"
+    />
+    {% for css in styling_files %}
+    <link rel="stylesheet" href="{% static 'customerapp/styles/' + css %}" />
+    {% endfor %}
+  </head>
+  <body>
+    {% block base %} {% endblock %}
+  </body>
+</html>
