@@ -2,17 +2,22 @@
 <div class="column full_fit">
   <header id="header" class="row">
     <div class="row">
-      <img id="logo" src="{% static 'customerapp/assets/logo_small.png' %}" />
-      <h1>DTC Search</h1>
+      <img
+        id="logo_small"
+        src="{% static 'customerapp/assets/logo_small.png' %}"
+      />
+      <h1>{{ page_title }}</h1>
     </div>
     <div class="row">
       <span>File service: </span>
-      <span>ONLINE</span>
+      <span> {{ file_service_status }} </span>
+      {% if file_service_until %}
       <span> until </span>
-      <span>Today 23:45</span>
+      <span> {{ file_service_until }} </span>
+      {% endif %}
     </div>
     <div>
-      <span>Credit Balance:</span>
+      <span>Credit:</span>
       <svg
         class="sidebar_icon"
         width="24px"
@@ -45,7 +50,7 @@
           ></path>
         </g>
       </svg>
-      <span>$ 13.17</span>
+      <span>{{ user_credit_amount }}</span>
       <svg
         class="sidebar_icon"
         width="24px"
@@ -80,7 +85,7 @@
           ></path>
         </g>
       </svg>
-      <span>Hi, Urfi</span>
+      <span>Hi, {{ username }}</span>
     </div>
   </header>
   <div class="row">

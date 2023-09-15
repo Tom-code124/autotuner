@@ -1,0 +1,11 @@
+#container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 2fr 3fr 3fr 2fr;
+  grid-template-areas:
+    "file-graph file-graph file-graph"
+    "file-graph file-graph file-graph"
+    "file-pricing file-pricing bosch-search bosch-search dtc-search dtc-search"
+    "";
+}
