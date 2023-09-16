@@ -12,12 +12,20 @@
   height: 100%;
 }
 
-html,
-body {
-  margin: 0px;
+html {
+  margin: 0;
   height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  min-height: 100%;
   width: 100%;
   background-color: #eef0f8;
+  padding-bottom: 6.74rem;
+  box-sizing: inherit;
 }
 
 header {
@@ -42,6 +50,8 @@ svg.sidebar_icon {
   top: 80px;
   right: 0;
   padding: 20px;
+  padding-bottom: 80px;
+  min-height: 82%;
 }
 
 #inner_container {
@@ -87,9 +97,10 @@ aside {
 footer {
   height: 40px;
   background-color: #fff;
-  width: auto;
-  margin: -20px;
-  margin-top: 20px;
   text-align: center;
   padding-top: 20px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }

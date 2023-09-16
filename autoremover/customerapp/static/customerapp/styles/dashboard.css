@@ -1,11 +1,95 @@
 #container {
   display: grid;
   width: 100%;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 2fr 3fr 3fr 2fr;
+  height: 700px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 5fr 3fr;
   grid-template-areas:
-    "file-graph file-graph file-graph"
-    "file-graph file-graph file-graph"
-    "file-pricing file-pricing bosch-search bosch-search dtc-search dtc-search"
-    "";
+    "file-graph file-graph file-graph file-graph file-graph file-graph last-processes last-processes last-processes new-files new-files new-files"
+    "file-pricing file-pricing file-pricing file-pricing bosch-search bosch-search bosch-search bosch-search dtc-search dtc-search dtc-search dtc-search";
+  column-gap: 20px;
+  row-gap: 20px;
+  place-items: stretch;
+}
+
+.grid-items {
+  border-radius: 5px;
+  padding: 20px;
+}
+
+#file-graph-card {
+  grid-area: file-graph;
+  background-color: #fff;
+  justify-content: space-evenly;
+}
+
+#last-processes-card {
+  grid-area: last-processes;
+  background-color: #8950fc;
+}
+
+#new-files-card {
+  grid-area: new-files;
+  background-color: #1bc5bd;
+}
+
+#file-pricing-card {
+  grid-area: file-pricing;
+  background-color: #1bc5bd;
+}
+
+#bosch-search-card {
+  grid-area: bosch-search;
+  background-color: #fff;
+}
+
+#dtc-search-card {
+  grid-area: dtc-search;
+  background-color: #8648e7;
+}
+
+#files-submitted-header {
+  flex-grow: 2;
+}
+
+#files-submitted-graph {
+  flex-grow: 4;
+  justify-content: space-evenly;
+  margin: 20px 0;
+}
+
+#month {
+  height: 100%;
+  width: 5%;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.graph-col {
+  background-color: #1bc5bd;
+  width: 100%;
+}
+
+#inner-boxes {
+  flex-grow: 1;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.inner-box {
+  padding: 20px;
+  border-radius: 5px;
+  width: 23%;
+}
+
+#inner-box-today {
+  background-color: #e4e6ef;
+}
+
+#inner-box-week {
+  background-color: #1bc5bd;
+}
+
+#inner-box-month {
+  background-color: #3699ff;
 }

@@ -11,13 +11,32 @@ def login_page(request):
     return render(request, "pages/customer_login.html", context)
 
 def dashboard_page(request):
+    monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]
+    months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
+    max_num = max(monthly_file_nums)
+    
+    monthly_data = []
+    for i in range(12):
+        m = {
+            'name': months[i],
+            'file_num': monthly_file_nums[i],
+            'percent': monthly_file_nums[i] * 100 / max_num,
+        }
+        monthly_data.append(m)
+
     context = {
         'page_title': 'DTC Search',
         'styling_files': ["dashboard.css"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'username': 'yunus',
-        'user_credit_amount': 13.52
+        'user_credit_amount': 13.52,
+        'files_submitted_data': {
+            'today': 1,
+            'week': 3,
+            'month': monthly_file_nums[-1],
+            'monthly_data': monthly_data
+        }
     }
     return render(request, "pages/dashboard.html", context)
 
