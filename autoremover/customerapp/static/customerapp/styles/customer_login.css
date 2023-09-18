@@ -6,6 +6,10 @@
 
 #right_col {
   flex-grow: 3;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #logo {
@@ -13,8 +17,7 @@
   width: 300px;
 }
 
-form {
-  margin: auto;
-  margin-top: 20%;
-  width: 300px;
+#form-container {
+  width: 400px;
+  padding: 20px;
 }

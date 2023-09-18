@@ -103,3 +103,60 @@ def dtc_search_page(request):
         }
         }
     return render(request, "pages/dtc_search.html", context)
+
+def knowledgebase_page(request):
+    knowledge_data = [
+        {
+            'title': 'Adblue Solutions',
+            'desc': 'You can find Adblue Solutions in this page',
+            'inner_data': [
+                {
+                    'sub_title': "AGRALE",
+                    'bullets': [
+                        'BOSCH EDC7UC31 -  Adblue Ecu and Pump must be disconnected '
+                    ]
+                },
+                {
+                    'sub_title': "ASTRA",
+                    'bullets': [
+                        'BOSCH EDC7UC31 - Adblue ECU to be unplugged',
+                        'BOSCH EDC17CV41 - Adblue ECU and Pump to be unplugged'
+                    ]
+                }
+            ]
+        },
+        {
+            'title': 'MED17 VCDS Logging profiles',
+            'desc': '<a href="https://drive.tiny.cloud/1/8lqf2m98sdocyt5hqrl8t0s6pir4vto88le9axrfsvxajoep/324197e6-1ac1-46a2-b358-13d3d436756c">Audi a5 - med171 - gen logs.zip</a>\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
+        },
+        {
+            'title': 'EGR OFF Solutions',
+            'inner_data': [
+                {
+                    'sub_title': 'ALFA ROMEO',
+                    'bullets': [
+                        'BOSCH EDC15C7 - Actuator to be unplugged',
+                        'BOSCH EDC17C69',
+                        'MARELLI MJ8'
+                    ]
+                },
+                {
+                    'sub_title': 'Aston Martin',
+                    'bullets': [
+                        'VISTEON EECVI  - Actuator to be unplugged'
+                    ]
+                }
+            ]
+        }
+    ]
+
+    context = {
+        'page_title': 'Knowledgebase',
+        'styling_files': ["knowledgebase.css"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'username': 'yunus',
+        'user_credit_amount': 13.52,
+        'knowledge_data': knowledge_data
+    }
+    return render(request, "pages/knowledgebase.html", context)

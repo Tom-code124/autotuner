@@ -1,34 +1,31 @@
-{% extends "base.html" %}
-{% block base %} {% load static %}
-    <div class="row full_fit">
-      <div id="left_col" class="column">
-        <img id="logo" src="{% static 'customerapp/assets/logo.png' %}" />
-      </div>
-      <div id="right_col">
-        <div class="center">
-          <form class="column form">
-            <h1>Welcome</h1>
-            <span>
-              Don't have an account?
-              <button>Register</button>
-            </span>
-            <label>Email:</label>
-            <input />
-            <div>
-              <label>Password:</label>
-              <a>Forgot Password?</a>
-            </div>
-            <input />
-            <div class="row">
-              <input type="checkbox" />
-              <label>Remember me</label>
-            </div>
-            <h3>reCaptcha</h3>
-            <button>Sign in</button>
-          </form>
+{% extends "base.html" %} {% block base %} {% load static %}
+<div class="row full_fit">
+  <div id="left_col" class="column">
+    <img id="logo" src="{% static 'customerapp/assets/logo.png' %}" />
+  </div>
+  <div id="right_col">
+    <div id="form-container">
+      <form class="column">
+        <h1>Welcome</h1>
+        <span>
+          Don't have an account?
+          <button>Register</button>
+        </span>
+        <label>Email:</label>
+        <input />
+        <div>
+          <label>Password:</label>
+          <a>Forgot Password?</a>
         </div>
-      </div>
+        <input />
+        <div class="row">
+          <input type="checkbox" />
+          <label>Remember me</label>
+        </div>
+        <h3>reCaptcha</h3>
+        <button>Sign in</button>
+      </form>
     </div>
-  </body>
-</html>
+  </div>
+</div>
 {% endblock %}

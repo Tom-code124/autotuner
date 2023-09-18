@@ -1,0 +1,28 @@
+{% extends "layout.html" %} {% block layout %}
+<div id="container" class="column">
+  <div id="card-header">
+    <h3>Knowledgebase</h3>
+    <span>
+      Search our knowledgebase for help with common questions/problems
+    </span>
+  </div>
+  <div id="card-body">
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for know in knowledge_data %}
+        <tr>
+          <td>{{ know.title }}</td>
+          <td><button>View</button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
