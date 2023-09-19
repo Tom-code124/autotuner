@@ -48,8 +48,8 @@ svg.sidebar_icon {
   top: 80px;
   right: 0;
   padding: 20px;
-  padding-bottom: 80px;
-  min-height: 82%;
+  padding-bottom: 60px;
+  min-height: 83%;
 }
 
 #inner_container {
@@ -105,4 +105,49 @@ footer {
 
 a {
   text-decoration: none;
+}
+
+#modal-background {
+  z-index: 99998;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.3);
+  opacity: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#modal-container {
+  z-index: 99999;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 60vw;
+}
+
+#modal-header {
+  justify-content: space-between;
+  height: 20px;
+  border-bottom: rgb(236, 231, 231) 1px solid;
+  padding-bottom: 5px;
+}
+
+#modal-body {
+  padding-top: 5px;
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.disable {
+  user-select: none;
+  pointer-events: none;
+}
+
+.disable-scroll {
+  overflow: hidden;
 }
