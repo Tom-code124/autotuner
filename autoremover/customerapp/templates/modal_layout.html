@@ -1,0 +1,8 @@
+{% load static %}
+<div id="modal-container" class="column">
+  <div id="modal-header" class="row">
+    <div id="modal-title">{{ modal_title }}</div>
+    <a id="modal-close">X</a>
+  </div>
+  <div id="modal-body">{% block modal_layout %} {% endblock %}</div>
+</div>

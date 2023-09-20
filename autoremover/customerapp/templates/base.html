@@ -13,6 +13,12 @@
     {% endfor %}
   </head>
   <body>
-    {% block base %} {% endblock %}
+    <div id="modal-background"></div>
+    {% block base %} {% endblock %} {% for script in script_files %}
+    <script
+      type="text/javascript"
+      src="{% static 'customerapp/scripts/' %}{{ script }}"
+    ></script>
+    {% endfor %}
   </body>
 </html>

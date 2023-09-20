@@ -6,5 +6,6 @@ urlpatterns = [
     path('', dashboard_page, name="Dashboard"),
     path('login/', login_page, name="Log-in"),
     path('dtc_search/', dtc_search_page, name='DTC Search'),
-    path('knowledgebase/', knowledgebase_page, name='Knowledgebase')
+    path('knowledgebase/', knowledgebase_page, name='Knowledgebase'),
+    path('winols_modal/', winols_modal, name='WinOLS Modal')
 ]
