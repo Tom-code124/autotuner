@@ -18,7 +18,9 @@
         {% for know in knowledge_data %}
         <tr>
           <td>{{ know.title }}</td>
-          <td><button>View</button></td>
+          <td>
+            <button id="{{ know.id }}" class="knowledge-button">View</button>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

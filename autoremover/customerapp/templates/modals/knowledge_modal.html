@@ -1,0 +1,7 @@
+{% extends 'modal_layout.html' %} {% block modal_layout %} {% if desc %}
+<p>{{ desc }}</p>
+{% endif %} {% if inner_data %}{% for data in inner_data %}
+<strong>{{ data.sub_title }}</strong>
+{% for bullet in data.bullets %}
+<p>{{ bullet }}</p>
+{% endfor %} {% endfor %} {% endif %} {% endblock %}

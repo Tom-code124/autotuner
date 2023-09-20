@@ -9,7 +9,6 @@ function turnOnModal(event) {
   );
 
   document.querySelector("body").classList.add("disable-scroll");
-  // document.getElementById("modal-body").style.overflow = "scroll";
   document.getElementById("modal-background").style.display = "flex";
 }
 
