@@ -160,3 +160,10 @@ def knowledgebase_page(request):
         'knowledge_data': knowledge_data
     }
     return render(request, "pages/knowledgebase.html", context)
+
+def winols_modal(request):
+    context = {
+        'modal_title': 'Add Your EVC WinOLS Account'
+    }
+
+    return render(request, "modals/winols_modal.html", context)

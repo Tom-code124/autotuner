@@ -1,11 +1,10 @@
-import { turnOnModal, turnOffModal } from "./modals.js";
+import { turnOnModal, injectModal } from "./modals.js";
 
-winols_icon = document.getElementById("winols-sidebar-icon");
-
-winols_icon.addEventListener("click", turnOnModal);
+function winolsClick() {
+  injectModal("winols_modal/");
+  turnOnModal();
+}
 
 document
-  .getElementById("modal-background")
-  .addEventListener("click", turnOffModal);
-
-document.getElementById("modal-close").addEventListener("click", turnOffModal);
+  .getElementById("winols-sidebar-icon")
+  .addEventListener("click", winolsClick);

@@ -9,7 +9,7 @@ function turnOnModal(event) {
   );
 
   document.querySelector("body").classList.add("disable-scroll");
-  document.getElementById("modal-body").style.overflow = "scroll";
+  // document.getElementById("modal-body").style.overflow = "scroll";
   document.getElementById("modal-background").style.display = "flex";
 }
 
@@ -28,4 +28,19 @@ function turnOffModal(event) {
   document.getElementById("modal-background").style.display = "none";
 }
 
-export { turnOnModal, turnOffModal };
+function injectModal(modal_url) {
+  document
+    .getElementById("modal-background")
+    .addEventListener("click", turnOffModal);
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("modal-background").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", modal_url, true);
+  xhttp.send();
+}
+
+export { turnOnModal, turnOffModal, injectModal };
