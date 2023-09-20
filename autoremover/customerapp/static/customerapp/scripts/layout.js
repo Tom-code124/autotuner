@@ -1,7 +1,7 @@
 import { turnOnModal, injectModal } from "./modals.js";
 
 function winolsClick() {
-  injectModal("winols_modal/");
+  injectModal(window.location.origin + "/app/winols_modal/");
   turnOnModal();
 }
 

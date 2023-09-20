@@ -25,8 +25,9 @@ def dashboard_page(request):
         monthly_data.append(m)
 
     context = {
-        'page_title': 'DTC Search',
+        'page_title': 'Dashboard',
         'styling_files': ["dashboard.css"],
+        'script_files': ["dashboard.js", "pricing_modal.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'username': 'yunus',
@@ -189,3 +190,51 @@ def knowledge_modal(request):
     context = knowledge_data[params.get('id')]
 
     return render(request, "modals/knowledge_modal.html", context)
+
+def pricing_modal(request):
+
+    context = {
+        'modal_title': 'File pricing'
+    }
+    return render(request, "modals/pricing_modal.html", context)
+
+def price_options_modal(request):
+    data = {
+        'cars': [
+            {
+                'option': 'Stage one tune',
+                'price': '50'
+            },
+            {
+                'option': 'Stage two tune',
+                'price': '60'
+            }
+        ],
+        'agricultural': [
+            {
+                'option': 'Gear box',
+                'price': '30'
+            }
+        ],
+        'trucks': [
+            {
+                'option': 'File check',
+                'price': '10'
+            },
+            {
+                'option': 'EGR off',
+                'price': '30'
+            }
+        ]
+    }
+
+    params = request.GET
+    category = params.get('category')
+    context = {
+        'options': data[category]
+    }
+
+    return render(request, "modals/price_options_modal.html", context)
+
+
+
