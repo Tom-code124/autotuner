@@ -3,7 +3,6 @@ import { afterInjection } from "./pricing_modal.js";
 
 function viewButtonClick(event) {
   getAndInject("pricing_modal/", undefined, undefined, afterInjection);
-  turnOnModal();
 }
 
 document

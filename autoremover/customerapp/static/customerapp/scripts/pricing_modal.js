@@ -1,4 +1,4 @@
-import { getAndInject } from "./modals.js";
+import { getAndInject, turnOnModal } from "./modals.js";
 
 function categoryChange(event) {
   getAndInject(
@@ -11,6 +11,8 @@ function afterInjection() {
   document
     .getElementById("category-select")
     .addEventListener("change", categoryChange);
+
+  turnOnModal();
 }
 
 export { afterInjection };

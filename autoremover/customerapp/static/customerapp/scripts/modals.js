@@ -1,7 +1,9 @@
+const modal_back = document.getElementById("modal-background");
+
 function turnOnModal(event) {
   [...document.querySelectorAll("*:not(body):not(html):not(head)")].map(
     (item) => {
-      if (!item.id.includes("modal")) {
+      if (!modal_back.contains(item)) {
         item.classList.add("disable");
         item.classList.add("disable-scroll");
       }

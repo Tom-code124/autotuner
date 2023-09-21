@@ -27,7 +27,7 @@ def dashboard_page(request):
     context = {
         'page_title': 'Dashboard',
         'styling_files': ["dashboard.css"],
-        'script_files': ["dashboard.js", "pricing_modal.js"],
+        'script_files': ["dashboard.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'username': 'yunus',
