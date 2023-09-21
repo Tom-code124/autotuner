@@ -1,7 +1,7 @@
-import { turnOnModal, injectModal } from "./modals.js";
+import { turnOnModal, getAndInject } from "./modals.js";
 
 function viewButtonClick(event) {
-  injectModal("knowledge_modal?id=" + event.target.id);
+  getAndInject("knowledge_modal?id=" + event.target.id);
   turnOnModal();
 }
 

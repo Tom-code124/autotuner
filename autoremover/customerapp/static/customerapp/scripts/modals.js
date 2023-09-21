@@ -27,19 +27,34 @@ function turnOffModal(event) {
   document.getElementById("modal-background").style.display = "none";
 }
 
-function injectModal(modal_url) {
-  document
-    .getElementById("modal-background")
-    .addEventListener("click", turnOffModal);
+function getAndInject(url, injectInId, preFunc, afterFunc) {
+  if (preFunc === undefined) {
+    document
+      .getElementById("modal-background")
+      .addEventListener("click", turnOffModal);
+  } else {
+    preFunc();
+  }
+
+  var id;
+
+  if (injectInId === undefined) {
+    id = "modal-background";
+  } else {
+    id = injectInId;
+  }
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("modal-background").innerHTML = this.responseText;
+      document.getElementById(id).innerHTML = this.responseText;
+      if (afterFunc !== undefined) {
+        afterFunc();
+      }
     }
   };
-  xhttp.open("GET", modal_url, true);
+  xhttp.open("GET", url, true);
   xhttp.send();
 }
 
-export { turnOnModal, turnOffModal, injectModal };
+export { turnOnModal, turnOffModal, getAndInject };
