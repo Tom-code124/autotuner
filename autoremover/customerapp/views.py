@@ -202,27 +202,32 @@ def price_options_modal(request):
     data = {
         'cars': [
             {
-                'option': 'Stage one tune',
+                'id': 'stage-one-tune',
+                'name': 'Stage one tune',
                 'price': '50'
             },
             {
-                'option': 'Stage two tune',
+                'id': 'stage-two-tune',
+                'name': 'Stage two tune',
                 'price': '60'
             }
         ],
         'agricultural': [
             {
-                'option': 'Gear box',
+                'id': 'gear-box',
+                'name': 'Gear box',
                 'price': '30'
             }
         ],
         'trucks': [
             {
-                'option': 'File check',
+                'id': 'file-check',
+                'name': 'File check',
                 'price': '10'
             },
             {
-                'option': 'EGR off',
+                'id': 'egr-off',
+                'name': 'EGR off',
                 'price': '30'
             }
         ]

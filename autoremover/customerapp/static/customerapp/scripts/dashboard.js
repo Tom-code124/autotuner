@@ -1,4 +1,4 @@
-import { turnOnModal, getAndInject } from "./modals.js";
+import { getAndInject } from "./modals.js";
 import { afterInjection } from "./pricing_modal.js";
 
 function viewButtonClick(event) {

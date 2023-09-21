@@ -1,3 +1,10 @@
 {% for option in options %}
-<input type="checkbox" value="Bike" />
+<div class="price-option-box row">
+  <input type="checkbox" id="{{ option.id }}" value="{{ option.name }}" />
+  <label for="{{ option.id }}" class="price-option-label row">
+    <span> {{ option.name }}</span>
+    <span> {{ option.price }} </span>
+  </label>
+</div>
+<br />
 {% endfor %}
