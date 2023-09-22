@@ -151,3 +151,7 @@ a {
 .disable-scroll {
   overflow: hidden;
 }
+
+.apart-children {
+  justify-content: space-between;
+}

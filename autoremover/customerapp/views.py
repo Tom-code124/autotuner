@@ -194,7 +194,8 @@ def knowledge_modal(request):
 def pricing_modal(request):
 
     context = {
-        'modal_title': 'File pricing'
+        'modal_title': 'File pricing',
+        'tax_percentage': '20'
     }
     return render(request, "modals/pricing_modal.html", context)
 

@@ -9,7 +9,35 @@
   </select>
   <div id="options-container" class="row">
     <form id="price-options-form"></form>
-    <div id="calculator-box"></div>
+    <div id="calculator-box" class="column">
+      <div id="calculator-header">Price</div>
+      <div id="calculator-body">
+        <div id="choice-content">
+          <ul id="selected-services">
+            <li class="price-li">
+              <div class="row apart-children">
+                <span>Fiat EGEA</span>
+                <span>25$</span>
+              </div>
+            </li>
+            <li id="tax-li" class="price-li">
+              <div class="row apart-children">
+                <div>
+                  VAT
+                  <span id="tax-percentage-span">{{ tax_percentage }}</span>%
+                </div>
+                <div><span id="tax-amount-span">5</span>$</div>
+              </div>
+            </li>
+          </ul>
+          <div id="price-total" class="row apart-children">
+            <span>Total:</span>
+            <div><span id="total-amount-span">30</span>$</div>
+          </div>
+        </div>
+        <div id="no-choice-content">Please select some options</div>
+      </div>
+    </div>
   </div>
 </div>
 
