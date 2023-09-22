@@ -1,0 +1,38 @@
+{% extends 'modal_layout.html' %} {% block modal_layout %} {% load static %}
+
+<div class="column">
+  <select id="category-select">
+    <option value="null" disabled selected hidden>Choose a vehicle type</option>
+    <option value="cars">Cars / Vans</option>
+    <option value="trucks">Trucks</option>
+    <option value="agricultural">Agricultural</option>
+  </select>
+  <div id="options-container" class="row">
+    <form id="price-options-form"></form>
+    <div id="calculator-box" class="column">
+      <div id="calculator-header">Price</div>
+      <div id="calculator-body">
+        <div id="choice-content">
+          <ul id="selected-services">
+            <li id="tax-li" class="price-li">
+              <div class="row apart-children">
+                <div>
+                  Taxes
+                  <span id="tax-percentage-span">{{ tax_percentage }}</span>%
+                </div>
+                <div><span id="tax-amount-span">5</span>$</div>
+              </div>
+            </li>
+          </ul>
+          <div id="price-total" class="row apart-children">
+            <span>Total:</span>
+            <div><span id="total-amount-span">0</span>$</div>
+          </div>
+        </div>
+        <div id="no-choice-content">Please select some options</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
