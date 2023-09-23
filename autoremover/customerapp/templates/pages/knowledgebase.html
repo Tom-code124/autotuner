@@ -8,7 +8,7 @@
   </div>
   <div id="card-body">
     <table>
-      <thead>
+      <thead align="left">
         <tr>
           <th>Title</th>
           <th></th>
@@ -16,8 +16,8 @@
       </thead>
       <tbody>
         {% for know in knowledge_data %}
-        <tr>
-          <td>{{ know.title }}</td>
+        <tr class="row apart-children">
+          <td class="title-td">{{ know.title }}</td>
           <td>
             <button id="{{ know.id }}" class="knowledge-button">View</button>
           </td>

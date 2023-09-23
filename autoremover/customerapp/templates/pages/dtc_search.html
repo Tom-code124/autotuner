@@ -6,30 +6,14 @@
       <h3>DTC Search</h3>
       <span>Search DTCs to find their descriptions</span>
     </div>
-    <div id="search-box" class="row">
-      <div id="search-icon"></div>
-      <input type="text" placeholder="Search..." />
-    </div>
-    <p>Search işi ajax ile yapilacak</p>
+    <form class="row">
+      <div id="search-box" class="row">
+        <input id="search-input" type="text" placeholder="Search..." />
+      </div>
+      <button type="submit" id="search-button">Search</button>
+    </form>
   </div>
-  <div id="card-body">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>CODE</th>
-          <th>DESCRIPTION</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for dtc in dtc_data.dtc_list %}
-        <tr class="table-data-row">
-          <td>{{ dtc.code }}</td>
-          <td>{{ dtc.desc }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  <div id="card-body"></div>
 </div>
 
 {% endblock %}

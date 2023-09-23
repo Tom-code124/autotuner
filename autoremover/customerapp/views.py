@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
+from urllib.parse import unquote
+import math
 
 # Create your views here.
 
@@ -97,10 +99,27 @@ def dashboard_page(request):
     }
     return render(request, "pages/dashboard.html", context)
 
+def winols_modal(request):
+    context = {
+        'modal_title': 'Add Your EVC WinOLS Account'
+    }
+
+    return render(request, "modals/winols_modal.html", context)
 
 def dtc_search_page(request):
-    dtc_data_amount = 966
-    current_page = 2
+    context = {
+        'page_title': 'DTC Search',
+        'styling_files': ["dtc_search.css"],
+        'script_files': ["dtc_search.js"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'username': 'yunus',
+        'user_credit_amount': 13.52
+        }
+    
+    return render(request, "pages/dtc_search.html", context)
+
+def dtc_search_modal(request):
     dtc_list = [
         {
             'code': 'P0000',
@@ -141,25 +160,104 @@ def dtc_search_page(request):
         {
             'code': 'P0009',
             'desc': 'Engine position system, bank 2 -engine performance'
+        },
+        {
+            'code': 'P000A',
+            'desc': 'No fault 2'
+        },
+        {
+            'code': 'P000B',
+            'desc': 'Fuel volume regulator control -circuit open 2'
+        },
+        {
+            'code': 'P000C',
+            'desc': 'Fuel volume regulator control -circuit range/performance 2'
+        },
+        {
+            'code': 'P000D',
+            'desc': 'Fuel volume regulator control -circuit low 2'
+        },
+        {
+            'code': 'P000E',
+            'desc': 'Fuel volume regulator control -circuit high 2'
+        },
+        {
+            'code': 'P000F',
+            'desc': 'Fuel shut -off valve -circuit open 2'
+        },
+        {
+            'code': 'P0010',
+            'desc': 'Fuel shut -off valve -circuit low 2'
+        },
+        {
+            'code': 'P0011',
+            'desc': 'Fuel shut -off valve -circuit high 2'
+        },
+        {
+            'code': 'P0012',
+            'desc': 'Engine position system, bank 1 -engine performance 2'
+        },
+        {
+            'code': 'P0013',
+            'desc': 'Engine position system, bank 2 -engine performance 2'
         }
     ]
+
+    params = request.GET
+    keyword = params.get('keyword')
+    page = params.get('page')
+
+    search_list = []
+    if keyword:
+        keyword = unquote(keyword).lower()
+        for dtc in dtc_list:
+            if keyword in dtc.get('code').lower() or keyword in dtc.get('desc').lower():
+                search_list.append(dtc)
+    else:
+        search_list = dtc_list
+
+    data_amount = len(search_list)
+    total_pages = math.ceil(len(search_list) / 10)
+
+    if page:
+        page = int(page)
+        if page > total_pages:
+            page = total_pages
+        
+        if page < 1:
+            page = 1
+        
+    else:
+        page = 1
+    
+    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
+
+    start_index = 10 * (page - 1)
+    end_index = min(10 * page - 1, data_amount - 1)
+    ret_list = search_list[start_index : end_index + 1]
+
+    if page_list:
+        any_previous_page = page > page_list[0]
+        any_following_page = page < page_list[-1]
+    else:
+        any_previous_page = False
+        any_following_page = False
+        page_list = [1]
+
     context = {
-        'page_title': 'DTC Search',
-        'styling_files': ["dtc_search.css"],
-        'file_service_status': 'ONLINE',
-        'file_service_until': datetime.now(),
-        'username': 'yunus',
-        'user_credit_amount': 13.52,
-        'dtc_data': {
-            'amount': dtc_data_amount,
-            'total_page_num': int(dtc_data_amount / 10) + 1,
-            'current_page': current_page,
-            'start_index': (current_page - 1) * 10,
-            'end_index': current_page * 10 - 1,
-            'dtc_list': dtc_list
-        }
-        }
-    return render(request, "pages/dtc_search.html", context)
+        'data_amount': data_amount,
+        'start_index': start_index + 1,
+        'end_index': end_index + 1,
+        'current_page': page,
+        'previous_page_disabled': not any_previous_page,
+        'following_page_disabled': not any_following_page,
+        'page_list': page_list,
+        'data': ret_list
+    }
+    
+    return render(request, "modals/dtc_search_modal.html", context)
+
+    
 
 def knowledgebase_page(request):
     knowledge_data = [
@@ -189,13 +287,6 @@ def knowledgebase_page(request):
     }
     return render(request, "pages/knowledgebase.html", context)
 
-def winols_modal(request):
-    context = {
-        'modal_title': 'Add Your EVC WinOLS Account'
-    }
-
-    return render(request, "modals/winols_modal.html", context)
-
 def knowledge_modal(request):
     knowledge_data = {
         'adblue_solutions': {
@@ -219,7 +310,7 @@ def knowledge_modal(request):
         },
         'med17_vcds_logging_profiles': {
             'modal_title': 'MED17 VCDS Logging profiles',
-            'desc': '<a href="https://drive.tiny.cloud/1/8lqf2m98sdocyt5hqrl8t0s6pir4vto88le9axrfsvxajoep/324197e6-1ac1-46a2-b358-13d3d436756c">Audi a5 - med171 - gen logs.zip</a>\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
+            'desc': 'Audi a5 - med171 - gen logs.zip\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
         },
         'egr_off_solutions': {
             'modal_title': 'EGR OFF Solutions',
