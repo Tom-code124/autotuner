@@ -80,12 +80,6 @@ aside {
   font-size: x-small;
 }
 
-.sidebar_item {
-  background-color: #1f1e2e;
-  text-align: center;
-  flex-grow: 1;
-}
-
 #sidebar_list {
   list-style: none;
   padding: 0;
@@ -154,4 +148,20 @@ a {
 
 .apart-children {
   justify-content: space-between;
+}
+
+.sidebar_item {
+  height: 100%;
+  background-color: #1f1e2e;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.sidebar_item:hover {
+  cursor: pointer;
+  background-color: #15151f;
+}
+
+.sidebar-anchor {
+  height: 10%;
 }

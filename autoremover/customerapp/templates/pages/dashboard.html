@@ -31,10 +31,14 @@
     </div>
     <div id="files-submitted-graph" class="row">
       {% for md in files_submitted_data.monthly_data %}
-      <div id="month" class="column">
+      <div class="month column">
         <div style="height: {{ md.percent }}%;" class="graph-col"></div>
-        <div>{{ md.name }}</div>
       </div>
+      {% endfor %}
+    </div>
+    <div id="files-submitted-labels" class="row">
+      {% for md in files_submitted_data.monthly_data %}
+      <div class="month-label">{{ md.name }}</div>
       {% endfor %}
     </div>
     <div id="inner-boxes" class="row">

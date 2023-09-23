@@ -55,14 +55,26 @@
 #files-submitted-graph {
   flex-grow: 4;
   justify-content: space-evenly;
-  margin: 20px 0;
+  margin-top: 20px;
 }
 
-#month {
+.month {
   height: 100%;
   width: 5%;
   justify-content: flex-end;
   align-items: center;
+}
+
+#files-submitted-labels {
+  margin-top: 5px;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.month-label {
+  text-align: center;
+  width: 5%;
 }
 
 .graph-col {
