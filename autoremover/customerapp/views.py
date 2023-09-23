@@ -11,8 +11,18 @@ def login_page(request, status="normal"):
         }
     
     status = request.GET.get('status')
+
+    context["display_login_form"] = "block"
+    context["display_signup_form"] = "none"
+    
     if status == "login_error":
-        context["login_error"] = "Wrong email or password"
+        context["login_error_message"] = "Wrong email or password"
+
+    if status == "signup_error":
+        wrong_data = request.GET.get('wrong')
+        context["signup_error_message"] = "This " + wrong_data + " is already being used by another account!"
+        context["display_login_form"] = "none"
+        context["display_signup_form"] = "block"
 
     return render(request, "pages/customer_login.html", context)
 
@@ -24,13 +34,37 @@ def authenticate(request):
             "test2@test2.com": "test2"
         }
 
-        email = request.POST.get('email_input')
-        password = request.POST.get('password_input')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
         if email in list(users.keys()):
             if users[email] == password:
                 return redirect("/app/")
             
         return redirect('/app/login?status=login_error')
+    
+def create_account(request):
+    if request.method == "POST":
+        emails = [
+            "test@test.com",
+            "test1@test1.com",
+            "test2@test2.com"
+        ]
+
+        phones = [
+            "123",
+            "123456"
+        ]
+        
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+
+        if not email in emails:
+            if not phone in phones:
+                return redirect("/app/")
+            else:
+                return redirect("/app/login?status=signup_error&wrong=phone")
+        else:
+                return redirect("/app/login?status=signup_error&wrong=email")
 
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]

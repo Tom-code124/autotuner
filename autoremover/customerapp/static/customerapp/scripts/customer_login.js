@@ -20,3 +20,23 @@ document
 document
   .getElementById("open-login-form-button")
   .addEventListener("click", openLogin);
+
+var passInput = document.getElementById("password-input");
+var confirmPassInput = document.getElementById("password-confirm-input");
+var submitSignupButton = document.getElementById("submit-signup-button");
+var passMismatchSpan = document.getElementById("pass-mismatch-span");
+
+function checkPasswordMatch() {
+  if (passInput.value == confirmPassInput.value) {
+    submitSignupButton.disabled = false;
+    passMismatchSpan.style.display = "none";
+    return true;
+  }
+
+  submitSignupButton.disabled = true;
+  passMismatchSpan.style.display = "block";
+  return false;
+}
+
+passInput.addEventListener("change", checkPasswordMatch);
+confirmPassInput.addEventListener("change", checkPasswordMatch);

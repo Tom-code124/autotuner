@@ -28,7 +28,6 @@
   width: 400px;
   padding: 20px;
   height: 70%;
-  display: none;
 }
 
 #signup-form {
@@ -37,4 +36,8 @@
 
 #login-form {
   height: 100%;
+}
+
+#pass-mismatch-span {
+  display: none;
 }
