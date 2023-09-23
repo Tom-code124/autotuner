@@ -5,25 +5,35 @@
   </div>
   <div id="right_col">
     <div id="login-form-container">
-      <form id="login-form" class="column apart-children">
+      <form
+        id="login-form"
+        class="column apart-children"
+        method="POST"
+        enctype="multipart/form-data"
+        action="/app/authenticate"
+      >
+        {% csrf_token %}
         <h1>Welcome</h1>
         <span>
           Don't have an account?
           <button id="open-signup-form-button">Register</button>
         </span>
-        <label>Email:</label>
-        <input />
+        <label for="email_input">Email:</label>
+        <input name="email_input" type="email" required />
         <div>
-          <label>Password:</label>
+          <label for="password_input">Password:</label>
           <a>Forgot Password?</a>
         </div>
-        <input />
+        <input name="password_input" type="password" required />
         <div class="row">
           <input type="checkbox" />
           <label>Remember me</label>
         </div>
         <h3>reCaptcha</h3>
-        <button>Sign in</button>
+        {% if login_error %}
+        <span>{{ login_error }}</span>
+        {% endif %}
+        <button type="submit" value="Submit" name="Submit">Sign in</button>
       </form>
     </div>
     <div id="signup-form-container">

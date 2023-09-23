@@ -1,15 +1,36 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import datetime
 
 # Create your views here.
 
-def login_page(request):
+def login_page(request, status="normal"):
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
         'script_files': ["customer_login.js"],
         }
+    
+    status = request.GET.get('status')
+    if status == "login_error":
+        context["login_error"] = "Wrong email or password"
+
     return render(request, "pages/customer_login.html", context)
+
+def authenticate(request):
+    if request.method == "POST":
+        users = {
+            "test@test.com": "test",
+            "test1@test1.com": "test1",
+            "test2@test2.com": "test2"
+        }
+
+        email = request.POST.get('email_input')
+        password = request.POST.get('password_input')
+        if email in list(users.keys()):
+            if users[email] == password:
+                return redirect("/app/")
+            
+        return redirect('/app/login?status=login_error')
 
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]

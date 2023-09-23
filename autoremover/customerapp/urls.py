@@ -7,6 +7,7 @@ urlpatterns = [
     path('pricing_modal/', pricing_modal, name="File Pricing"),
     path('price_options_modal', price_options_modal, name="Price Options Modal"),
     path('login/', login_page, name="Log-in"),
+    path('authenticate', authenticate, name="Log-in Try"),
     path('dtc_search/', dtc_search_page, name='DTC Search'),
     path('knowledgebase/', knowledgebase_page, name='Knowledgebase'),
     path('winols_modal/', winols_modal, name='WinOLS Modal'),
