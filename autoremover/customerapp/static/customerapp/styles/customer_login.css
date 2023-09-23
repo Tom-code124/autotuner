@@ -21,16 +21,20 @@
 #login-form-container {
   width: 400px;
   padding: 20px;
+  height: 50%;
 }
 
 #signup-form-container {
   width: 400px;
   padding: 20px;
-  justify-content: center;
   height: 70%;
   display: none;
 }
 
 #signup-form {
+  height: 100%;
+}
+
+#login-form {
   height: 100%;
 }
