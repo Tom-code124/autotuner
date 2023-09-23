@@ -4,7 +4,7 @@
     <img id="logo" src="{% static 'customerapp/assets/logo.png' %}" />
   </div>
   <div id="right_col">
-    <div id="form-container">
+    <div id="login-form-container">
       <form class="column">
         <h1>Welcome</h1>
         <span>
@@ -24,6 +24,37 @@
         </div>
         <h3>reCaptcha</h3>
         <button>Sign in</button>
+      </form>
+    </div>
+    <div id="signup-form-container" class="column">
+      <form id="signup-form" class="column apart-children">
+        <h1>Sign-up</h1>
+        <span>Enter your details to create your account</span>
+        <input placeholder="Full name" />
+        <input placeholder="Company name" />
+        <input type="email" placeholder="Email address" />
+        <div class="row">
+          <select id="phone-country-code">
+            <option value="+90" selected>+90 Türkiye</option>
+            <option value="+44">+44 UK</option>
+            <option value="+1">+1 US</option>
+            <option value="+84">+84 Vietnam</option>
+          </select>
+          <input placeholder="Phone number" />
+        </div>
+        <input placeholder="Billing address" />
+        <input type="password" placeholder="Password" />
+        <input type="password" placeholder="Confirm password" />
+        <div class="row">
+          <input id="terms-and-conditions-checkbox" type="checkbox" />
+          <label for="terms-and-conditions-checkbox"
+            >I agree to the terms and conditions.</label
+          >
+        </div>
+        <p>reCaptcha</p>
+        <div class="row">
+          <button>Sign-up</button>
+        </div>
       </form>
     </div>
   </div>

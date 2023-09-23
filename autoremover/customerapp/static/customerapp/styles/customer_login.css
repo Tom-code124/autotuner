@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #fff;
 }
 
 #logo {
@@ -17,7 +18,19 @@
   width: 300px;
 }
 
-#form-container {
+#login-form-container {
   width: 400px;
   padding: 20px;
+  display: none;
+}
+
+#signup-form-container {
+  width: 400px;
+  padding: 20px;
+  justify-content: center;
+  height: 70%;
+}
+
+#signup-form {
+  height: 100%;
 }
