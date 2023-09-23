@@ -21,7 +21,6 @@
 #login-form-container {
   width: 400px;
   padding: 20px;
-  display: none;
 }
 
 #signup-form-container {
@@ -29,6 +28,7 @@
   padding: 20px;
   justify-content: center;
   height: 70%;
+  display: none;
 }
 
 #signup-form {
