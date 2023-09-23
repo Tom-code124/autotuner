@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
+import math
 
 # Create your views here.
 
@@ -97,10 +98,26 @@ def dashboard_page(request):
     }
     return render(request, "pages/dashboard.html", context)
 
+def winols_modal(request):
+    context = {
+        'modal_title': 'Add Your EVC WinOLS Account'
+    }
+
+    return render(request, "modals/winols_modal.html", context)
 
 def dtc_search_page(request):
-    dtc_data_amount = 966
-    current_page = 2
+    context = {
+        'page_title': 'DTC Search',
+        'styling_files': ["dtc_search.css"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'username': 'yunus',
+        'user_credit_amount': 13.52
+        }
+    
+    return render(request, "pages/dtc_search.html", context)
+
+def dtc_search_modal(request):
     dtc_list = [
         {
             'code': 'P0000',
@@ -141,25 +158,103 @@ def dtc_search_page(request):
         {
             'code': 'P0009',
             'desc': 'Engine position system, bank 2 -engine performance'
+        },
+        {
+            'code': 'P000A',
+            'desc': 'No fault 2'
+        },
+        {
+            'code': 'P000B',
+            'desc': 'Fuel volume regulator control -circuit open 2'
+        },
+        {
+            'code': 'P000C',
+            'desc': 'Fuel volume regulator control -circuit range/performance 2'
+        },
+        {
+            'code': 'P000D',
+            'desc': 'Fuel volume regulator control -circuit low 2'
+        },
+        {
+            'code': 'P000E',
+            'desc': 'Fuel volume regulator control -circuit high 2'
+        },
+        {
+            'code': 'P000F',
+            'desc': 'Fuel shut -off valve -circuit open 2'
+        },
+        {
+            'code': 'P0010',
+            'desc': 'Fuel shut -off valve -circuit low 2'
+        },
+        {
+            'code': 'P0011',
+            'desc': 'Fuel shut -off valve -circuit high 2'
+        },
+        {
+            'code': 'P0012',
+            'desc': 'Engine position system, bank 1 -engine performance 2'
+        },
+        {
+            'code': 'P0013',
+            'desc': 'Engine position system, bank 2 -engine performance 2'
         }
     ]
+
+    params = request.GET
+    keyword = params.get('keyword')
+    page = params.get('page')
+
+    search_list = []
+    if keyword:
+        for dtc in dtc_list:
+            if keyword in dtc.code or keyword in dtc.desc:
+                search_list.append(dtc)
+    else:
+        search_list = dtc_list
+
+    data_amount = len(search_list)
+    total_pages = math.ceil(len(search_list) / 10)
+
+    if page:
+        page = int(page)
+        if page > total_pages:
+            page = total_pages
+        
+        if page < 1:
+            page = 1
+        
+    else:
+        page = 1
+    
+    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages))
+
+    start_index = 10 * (page - 1)
+    end_index = math.min(10 * page - 1, data_amount)
+    ret_list = search_list[start_index : end_index + 1]
+
+    if page_list:
+        any_previous_page = page > page_list[0]
+        any_following_page = page < page_list[-1]
+    else:
+        any_previous_page = False
+        any_following_page = False
+        page_list = [1]
+
     context = {
-        'page_title': 'DTC Search',
-        'styling_files': ["dtc_search.css"],
-        'file_service_status': 'ONLINE',
-        'file_service_until': datetime.now(),
-        'username': 'yunus',
-        'user_credit_amount': 13.52,
-        'dtc_data': {
-            'amount': dtc_data_amount,
-            'total_page_num': int(dtc_data_amount / 10) + 1,
-            'current_page': current_page,
-            'start_index': (current_page - 1) * 10,
-            'end_index': current_page * 10 - 1,
-            'dtc_list': dtc_list
-        }
-        }
-    return render(request, "pages/dtc_search.html", context)
+        'data_amount': data_amount,
+        'start_index': start_index,
+        'end_index': end_index,
+        'current_page': page,
+        'previous_page_disabled': not any_previous_page,
+        'following_page_disabled': not any_following_page,
+        'page_list': page_list,
+        'data': ret_list
+    }
+    
+    return render("modals/dtc_search_modal.html", context)
+
+    
 
 def knowledgebase_page(request):
     knowledge_data = [
@@ -188,13 +283,6 @@ def knowledgebase_page(request):
         'knowledge_data': knowledge_data
     }
     return render(request, "pages/knowledgebase.html", context)
-
-def winols_modal(request):
-    context = {
-        'modal_title': 'Add Your EVC WinOLS Account'
-    }
-
-    return render(request, "modals/winols_modal.html", context)
 
 def knowledge_modal(request):
     knowledge_data = {

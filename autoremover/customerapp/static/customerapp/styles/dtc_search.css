@@ -22,13 +22,7 @@
 input {
   border: none;
   outline: none;
-}
-
-#search-icon {
-  background-image: url(https://cdn2.hubspot.net/hubfs/4004166/bioticresearch_website_assets/images/search_icon.png);
-  background-repeat: no-repeat;
-  background-position: left center;
-  width: 40px;
+  margin-left: 3px;
 }
 
 h3 {
@@ -51,4 +45,22 @@ h3 {
 
 .table th {
   text-align: left;
+}
+
+.dtc-code-span {
+  background-color: #ebedf3;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#search-button {
+  border-radius: 5px;
+  background-color: #fff;
+  border: grey 1px solid;
+  margin-left: 5px;
+}
+
+#search-button:hover {
+  cursor: pointer;
+  background-color: grey;
 }
