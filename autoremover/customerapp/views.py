@@ -7,6 +7,7 @@ def login_page(request):
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
+        'script_files': ["customer_login.js"],
         }
     return render(request, "pages/customer_login.html", context)
 
