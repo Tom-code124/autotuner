@@ -219,7 +219,7 @@ def knowledge_modal(request):
         },
         'med17_vcds_logging_profiles': {
             'modal_title': 'MED17 VCDS Logging profiles',
-            'desc': '<a href="https://drive.tiny.cloud/1/8lqf2m98sdocyt5hqrl8t0s6pir4vto88le9axrfsvxajoep/324197e6-1ac1-46a2-b358-13d3d436756c">Audi a5 - med171 - gen logs.zip</a>\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
+            'desc': 'Audi a5 - med171 - gen logs.zip\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
         },
         'egr_off_solutions': {
             'modal_title': 'EGR OFF Solutions',
