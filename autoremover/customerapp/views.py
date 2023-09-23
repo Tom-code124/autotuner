@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
+from urllib.parse import unquote
 import math
 
 # Create your views here.
@@ -109,6 +110,7 @@ def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
         'styling_files': ["dtc_search.css"],
+        'script_files': ["dtc_search.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'username': 'yunus',
@@ -207,8 +209,9 @@ def dtc_search_modal(request):
 
     search_list = []
     if keyword:
+        keyword = unquote(keyword).lower()
         for dtc in dtc_list:
-            if keyword in dtc.code or keyword in dtc.desc:
+            if keyword in dtc.get('code').lower() or keyword in dtc.get('desc').lower():
                 search_list.append(dtc)
     else:
         search_list = dtc_list
@@ -227,10 +230,10 @@ def dtc_search_modal(request):
     else:
         page = 1
     
-    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages))
+    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
 
     start_index = 10 * (page - 1)
-    end_index = math.min(10 * page - 1, data_amount)
+    end_index = min(10 * page - 1, data_amount - 1)
     ret_list = search_list[start_index : end_index + 1]
 
     if page_list:
@@ -243,8 +246,8 @@ def dtc_search_modal(request):
 
     context = {
         'data_amount': data_amount,
-        'start_index': start_index,
-        'end_index': end_index,
+        'start_index': start_index + 1,
+        'end_index': end_index + 1,
         'current_page': page,
         'previous_page_disabled': not any_previous_page,
         'following_page_disabled': not any_following_page,
@@ -252,7 +255,7 @@ def dtc_search_modal(request):
         'data': ret_list
     }
     
-    return render("modals/dtc_search_modal.html", context)
+    return render(request, "modals/dtc_search_modal.html", context)
 
     
 

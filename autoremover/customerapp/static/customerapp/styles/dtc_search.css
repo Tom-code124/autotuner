@@ -64,3 +64,11 @@ h3 {
   cursor: pointer;
   background-color: grey;
 }
+
+#pagination-ul {
+  list-style-type: none;
+}
+
+.pagination-li {
+  margin: 5px;
+}
