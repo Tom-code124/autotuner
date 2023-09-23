@@ -1,14 +1,70 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import datetime
 
 # Create your views here.
 
-def login_page(request):
+def login_page(request, status="normal"):
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
+        'script_files': ["customer_login.js"],
         }
+    
+    status = request.GET.get('status')
+
+    context["display_login_form"] = "block"
+    context["display_signup_form"] = "none"
+    
+    if status == "login_error":
+        context["login_error_message"] = "Wrong email or password"
+
+    if status == "signup_error":
+        wrong_data = request.GET.get('wrong')
+        context["signup_error_message"] = "This " + wrong_data + " is already being used by another account!"
+        context["display_login_form"] = "none"
+        context["display_signup_form"] = "block"
+
     return render(request, "pages/customer_login.html", context)
+
+def authenticate(request):
+    if request.method == "POST":
+        users = {
+            "test@test.com": "test",
+            "test1@test1.com": "test1",
+            "test2@test2.com": "test2"
+        }
+
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        if email in list(users.keys()):
+            if users[email] == password:
+                return redirect("/app/")
+            
+        return redirect('/app/login?status=login_error')
+    
+def create_account(request):
+    if request.method == "POST":
+        emails = [
+            "test@test.com",
+            "test1@test1.com",
+            "test2@test2.com"
+        ]
+
+        phones = [
+            "123",
+            "123456"
+        ]
+        
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+
+        if not email in emails:
+            if not phone in phones:
+                return redirect("/app/")
+            else:
+                return redirect("/app/login?status=signup_error&wrong=phone")
+        else:
+                return redirect("/app/login?status=signup_error&wrong=email")
 
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]

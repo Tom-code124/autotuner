@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #fff;
 }
 
 #logo {
@@ -17,7 +18,26 @@
   width: 300px;
 }
 
-#form-container {
+#login-form-container {
   width: 400px;
   padding: 20px;
+  height: 50%;
+}
+
+#signup-form-container {
+  width: 400px;
+  padding: 20px;
+  height: 70%;
+}
+
+#signup-form {
+  height: 100%;
+}
+
+#login-form {
+  height: 100%;
+}
+
+#pass-mismatch-span {
+  display: none;
 }

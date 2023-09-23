@@ -4,26 +4,104 @@
     <img id="logo" src="{% static 'customerapp/assets/logo.png' %}" />
   </div>
   <div id="right_col">
-    <div id="form-container">
-      <form class="column">
+    <div id="login-form-container" style="display: {{ display_login_form }};">
+      <form
+        id="login-form"
+        class="column apart-children"
+        method="POST"
+        enctype="multipart/form-data"
+        action="/app/authenticate"
+      >
+        {% csrf_token %}
         <h1>Welcome</h1>
         <span>
           Don't have an account?
-          <button>Register</button>
+          <button id="open-signup-form-button">Register</button>
         </span>
-        <label>Email:</label>
-        <input />
+        <label for="email">Email:</label>
+        <input name="email" type="email" required />
         <div>
-          <label>Password:</label>
+          <label for="password">Password:</label>
           <a>Forgot Password?</a>
         </div>
-        <input />
+        <input name="password" type="password" required />
         <div class="row">
           <input type="checkbox" />
           <label>Remember me</label>
         </div>
         <h3>reCaptcha</h3>
-        <button>Sign in</button>
+        {% if login_error_message %}
+        <span>{{ login_error_message }}</span>
+        {% endif %}
+        <button type="submit" value="Submit" name="Submit">Sign in</button>
+      </form>
+    </div>
+    <div id="signup-form-container" style="display: {{ display_signup_form }};">
+      <form
+        id="signup-form"
+        class="column apart-children"
+        method="POST"
+        enctype="multipart/form-data"
+        action="/app/create_account"
+      >
+        {% csrf_token %}
+        <h1>Sign-up</h1>
+        <span
+          >Already have an account?
+          <button id="open-login-form-button">Log-in</button></span
+        >
+        <span>Enter your details to create your account</span>
+        <input name="full_name" placeholder="Full name" required />
+        <input name="company_name" placeholder="Company name" />
+        <input name="email" type="email" placeholder="Email address" required />
+        <div class="row">
+          <select name="phone_country_code" id="phone-country-code">
+            <option value="+90" selected>+90 Türkiye</option>
+            <option value="+44">+44 UK</option>
+            <option value="+1">+1 US</option>
+            <option value="+84">+84 Vietnam</option>
+          </select>
+          <input
+            name="phone"
+            placeholder="Phone number"
+            type="number"
+            required
+          />
+        </div>
+        <input placeholder="Billing address" />
+        <input
+          id="password-input"
+          name="password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+        <input
+          id="password-confirm-input"
+          type="password"
+          placeholder="Confirm password"
+          required
+        />
+        <span id="pass-mismatch-span">Passwords does not match!</span>
+        <div class="row">
+          <input required id="terms-and-conditions-checkbox" type="checkbox" />
+          <label for="terms-and-conditions-checkbox"
+            >I agree to the terms and conditions.</label
+          >
+        </div>
+        <p>reCaptcha</p>
+        <button
+          id="submit-signup-button"
+          type="submit"
+          value="Submit"
+          name="Submit"
+        >
+          Sign-up
+        </button>
+
+        {% if signup_error_message %}
+        <span>{{ signup_error_message }}</span>
+        {% endif %}
       </form>
     </div>
   </div>
