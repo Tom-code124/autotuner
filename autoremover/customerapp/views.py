@@ -82,6 +82,25 @@ def dashboard_page(request):
         }
         monthly_data.append(m)
 
+    new_know_data = [
+        {
+            'date': '22.11.2023',
+            'desc': 'Scania S500-770 DC13-16 EMS10 SCR'
+        },
+        {
+            'date': '19.11.2023',
+            'desc': 'Scania S500-770 DC13-16 EMS10 SCR off EGR on original new gearbox and sme other fixes with some updates'
+        },
+        {
+            'date': '10.10.2023',
+            'desc': 'Scania S500-770 DC13-16 EMS10 SCR off'
+        },
+        {
+            'date': '22.09.2023',
+            'desc': 'Scania S500-770 DC13-16'
+        },
+    ]
+
     context = {
         'page_title': 'Dashboard',
         'styling_files': ["dashboard.css"],
@@ -95,7 +114,8 @@ def dashboard_page(request):
             'week': 3,
             'month': monthly_file_nums[-1],
             'monthly_data': monthly_data
-        }
+        },
+        'new_know_data': new_know_data
     }
     return render(request, "pages/dashboard.html", context)
 
