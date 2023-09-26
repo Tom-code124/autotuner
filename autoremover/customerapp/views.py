@@ -101,6 +101,25 @@ def dashboard_page(request):
         },
     ]
 
+    last_processes_data = [
+        {
+            'status': 'Done',
+            'desc': 'Ford Focus 2011 - DPF off'
+        },
+        {
+            'status': 'Cancelled',
+            'desc': 'Fiat Egea 2018 - EGR off'
+        },
+        {
+            'status': 'Done',
+            'desc': 'Volkswagen Passat 2019 - Stage-1 Tuning'
+        },
+        {
+            'status': 'Cancelled',
+            'desc': 'Ford Focus 2016 - DPF off Stage-2 Tuning'
+        },
+    ]
+
     context = {
         'page_title': 'Dashboard',
         'styling_files': ["dashboard.css"],
@@ -115,7 +134,8 @@ def dashboard_page(request):
             'month': monthly_file_nums[-1],
             'monthly_data': monthly_data
         },
-        'new_know_data': new_know_data
+        'new_know_data': new_know_data,
+        'last_processes_data': last_processes_data
     }
     
     return render(request, "pages/dashboard.html", context)

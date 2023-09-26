@@ -159,7 +159,7 @@
   display: none;
 }
 
-#new-know-header {
+.grid-card-header {
   margin-bottom: 10px;
 }
 
@@ -183,8 +183,31 @@ h3 {
   border-radius: 5px;
 }
 
+#last-processes-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  width: 100%;
+}
+
+#last-processes-list li {
+  margin: 0;
+  margin-bottom: 5px;
+  padding: 5px;
+  background-color: #af88fd;
+  border-radius: 5px;
+}
+
 .new-know-date {
   background-color: #1bc5bd;
+  margin-right: 10px;
+  border-radius: 5px;
+  text-align: center;
+  height: 20px;
+  padding: 5px;
+}
+
+.last-processes-date {
   margin-right: 10px;
   border-radius: 5px;
   text-align: center;
