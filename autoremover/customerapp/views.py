@@ -28,22 +28,6 @@ def login_page(request, status="normal"):
 
     return render(request, "pages/customer_login.html", context)
 
-def authenticate(request):
-    if request.method == "POST":
-        users = {
-            "test@test.com": "test",
-            "test1@test1.com": "test1",
-            "test2@test2.com": "test2"
-        }
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        if email in list(users.keys()):
-            if users[email] == password:
-                return redirect("/app/")
-            
-        return redirect('/app/login?status=login_error')
-    
 def create_account(request):
     if request.method == "POST":
         emails = [
@@ -68,6 +52,22 @@ def create_account(request):
         else:
                 return redirect("/app/login?status=signup_error&wrong=email")
 
+def authenticate(request):
+    if request.method == "POST":
+        users = {
+            "test@test.com": "test",
+            "test1@test1.com": "test1",
+            "test2@test2.com": "test2"
+        }
+
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        if email in list(users.keys()):
+            if users[email] == password:
+                return redirect("/app/")
+            
+        return redirect('/app/login?status=login_error')
+    
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]
     months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
@@ -139,13 +139,6 @@ def dashboard_page(request):
     }
     
     return render(request, "pages/dashboard.html", context)
-
-def winols_modal(request):
-    context = {
-        'modal_title': 'Add Your EVC WinOLS Account'
-    }
-
-    return render(request, "modals/winols_modal.html", context)
 
 def files_page(request):
     context = {
@@ -425,6 +418,26 @@ def requested_files_modal(request):
     }
     
     return render(request, "modals/requested_files_modal.html", context)
+
+def winols_modal(request):
+    context = {
+        'modal_title': 'Add Your EVC WinOLS Account'
+    }
+
+    return render(request, "modals/winols_modal.html", context)
+
+def expense_history_page(request):
+    context = {
+        'page_title': 'Expense History',
+        'styling_files': ["expense_history.css"],
+        'script_files': ["expense_history.js"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'username': 'yunus',
+        'user_credit_amount': 13.52
+    }
+
+    return render(request, "pages/expense_history.html", context)
 
 def dtc_search_page(request):
     context = {
