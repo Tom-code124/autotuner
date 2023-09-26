@@ -117,6 +117,7 @@ def dashboard_page(request):
         },
         'new_know_data': new_know_data
     }
+    
     return render(request, "pages/dashboard.html", context)
 
 def winols_modal(request):
@@ -125,6 +126,18 @@ def winols_modal(request):
     }
 
     return render(request, "modals/winols_modal.html", context)
+
+def files_page(request):
+    context = {
+        'page_title': 'Your Files',
+        'styling_files': ["files.css"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'username': 'yunus',
+        'user_credit_amount': 13.52,
+    }
+
+    return render(request, "pages/files.html", context)
 
 def dtc_search_page(request):
     context = {
