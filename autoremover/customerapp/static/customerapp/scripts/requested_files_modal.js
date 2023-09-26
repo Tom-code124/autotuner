@@ -1,6 +1,6 @@
 import { getAndInject } from "./modals.js";
 
-var searchInput = document.getElementById("search-input");
+var searchInput = document.getElementById("req-files-search-input");
 
 function loadPagination(event) {
   var currentPage = Number(
@@ -16,13 +16,13 @@ function loadPagination(event) {
 
   if (page != currentPage) {
     var keyword = searchInput.value;
-    var url = "dtc_search_modal?page=" + page;
+    var url = "requested_files?page=" + page;
 
     if (keyword.trim().length != 0) {
       url += "&keyword=" + encodeURIComponent(keyword);
     }
 
-    getAndInject(url, "card-body", undefined, afterFunc);
+    getAndInject(url, "page-content", undefined, afterFunc);
   }
 }
 

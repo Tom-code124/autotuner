@@ -131,6 +131,7 @@ def files_page(request):
     context = {
         'page_title': 'Your Files',
         'styling_files': ["files.css"],
+        'script_files': ["files.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'username': 'yunus',
@@ -138,6 +139,272 @@ def files_page(request):
     }
 
     return render(request, "pages/files.html", context)
+
+
+def requested_files_modal(request):
+    req_file_list = [
+        {
+            'num': 1,
+            'vehicle': 'Ford Focus 2011',
+            'ecu': 'Bosch AJSDO0012',
+            'process': 'DPF off Stage-1 Tune',
+            'requested_at': '10.11.2022',
+            'updated_at': '12.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 2,
+            'vehicle': 'Ford Focus 2012',
+            'ecu': 'Bosch AJSDO0013',
+            'process': 'DPF off EGR off',
+            'requested_at': '10.11.2023',
+            'updated_at': '12.11.2023',
+            'status': 'Cancelled'
+        },
+        {
+            'num': 3,
+            'vehicle': 'Ford Focus 2013',
+            'ecu': 'Bosch AJSDO0014',
+            'process': 'EGR off Stage-1 Tune',
+            'requested_at': '8.11.2022',
+            'updated_at': '11.11.2022',
+            'status': 'Pending'
+        },
+        {
+            'num': 4,
+            'vehicle': 'Ford Focus 2014',
+            'ecu': 'Bosch AJSDO2630015',
+            'process': 'Stage-1 Tune',
+            'requested_at': '9.11.2022',
+            'updated_at': '10.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 5,
+            'vehicle': 'Ford Focus 2015',
+            'ecu': 'Bosch AJSDO2630016',
+            'process': 'DPF off Stage-1 Tune',
+            'requested_at': '13.11.2022',
+            'updated_at': '15.11.2023',
+            'status': 'Cancelled'
+        },
+        {
+            'num': 5,
+            'vehicle': 'Ford Focus 2016',
+            'ecu': 'Bosch AJSDO2630017',
+            'process': 'DPF off',
+            'requested_at': '10.11.2022',
+            'updated_at': '12.11.2022',
+            'status': 'Pending'
+        },
+        {
+            'num': 6,
+            'vehicle': 'Ford Focus 2017',
+            'ecu': 'Bosch AJSDO2630018',
+            'process': 'EGR off',
+            'requested_at': '10.11.2022',
+            'updated_at': '15.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 7,
+            'vehicle': 'Ford Focus 2018',
+            'ecu': 'Bosch AJSDO2630019',
+            'process': 'EGR off Stage-1 Tune',
+            'requested_at': '10.11.2022',
+            'updated_at': '25.11.2022',
+            'status': 'Cancelled'
+        },
+        {
+            'num': 8,
+            'vehicle': 'Ford Focus 2019',
+            'ecu': 'Bosch AJSDO2630020',
+            'process': 'DPF off Stage-1 Tune',
+            'requested_at': '30.11.2024',
+            'updated_at': '12.11.2025',
+            'status': 'Pending'
+        },
+        {
+            'num': 9,
+            'vehicle': 'Ford Focus 2020',
+            'ecu': 'Bosch AJSDO2630021',
+            'process': 'DPF off EGR off',
+            'requested_at': '10.11.2023',
+            'updated_at': '2.11.2027',
+            'status': 'Done'
+        },
+        {
+            'num': 10,
+            'vehicle': 'Ford Focus 2021',
+            'ecu': 'Bosch AJSDO2630022',
+            'process': 'DPF off EGR off Stage-1 Tune',
+            'requested_at': '10.11.2002',
+            'updated_at': '12.11.2012',
+            'status': 'Cancelled'
+        },
+        {
+            'num': 11,
+            'vehicle': 'Ford Focus 2022',
+            'ecu': 'Bosch AJSDO2630023',
+            'process': 'DPF off EGR off Stage-1 Tune',
+            'requested_at': '10.11.2008',
+            'updated_at': '12.11.2022',
+            'status': 'Pending'
+        },
+        {
+            'num': 12,
+            'vehicle': 'Ford Focus 2023',
+            'ecu': 'Bosch AJSDO2630024',
+            'process': 'DPF off EGR off Stage-2 Tune',
+            'requested_at': '10.11.2009',
+            'updated_at': '12.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 13,
+            'vehicle': 'Ford Focus 2024',
+            'ecu': 'Bosch AJSDO2630025',
+            'process': 'DPF off EGR off Stage-3 Tune',
+            'requested_at': '10.11.2022',
+            'updated_at': '12.11.2030',
+            'status': 'Cancelled'
+        },
+        {
+            'num': 14,
+            'vehicle': 'Ford Focus 2022',
+            'ecu': 'Bosch AJSDO2630023',
+            'process': 'DPF off EGR off Stage-1 Tune',
+            'requested_at': '10.11.2008',
+            'updated_at': '12.11.2022',
+            'status': 'Pending'
+        },
+        {
+            'num': 15,
+            'vehicle': 'Ford Focus 2023',
+            'ecu': 'Bosch AJSDO2630024',
+            'process': 'DPF off EGR off Stage-2 Tune',
+            'requested_at': '10.11.2009',
+            'updated_at': '12.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 16,
+            'vehicle': 'Ford Focus 2020',
+            'ecu': 'Bosch AJSDO2630021',
+            'process': 'DPF off EGR off',
+            'requested_at': '10.11.2023',
+            'updated_at': '2.11.2027',
+            'status': 'Done'
+        },
+        {
+            'num': 17,
+            'vehicle': 'Ford Focus 2020',
+            'ecu': 'Bosch AJSDO2630021',
+            'process': 'DPF off EGR off',
+            'requested_at': '10.11.2023',
+            'updated_at': '2.11.2027',
+            'status': 'Done'
+        },
+        {
+            'num': 18,
+            'vehicle': 'Ford Focus 2021',
+            'ecu': 'Bosch AJSDO2630022',
+            'process': 'DPF off EGR off Stage-1 Tune',
+            'requested_at': '10.11.2002',
+            'updated_at': '12.11.2012',
+            'status': 'Cancelled'
+        },
+        {
+            'num': 19,
+            'vehicle': 'Ford Focus 2022',
+            'ecu': 'Bosch AJSDO2630023',
+            'process': 'DPF off EGR off Stage-1 Tune',
+            'requested_at': '10.11.2008',
+            'updated_at': '12.11.2022',
+            'status': 'Pending'
+        },
+        {
+            'num': 20,
+            'vehicle': 'Ford Focus 2023',
+            'ecu': 'Bosch AJSDO2630024',
+            'process': 'DPF off EGR off Stage-2 Tune',
+            'requested_at': '10.11.2009',
+            'updated_at': '12.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 21,
+            'vehicle': 'Ford Focus 2014',
+            'ecu': 'Bosch AJSDO2630015',
+            'process': 'Stage-1 Tune',
+            'requested_at': '9.11.2022',
+            'updated_at': '10.11.2022',
+            'status': 'Done'
+        },
+        {
+            'num': 22,
+            'vehicle': 'Ford Focus 2015',
+            'ecu': 'Bosch AJSDO2630016',
+            'process': 'DPF off Stage-1 Tune',
+            'requested_at': '13.11.2022',
+            'updated_at': '15.11.2023',
+            'status': 'Cancelled'
+        },
+    ]
+
+    params = request.GET
+    keyword = params.get('keyword')
+    page = params.get('page')
+
+    search_list = []
+    if keyword:
+        keyword = unquote(keyword).lower()
+        for file in req_file_list:
+            if keyword in str(file.get('num')).lower() or keyword in file.get('vehicle').lower() or keyword in file.get('ecu').lower() or keyword in file.get('process').lower() or keyword in file.get('requested_at').lower() or keyword in file.get('updated_at').lower() or keyword in file.get('status').lower():
+                search_list.append(file)
+    else:
+        search_list = req_file_list
+
+    data_amount = len(search_list)
+    total_pages = math.ceil(len(search_list) / 10)
+
+    if page:
+        page = int(page)
+        if page > total_pages:
+            page = total_pages
+        
+        if page < 1:
+            page = 1
+        
+    else:
+        page = 1
+    
+    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
+
+    start_index = 10 * (page - 1)
+    end_index = min(10 * page - 1, data_amount - 1)
+    ret_list = search_list[start_index : end_index + 1]
+
+    if page_list:
+        any_previous_page = page > page_list[0]
+        any_following_page = page < page_list[-1]
+    else:
+        any_previous_page = False
+        any_following_page = False
+        page_list = [1]
+
+    context = {
+        'data_amount': data_amount,
+        'start_index': start_index + 1,
+        'end_index': end_index + 1,
+        'current_page': page,
+        'previous_page_disabled': not any_previous_page,
+        'following_page_disabled': not any_following_page,
+        'page_list': page_list,
+        'requested_file_data': ret_list
+    }
+    
+    return render(request, "modals/requested_files_modal.html", context)
 
 def dtc_search_page(request):
     context = {
@@ -289,8 +556,6 @@ def dtc_search_modal(request):
     }
     
     return render(request, "modals/dtc_search_modal.html", context)
-
-    
 
 def knowledgebase_page(request):
     knowledge_data = [

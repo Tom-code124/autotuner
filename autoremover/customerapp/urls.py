@@ -6,6 +6,7 @@ urlpatterns = [
     path('', dashboard_page, name="Dashboard"),
     path('winols_modal/', winols_modal, name='WinOLS Modal'),
     path('files/', files_page, name="Your Files"),
+    path('files/requested_files', requested_files_modal, name="Requested Files"),
     path('pricing_modal/', pricing_modal, name="File Pricing"),
     path('price_options_modal', price_options_modal, name="Price Options Modal"),
     path('login/', login_page, name="Log-in"),

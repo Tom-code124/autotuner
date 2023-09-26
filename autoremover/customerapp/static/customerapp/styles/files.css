@@ -31,7 +31,7 @@
   border-radius: 0 0 10px 10px;
 }
 
-#search-box {
+.search-box {
   height: 35px;
   border: grey 1px solid;
   border-radius: 5px;
@@ -46,14 +46,14 @@ input {
   margin-left: 3px;
 }
 
-#search-button {
+.search-button {
   border-radius: 5px;
   background-color: #fff;
   border: grey 1px solid;
   margin-left: 5px;
 }
 
-#search-button:hover {
+.search-button:hover {
   cursor: pointer;
   background-color: grey;
 }
@@ -80,4 +80,16 @@ form {
 
 .table th {
   text-align: left;
+}
+
+#current-page-button {
+  background-color: #1bc5bd;
+}
+
+#pagination-ul {
+  list-style-type: none;
+}
+
+.pagination-li {
+  margin: 5px;
 }

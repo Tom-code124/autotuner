@@ -72,3 +72,7 @@ h3 {
 .pagination-li {
   margin: 5px;
 }
+
+#current-page-button {
+  background-color: #1bc5bd;
+}
