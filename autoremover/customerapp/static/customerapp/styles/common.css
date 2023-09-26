@@ -55,6 +55,7 @@ svg.sidebar_icon {
 #inner_container {
   border-radius: 10px;
   margin: auto;
+  margin-bottom: 20px;
   width: 80%;
   background-color: #eef0f8;
 }

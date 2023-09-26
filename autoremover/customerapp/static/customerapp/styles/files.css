@@ -93,3 +93,8 @@ form {
 .pagination-li {
   margin: 5px;
 }
+
+.download-div {
+  width: 50%;
+  margin: auto;
+}
