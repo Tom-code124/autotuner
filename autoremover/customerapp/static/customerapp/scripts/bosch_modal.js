@@ -58,6 +58,7 @@ function afterFuncPagination() {
   paginationButtons.map((item) => {
     item.addEventListener("click", loadPagination);
   });
+  searchInputHeader.removeEventListener("input", balance);
 }
 
 export { afterFuncEmpty, afterFuncPagination };

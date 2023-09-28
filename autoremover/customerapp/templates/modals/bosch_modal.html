@@ -9,6 +9,7 @@
     </tr>
   </thead>
   <tbody>
+    {% if results.search_data %}
     {% for ecu in results.search_data %}
     <tr class="table-data-row">
       <td><span class="ecu-type-span">{{ ecu.type }}</span></td>
@@ -16,6 +17,9 @@
       <td>{{ ecu.car_manufacturer }}</td>
     </tr>
     {% endfor %}
+    {% else %}
+    <div>There is no such ECU, try again</div>
+    {% endif %}
   </tbody>
 </table>
 <div class="row apart-children">
