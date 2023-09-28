@@ -1,0 +1,84 @@
+{% if results %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>TYPE</th>
+      <th>MANUFACTURER NUMBER</th>
+      <th>CAR MANUFACTURER</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ecu in results.search_data %}
+    <tr class="table-data-row">
+      <td><span class="ecu-type-span">{{ ecu.type }}</span></td>
+      <td>{{ ecu.number }}</td>
+      <td>{{ ecu.car_manufacturer }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="row apart-children">
+  <ul id="pagination-ul" class="row">
+    <li class="pagination-li">
+      <button
+        id="previous-page-button"
+        class="pagination-button"
+        {% if results.previous_page_disabled %}
+        disabled
+        {% endif %}
+      >
+        Previous page
+      </button>
+    </li>
+    {% for page in results.page_list %} 
+    <li {% if page == results.current_page %} id="current-page-li" {% endif %} class="pagination-li">
+        <button 
+        {% if page == results.current_page %} id="current-page-button" {% endif %}
+        class="pagination-button">
+          {{ page }}
+        </button>
+    </li>
+      {% endfor %}
+    <li class="pagination-li">
+      <button
+        id="following-page-button"
+        class="pagination-button"
+        {% if results.following_page_disabled %}
+        disabled
+        {% endif %}
+      >
+        Next page
+      </button>
+    </li>
+  </ul>
+  <span>Showing {{ results.start_index }} - {{ results.end_index }} of {{ results.data_amount }}</span>
+</div>
+  
+{% else %}
+
+{% load static %}
+
+<div class="row apart-children">
+  <img
+    src="{% static 'customerapp/assets/ecu_search_manual.png' %}"
+    id="info-img"
+  />
+  <div class="column center-children">
+    <div id="info-box" class="column">
+      <h3>How to find your ECU</h3>
+      <p>To find the right device please search using the Bosch number. A Bosch engine control unit always starts with 028 or 026.</p>
+      
+      <form id="bosch-search-form-2" class="row">
+        <div id="bosch-search-box-2" class="row search-box">
+          <input id="bosch-search-input-2" type="text" placeholder="Search..." />
+        </div>
+        <button type="submit" id="bosch-search-button-2" class="search-button">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endif %}

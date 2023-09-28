@@ -1,0 +1,31 @@
+{% extends "layout.html" %} {% block layout %} {% load static %}
+
+<div id="container">
+  <div id="card-header" class="row">
+    <div class="column">
+      <h3>Bosch ECU Search</h3>
+      <span>
+        Search Bosch ECUs to find the type from the manufacturer number
+      </span>
+    </div>
+    <div class="row">
+      <img
+        src="{% static 'customerapp/assets/bosch_logo.png' %}"
+        height="35px"
+      />
+
+      <form id="bosch-search-form" class="row">
+        <div id="bosch-search-box" class="row search-box">
+          <input id="bosch-search-input" type="text" placeholder="Search..." />
+        </div>
+        <button type="submit" id="bosch-search-button" class="search-button">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="card-body"></div>
+</div>
+
+{% endblock %}

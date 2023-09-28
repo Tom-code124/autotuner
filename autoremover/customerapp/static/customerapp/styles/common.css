@@ -166,3 +166,7 @@ a {
 .sidebar-anchor {
   height: 10%;
 }
+
+.center-children {
+  justify-content: center;
+}

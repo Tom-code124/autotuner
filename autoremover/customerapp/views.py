@@ -710,6 +710,145 @@ def dtc_search_modal(request):
     
     return render(request, "modals/dtc_search_modal.html", context)
 
+def bosch_search_page(request):
+    context = {
+        'page_title': 'Bosch Search',
+        'styling_files': ["bosch_search.css"],
+        'script_files': ["bosch_search.js"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'username': 'yunus',
+        'user_credit_amount': 13.52
+    }
+
+    return render(request, "pages/bosch_search.html", context)
+
+def bosch_modal(request):
+    ecu_list = [
+        {
+            'type': 'MED9.5.10',
+            'number': '0261S021861',
+            'car_manufacturer': 'VW'
+        },
+        {
+            'type': 'MED9.5.10',
+            'number': '0261S021372',
+            'car_manufacturer': 'AUDI'
+        },
+        {
+            'type': 'MED9.1',
+            'number': '0261S021863',
+            'car_manufacturer': 'BMW'
+        },
+        {
+            'type': 'MED9.2',
+            'number': '0261S021864',
+            'car_manufacturer': 'VW'
+        },
+        {
+            'type': 'MED9.3',
+            'number': '0261S021865',
+            'car_manufacturer': 'AUDI'
+        },
+        {
+            'type': 'MED9.4',
+            'number': '0261S021866',
+            'car_manufacturer': 'BMW'
+        },
+        {
+            'type': 'MED9.5',
+            'number': '0261S021867',
+            'car_manufacturer': 'VW'
+        },
+        {
+            'type': 'MED9.6',
+            'number': '0261S021868',
+            'car_manufacturer': 'AUDI'
+        },
+        {
+            'type': 'MED9.7',
+            'number': '0261S021869',
+            'car_manufacturer': 'BMW'
+        },
+        {
+            'type': 'MED9.8',
+            'number': '0261S0218610',
+            'car_manufacturer': 'VW'
+        },
+        {
+            'type': 'MED9.9',
+            'number': '0261S0218611',
+            'car_manufacturer': 'AUDI'
+        },
+        {
+            'type': 'MED9.10',
+            'number': '0261S0218612',
+            'car_manufacturer': 'BMW'
+        },
+        {
+            'type': 'MED9.11',
+            'number': '0261S0218613',
+            'car_manufacturer': 'VW'
+        }
+    ]
+
+    params = request.GET
+    keyword = params.get('keyword')
+    page = params.get('page')
+
+    context = {}
+
+    if keyword:
+        search_list = []
+        keyword = unquote(keyword).lower()
+        for ecu in ecu_list:
+            if keyword in ecu.get('number').lower():
+                search_list.append(ecu)
+
+        data_amount = len(search_list)
+        total_pages = math.ceil(len(search_list) / 10)
+
+        if page:
+            page = int(page)
+            if page > total_pages:
+                page = total_pages
+            
+            if page < 1:
+                page = 1
+            
+        else:
+            page = 1
+        
+        page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
+
+        start_index = 10 * (page - 1)
+        end_index = min(10 * page - 1, data_amount - 1)
+        ret_list = search_list[start_index : end_index + 1]
+
+        if page_list:
+            any_previous_page = page > page_list[0]
+            any_following_page = page < page_list[-1]
+        else:
+            any_previous_page = False
+            any_following_page = False
+            page_list = [1]
+
+        context = {
+            'results': {
+                'data_amount': data_amount,
+                'start_index': start_index + 1,
+                'end_index': end_index + 1,
+                'current_page': page,
+                'previous_page_disabled': not any_previous_page,
+                'following_page_disabled': not any_following_page,
+                'page_list': page_list,
+                'search_data': ret_list
+            }
+        }
+
+    return render(request, "modals/bosch_modal.html", context)
+
+
 def knowledgebase_page(request):
     knowledge_data = [
         {
