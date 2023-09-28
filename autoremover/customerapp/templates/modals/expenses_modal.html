@@ -1,0 +1,61 @@
+<table class="table">
+    <thead>
+      <tr>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>Category</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if data %}
+      {% for expense in data %}
+      <tr class="table-data-row">
+        <td>{{ expense.amount }}</td>
+        <td>{{ expense.type }}</td>
+        <td>{{ expense.category }}</td>
+        <td>{{ expense.desc }}</td>
+      </tr>
+      {% endfor %}
+    {% else %}
+        <div>No expenses or deposits yet</div>
+    {% endif %}
+    </tbody>
+  </table>
+  <div class="row apart-children">
+    <ul id="pagination-ul" class="row">
+      <li class="pagination-li">
+        <button
+          id="previous-page-button"
+          class="pagination-button"
+          {% if previous_page_disabled %}
+          disabled
+          {% endif %}
+        >
+          Previous page
+        </button>
+      </li>
+      {% for page in page_list %} 
+      <li {% if page == current_page %} id="current-page-li" {% endif %} class="pagination-li">
+          <button 
+          {% if page == current_page %} id="current-page-button" {% endif %}
+          class="pagination-button">
+            {{ page }}
+          </button>
+      </li>
+       {% endfor %}
+      <li class="pagination-li">
+        <button
+          id="following-page-button"
+          class="pagination-button"
+          {% if following_page_disabled %}
+          disabled
+          {% endif %}
+        >
+          Next page
+        </button>
+      </li>
+    </ul>
+    <span>Showing {{ start_index }} - {{ end_index }} of {{ data_amount }}</span>
+  </div>
+  

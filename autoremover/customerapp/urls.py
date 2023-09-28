@@ -13,6 +13,7 @@ urlpatterns = [
     path('files/requested_files', requested_files_modal, name="Requested Files"),
     path('winols_modal/', winols_modal, name='WinOLS Modal'),
     path('expense_history/', expense_history_page, name="Expense History"),
+    path('expense_history/expenses_modal', expenses_modal, name="Expenses Modal"),
     path('dtc_search/', dtc_search_page, name='DTC Search'),
     path('dtc_search/dtc_search_modal', dtc_search_modal, name='DTC Search Modal'),
     path('knowledgebase/', knowledgebase_page, name='Knowledgebase'),

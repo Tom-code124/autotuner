@@ -439,6 +439,126 @@ def expense_history_page(request):
 
     return render(request, "pages/expense_history.html", context)
 
+def expenses_modal(request):
+    expenses_data = [
+        {
+            'amount': '150',
+            'type': 'Expense',
+            'category': 'File process',
+            'desc': 'DPF off, Stage-1 tuning requested for Ford Focus 20118'
+        },
+        {
+            'amount': '50',
+            'type': 'Expense',
+            'category': 'File purchase',
+            'desc': 'Original file of Ford Focus 20147'
+        },
+        {
+            'amount': '100',
+            'type': 'Expense',
+            'category': 'File process',
+            'desc': 'EGR off requested for Ford Focus 20166'
+        },
+        {
+            'amount': '190',
+            'type': 'Deposit',
+            'category': 'Deposit',
+            'desc': 'You have deposited 900 credits'
+        },
+        {
+            'amount': '150',
+            'type': 'Expense',
+            'category': 'File process',
+            'desc': 'DPF off, Stage-1 tuning requested for Ford Focus 20115'
+        },
+        {
+            'amount': '50',
+            'type': 'Expense',
+            'category': 'File purchase',
+            'desc': 'Original file of Ford Focus 20144'
+        },
+        {
+            'amount': '100',
+            'type': 'Expense',
+            'category': 'File process',
+            'desc': 'EGR off requested for Ford Focus 20163'
+        },
+        {
+            'amount': '100',
+            'type': 'Deposit',
+            'category': 'Deposit',
+            'desc': 'You have deposited 100 credits'
+        },
+        {
+            'amount': '120',
+            'type': 'Expense',
+            'category': 'File process',
+            'desc': 'DPF off, Stage-1 tuning requested for Ford Focus 2012'
+        },
+        {
+            'amount': '51',
+            'type': 'Expense',
+            'category': 'File purchase',
+            'desc': 'Original file of Ford Focus 2011'
+        },
+        {
+            'amount': '110',
+            'type': 'Expense',
+            'category': 'File process',
+            'desc': 'EGR off requested for Ford Focus 2011'
+        },
+        {
+            'amount': '1000',
+            'type': 'Deposit',
+            'category': 'Deposit',
+            'desc': 'You have deposited 1000 credits'
+        },
+    ]
+
+    params = request.GET
+    page = params.get('page')
+
+    data_amount = len(expenses_data)
+    total_pages = math.ceil(data_amount / 10)
+
+    if page:
+        page = int(page)
+        if page > total_pages:
+            page = total_pages
+        
+        if page < 1:
+            page = 1
+        
+    else:
+        page = 1
+
+    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
+
+    start_index = 10 * (page - 1)
+    end_index = min(10 * page - 1, data_amount - 1)
+    ret_list = expenses_data[start_index : end_index + 1]
+
+    if page_list:
+        any_previous_page = page > page_list[0]
+        any_following_page = page < page_list[-1]
+    else:
+        any_previous_page = False
+        any_following_page = False
+        page_list = [1]
+
+    context = {
+        'data_amount': data_amount,
+        'start_index': start_index + 1,
+        'end_index': end_index + 1,
+        'current_page': page,
+        'previous_page_disabled': not any_previous_page,
+        'following_page_disabled': not any_following_page,
+        'page_list': page_list,
+        'data': ret_list
+    }
+
+    return render(request, "modals/expenses_modal.html", context)
+
 def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
