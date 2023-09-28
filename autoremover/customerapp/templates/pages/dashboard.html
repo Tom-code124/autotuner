@@ -31,10 +31,14 @@
     </div>
     <div id="files-submitted-graph" class="row">
       {% for md in files_submitted_data.monthly_data %}
-      <div id="month" class="column">
+      <div class="month column">
         <div style="height: {{ md.percent }}%;" class="graph-col"></div>
-        <div>{{ md.name }}</div>
       </div>
+      {% endfor %}
+    </div>
+    <div id="files-submitted-labels" class="row">
+      {% for md in files_submitted_data.monthly_data %}
+      <div class="month-label">{{ md.name }}</div>
       {% endfor %}
     </div>
     <div id="inner-boxes" class="row">
@@ -52,8 +56,102 @@
       </div>
     </div>
   </div>
-  <div class="grid-items" id="last-processes-card"></div>
-  <div class="grid-items" id="new-files-card"></div>
+  <div class="grid-items" id="last-processes-card">
+    <div class="row grid-card-header">
+      <svg
+        class="sidebar_icon"
+        width="40px"
+        height="40px"
+        viewBox="0 0 24 24"
+        version="1.1"
+      >
+        <g
+          id="Stockholm-icons-/-Files-/-Download"
+          stroke="none"
+          stroke-width="1"
+          fill="none"
+          fill-rule="evenodd"
+        >
+          <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+          <path
+            d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z"
+            id="Path-57"
+            fill="#fff"
+            fill-rule="nonzero"
+            opacity="0.3"
+          ></path>
+          <rect
+            id="Rectangle"
+            fill="#fff"
+            opacity="0.3"
+            transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) "
+            x="11"
+            y="1"
+            width="2"
+            height="14"
+            rx="1"
+          ></rect>
+          <path
+            d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z"
+            id="Path-102"
+            fill="#fff"
+            fill-rule="nonzero"
+            transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) "
+          ></path>
+        </g>
+      </svg>
+      <h3>Latest updates on your file requests</h3>
+    </div>
+    <ul id="last-processes-list">
+      {% for process in last_processes_data %}
+
+      <li class="row">
+        <span class="last-processes-date" style="background-color: {% if process.status == "Done" %} green {% else %} red {% endif %};">{{ process.status }}</span>
+        <span>{{ process.desc }}</span>
+      </li>
+
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="grid-items" id="new-knowledge-card">
+    <div class="row grid-card-header">
+      <svg width="40px" height="40px" viewBox="0 0 24 24" version="1.1">
+        <g
+          id="Stockholm-icons-/-Code-/-Question-circle"
+          stroke="none"
+          stroke-width="1"
+          fill="none"
+          fill-rule="evenodd"
+        >
+          <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+          <circle
+            id="Oval-5"
+            fill="#fff"
+            opacity="0.3"
+            cx="12"
+            cy="12"
+            r="10"
+          ></circle>
+          <path
+            d="M12,16 C12.5522847,16 13,16.4477153 13,17 C13,17.5522847 12.5522847,18 12,18 C11.4477153,18 11,17.5522847 11,17 C11,16.4477153 11.4477153,16 12,16 Z M10.591,14.868 L10.591,13.209 L11.851,13.209 C13.447,13.209 14.602,11.991 14.602,10.395 C14.602,8.799 13.447,7.581 11.851,7.581 C10.234,7.581 9.121,8.799 9.121,10.395 L7.336,10.395 C7.336,7.875 9.31,5.922 11.851,5.922 C14.392,5.922 16.387,7.875 16.387,10.395 C16.387,12.915 14.392,14.868 11.851,14.868 L10.591,14.868 Z"
+            id="Combined-Shape"
+            fill="#fff"
+          ></path>
+        </g>
+      </svg>
+      <h3>Latest updates on knowledgebase</h3>
+    </div>
+    <ul id="new-know-list">
+      {% for know in new_know_data %}
+
+      <li class="row">
+        <span class="new-know-date">{{ know.date }}</span>
+        <span>{{ know.desc }}</span>
+      </li>
+
+      {% endfor %}
+    </ul>
+  </div>
   <div class="grid-items column" id="file-pricing-card">
     <svg width="50px" height="50px" viewBox="0 0 24 24" version="1.1">
       <g
@@ -123,7 +221,7 @@
     </svg>
     <div>DTC Search</div>
     <div>Search our database for the meanings of P, U, B, C & DF codes.</div>
-    <a>DTC Search</a>
+    <a href="/app/dtc_search/"><button>DTC Search</button></a>
   </div>
 </div>
 {% endblock %}

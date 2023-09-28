@@ -10,14 +10,13 @@ function search(event) {
   event.preventDefault();
   var keyword = searchInput.value;
 
+  var url = "dtc_search_modal";
+
   if (keyword.trim().length != 0) {
-    getAndInject(
-      "dtc_search_modal?keyword=" + encodeURIComponent(keyword),
-      "card-body",
-      undefined,
-      afterFunc
-    );
+    url += "?keyword=" + encodeURIComponent(keyword);
   }
+
+  getAndInject(url, "card-body", undefined, afterFunc);
 }
 
 searchButton.addEventListener("click", search);

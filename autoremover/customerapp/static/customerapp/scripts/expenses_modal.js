@@ -1,7 +1,5 @@
 import { getAndInject } from "./modals.js";
 
-var searchInput = document.getElementById("search-input");
-
 function loadPagination(event) {
   var currentPage = Number(
     document.getElementById("current-page-button").innerText
@@ -15,12 +13,7 @@ function loadPagination(event) {
   }
 
   if (page != currentPage) {
-    var keyword = searchInput.value;
-    var url = "dtc_search_modal?page=" + page;
-
-    if (keyword.trim().length != 0) {
-      url += "&keyword=" + encodeURIComponent(keyword);
-    }
+    var url = "expenses_modal?page=" + page;
 
     getAndInject(url, "card-body", undefined, afterFunc);
   }

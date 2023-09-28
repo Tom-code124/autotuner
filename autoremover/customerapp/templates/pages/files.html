@@ -1,0 +1,31 @@
+{% extends "layout.html" %} {% block layout %}
+
+<div id="container" class="column">
+  <div id="card-header" class="row apart-children">
+    <div id="processed-files-tab" class="card-header-tab column active-tab">
+      <span>Requested files</span>
+      <span>Files uploaded by you and requested to be processed</span>
+    </div>
+    <div id="bought-files-tab" class="card-header-tab column">
+      <span>Bought files</span>
+      <span>Files bought from shop</span>
+    </div>
+  </div>
+  <div id="card-body" class="columns">
+    <form id="req-files-search-form" class="row">
+      <div id="req-files-search-box" class="row search-box">
+        <input
+          id="req-files-search-input"
+          type="text"
+          placeholder="Search..."
+        />
+      </div>
+      <button type="submit" id="req-files-search-button" class="search-button">
+        Search
+      </button>
+    </form>
+    <div id="page-content"></div>
+  </div>
+</div>
+
+{% endblock %}
