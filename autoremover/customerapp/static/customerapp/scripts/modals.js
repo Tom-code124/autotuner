@@ -1,9 +1,14 @@
 const modal_back = document.getElementById("modal-background");
+const profile_card = document.getElementById("profile-card");
 
 function turnOnModal(event) {
   [...document.querySelectorAll("*:not(body):not(html):not(head)")].map(
     (item) => {
-      if (!modal_back.contains(item)) {
+      if (
+        !modal_back.contains(item) &&
+        !profile_card.contains(item) &&
+        item.id != "profile-card"
+      ) {
         item.classList.add("disable");
         item.classList.add("disable-scroll");
       }
@@ -15,6 +20,8 @@ function turnOnModal(event) {
 }
 
 function turnOffModal(event) {
+  profile_card.classList.remove("on-screen");
+
   if (
     !(event.target.id == "modal-background" || event.target.id == "modal-close")
   ) {
