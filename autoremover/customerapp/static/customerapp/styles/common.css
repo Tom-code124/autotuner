@@ -189,3 +189,14 @@ a {
 #profile-card.on-screen {
   right: 0;
 }
+
+#profile-header {
+  border-bottom: 1px dashed #ebedf3;
+  padding-bottom: 20px;
+}
+
+#profile-body {
+  border-bottom: 1px dashed #ebedf3;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
