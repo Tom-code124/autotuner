@@ -526,7 +526,7 @@
     </div>
   </div>
   <div id="profile-body" class="column">
-    <div id="update-profile-opener" class="row">
+    <a id="update-profile" class="row opener">
       <svg width="24px" height="24px" viewBox="0 0 24 24">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
@@ -547,8 +547,8 @@
         <span>My Profile</span>
         <span>Update account details</span>
       </div>
-    </div>
-    <div id="change-password-opener" class="row">
+    </a>
+    <a id="change-password" class="row opener">
       <svg width="24px" height="24px" viewBox="0 0 24 24">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
@@ -567,8 +567,8 @@
         <span>Password</span>
         <span>Change your password</span>
       </div>
-    </div>
-    <div id="settings-opener" class="row">
+    </a>
+    <a id="settings" class="row opener">
       <svg width="24px" height="24px" viewBox="0 0 24 24">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
@@ -588,10 +588,45 @@
         <span>Settings</span>
         <span>Change portal settings</span>
       </div>
-    </div>
+    </a>
   </div>
   <div id="update-profile-modal" class="column modal">
-    <span>This is profile modal</span>
+    <h3>Update details</h3>
+    <form
+      id="signup-form"
+      class="column apart-children"
+      method="POST"
+      enctype="multipart/form-data"
+      action="/app/create_account"
+    >
+      {% csrf_token %}
+      <label for="full_name">Name*</label>
+      <input name="full_name" placeholder="Full name" required />
+      <label for="company_name">Company Name*</label>
+      <input name="company_name" placeholder="Company name" />
+      <label for="email">Email address*</label>
+      <input name="email" type="email" placeholder="Email address" required />
+      <label for="phone">Phone Number*</label>
+      <div class="row">
+        <select name="phone_country_code" id="phone-country-code">
+          <option value="+90" selected>+90 Türkiye</option>
+          <option value="+44">+44 UK</option>
+          <option value="+1">+1 US</option>
+          <option value="+84">+84 Vietnam</option>
+        </select>
+        <input name="phone" placeholder="Phone number" type="number" required />
+      </div>
+      <label for="billing_address">Billing Address</label>
+      <input name="billing_address" placeholder="Billing address" />
+      <button
+        id="submit-signup-button"
+        type="submit"
+        value="Submit"
+        name="Submit"
+      >
+        Update details
+      </button>
+    </form>
   </div>
   <div id="change-password-modal" class="column modal">
     <span>This is password change modal</span>
