@@ -170,3 +170,37 @@ a {
 .center-children {
   justify-content: center;
 }
+
+#profile-card {
+  width: 375px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: -415px;
+  left: auto;
+  z-index: 99999;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 1px 9px -3px rgba(0, 0, 0, 0.25);
+  transition: left 0.3s ease, right 0.3s ease, bottom 0.3s ease, top 0.3s ease;
+}
+
+#profile-card.on-screen {
+  right: 0;
+}
+
+#profile-header {
+  border-bottom: 1px dashed #ebedf3;
+  padding-bottom: 20px;
+}
+
+#profile-body {
+  border-bottom: 1px dashed #ebedf3;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+.modal {
+  display: none;
+}
