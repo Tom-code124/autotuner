@@ -10,16 +10,17 @@
         class="column apart-children"
         method="POST"
         enctype="multipart/form-data"
-        action="/app/authenticate"
+        action="/app/login/"
       >
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}" />
         <h1>Welcome</h1>
         <span>
           Don't have an account?
           <button id="open-signup-form-button">Register</button>
         </span>
-        <label for="email">Email:</label>
-        <input name="email" type="email" required />
+        <label for="username">Username:</label>
+        <input name="username" type="text" required />
         <div>
           <label for="password">Password:</label>
           <a>Forgot Password?</a>

@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from urllib.parse import unquote
 import math
@@ -6,6 +8,15 @@ import math
 # Create your views here.
 
 def login_page(request, status="normal"):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect(request.POST.get('next'))
+    
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
@@ -27,6 +38,10 @@ def login_page(request, status="normal"):
         context["display_signup_form"] = "block"
 
     return render(request, "pages/customer_login.html", context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('/app/login/')
 
 def create_account(request):
     if request.method == "POST":
@@ -52,6 +67,7 @@ def create_account(request):
         else:
                 return redirect("/app/login?status=signup_error&wrong=email")
 
+"""
 def authenticate(request):
     if request.method == "POST":
         users = {
@@ -67,7 +83,9 @@ def authenticate(request):
                 return redirect("/app/")
             
         return redirect('/app/login?status=login_error')
+"""
     
+@login_required
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]
     months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
@@ -140,6 +158,7 @@ def dashboard_page(request):
     
     return render(request, "pages/dashboard.html", context)
 
+@login_required
 def files_page(request):
     context = {
         'page_title': 'Your Files',
@@ -154,6 +173,7 @@ def files_page(request):
     return render(request, "pages/files.html", context)
 
 
+@login_required
 def requested_files_modal(request):
     req_file_list = [
         {
@@ -419,6 +439,7 @@ def requested_files_modal(request):
     
     return render(request, "modals/requested_files_modal.html", context)
 
+@login_required
 def winols_modal(request):
     context = {
         'modal_title': 'Add Your EVC WinOLS Account'
@@ -426,6 +447,7 @@ def winols_modal(request):
 
     return render(request, "modals/winols_modal.html", context)
 
+@login_required
 def expense_history_page(request):
     context = {
         'page_title': 'Expense History',
@@ -439,6 +461,7 @@ def expense_history_page(request):
 
     return render(request, "pages/expense_history.html", context)
 
+@login_required
 def expenses_modal(request):
     expenses_data = [
         {
@@ -559,6 +582,7 @@ def expenses_modal(request):
 
     return render(request, "modals/expenses_modal.html", context)
 
+@login_required
 def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
@@ -572,6 +596,7 @@ def dtc_search_page(request):
     
     return render(request, "pages/dtc_search.html", context)
 
+@login_required
 def dtc_search_modal(request):
     dtc_list = [
         {
@@ -710,6 +735,7 @@ def dtc_search_modal(request):
     
     return render(request, "modals/dtc_search_modal.html", context)
 
+@login_required
 def bosch_search_page(request):
     context = {
         'page_title': 'Bosch Search',
@@ -723,6 +749,7 @@ def bosch_search_page(request):
 
     return render(request, "pages/bosch_search.html", context)
 
+@login_required
 def bosch_modal(request):
     ecu_list = [
         {
@@ -848,7 +875,7 @@ def bosch_modal(request):
 
     return render(request, "modals/bosch_modal.html", context)
 
-
+@login_required
 def knowledgebase_page(request):
     knowledge_data = [
         {
@@ -877,6 +904,7 @@ def knowledgebase_page(request):
     }
     return render(request, "pages/knowledgebase.html", context)
 
+@login_required
 def knowledge_modal(request):
     knowledge_data = {
         'adblue_solutions': {
@@ -928,6 +956,7 @@ def knowledge_modal(request):
 
     return render(request, "modals/knowledge_modal.html", context)
 
+@login_required
 def pricing_modal(request):
 
     context = {
@@ -936,6 +965,7 @@ def pricing_modal(request):
     }
     return render(request, "modals/pricing_modal.html", context)
 
+@login_required
 def price_options_modal(request):
     data = {
         'cars': [
