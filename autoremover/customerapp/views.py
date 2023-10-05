@@ -15,7 +15,8 @@ def login_page(request, status="normal"):
 
         if user is not None:
             login(request, user)
-            return redirect(request.POST.get('next'))
+            redirect_url = request.POST.get('next') if request.POST.get('next') else "/app/"
+            return redirect(redirect_url)
     
     context = {
         'page_title': 'Log-in',
