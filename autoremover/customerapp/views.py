@@ -17,6 +17,9 @@ def login_page(request, status="normal"):
             login(request, user)
             redirect_url = request.POST.get('next') if request.POST.get('next') else "/app/"
             return redirect(redirect_url)
+        
+    elif request.user.is_authenticated:
+        return redirect("/app/")
     
     context = {
         'page_title': 'Log-in',
