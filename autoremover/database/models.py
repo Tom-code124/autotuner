@@ -23,7 +23,7 @@ transaction_type_choices = [
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=200)
-    phone_number = models.CharField(validators=[phone_regex], max_length=17, unique=True)
+    phone_number = models.CharField(validators=[phone_regex], max_length=16, unique=True)
     credit_amount = models.IntegerField(default=0)
 
 class Employee(models.Model):
@@ -35,13 +35,14 @@ class VehicleCategory(models.Model):
 class VehicleBrand(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-class EngineVersion(models.Model):
-    name = models.CharField(max_length=100)
-
 class VehicleModel(models.Model):
     name = models.CharField(max_length=50)
     brand = models.ForeignKey(VehicleBrand, on_delete=models.CASCADE, related_name='brand')
-    versions = models.ManyToManyField(EngineVersion)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['brand', 'name'], name='vehicle_model_brand_unique_constraint')
+        ]
 
 class EcuBrand(models.Model):
     name = models.CharField(max_length=50)
@@ -55,13 +56,17 @@ class Ecu(models.Model):
     number = models.CharField(max_length=15)
     car_brands = models.ManyToManyField(VehicleBrand)
 
+class EngineVersion(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    
 class Vehicle(models.Model):
     category = models.ForeignKey(VehicleCategory, on_delete=models.SET_NULL, null=True, related_name='category')
     model = models.ForeignKey(VehicleModel, on_delete=models.SET_NULL, null=True, related_name='model')
     version = models.ForeignKey(EngineVersion, on_delete=models.SET_NULL, null=True, related_name='version')
     hp = models.IntegerField()
     year = models.IntegerField()
-    ecu = models.ForeignKey(Ecu, null=True, on_delete=models.SET_NULL)
+    engine_versions = models.ManyToManyField(EngineVersion)
+    ecu = models.ForeignKey(Ecu, on_delete=models.SET_NULL, null=True, blank=True, related_name='ecu')
 
 class ConnectionTool(models.Model):
     name = models.CharField(max_length=30)
@@ -83,14 +88,14 @@ class FileRequest(models.Model):
     total_price = models.IntegerField()
     file_type = models.CharField(max_length=1, choices=file_type_choices)
     transmissin = models.CharField(max_length=1, choices=transmissin_choices)
-    tool = models.ForeignKey(ConnectionTool, on_delete=models.SET_NULL)
+    tool = models.ForeignKey(ConnectionTool, on_delete=models.SET_NULL, null=True, related_name='tool')
     tool_type = models.CharField(max_length=1, choices=tool_type_choices)
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
     original_file = models.FileField(upload_to="uploads/original/")
     
-    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
-    processed_file = models.FileField(upload_to="uploads/processed/", null=True)
+    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True)
+    processed_file = models.FileField(upload_to="uploads/processed/", null=True, blank=True)
     
 class Knowledge(models.Model):
     title = models.CharField(max_length=100)
@@ -120,8 +125,8 @@ class Transaction(models.Model):
 
     category = models.CharField(max_length=1, choices=transaction_type_choices)
     amount = models.IntegerField()
-    file_request = models.OneToOneField(FileRequest, on_delete=models.CASCADE, null=True)
-    file_bought = models.OneToOneField(FileSale, on_delete=models.CASCADE, null=True)
+    file_request = models.OneToOneField(FileRequest, on_delete=models.CASCADE)
+    file_bought = models.OneToOneField(FileSale, on_delete=models.CASCADE)
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
