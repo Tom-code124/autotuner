@@ -19,6 +19,10 @@ transaction_type_choices = [
     ("E", "Expense"),
     ("D", "Deposit")
 ]
+fuel_type_choices = [
+    ("P", "Petrol"),
+    ("D", "Diesel")
+]
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -37,6 +41,7 @@ class VehicleBrand(models.Model):
 
 class VehicleModel(models.Model):
     name = models.CharField(max_length=50)
+    category = models.ForeignKey(VehicleCategory, on_delete=models.SET_NULL, null=True, related_name='category')
     brand = models.ForeignKey(VehicleBrand, on_delete=models.CASCADE, related_name='brand')
 
     class Meta:
@@ -44,40 +49,48 @@ class VehicleModel(models.Model):
             models.UniqueConstraint(fields=['brand', 'name'], name='vehicle_model_brand_unique_constraint')
         ]
 
+class Vehicle(models.Model):
+    model = models.ForeignKey(VehicleModel, on_delete=models.CASCADE, null=True, related_name='model')
+    year = models.IntegerField()
+
+class VehicleEngine(models.Model):
+    name = models.CharField(max_length=100)
+    fuel_type = models.CharField(max_length=1, choices=fuel_type_choices)
+    hp = models.IntegerField()
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='model')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['vehicle', 'name', 'hp'], name='vehicle_name_hp_unique_constraint')
+        ]
+
 class EcuBrand(models.Model):
     name = models.CharField(max_length=50)
 
-class EcuModel(models.Model):
+class EcuModel(models.Model): # for ecu type
     name = models.CharField(max_length=50)
     brand = models.ForeignKey(EcuBrand, on_delete=models.CASCADE)
 
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
     number = models.CharField(max_length=15)
-    car_brands = models.ManyToManyField(VehicleBrand)
-
-class EngineVersion(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    
-class Vehicle(models.Model):
-    category = models.ForeignKey(VehicleCategory, on_delete=models.SET_NULL, null=True, related_name='category')
-    model = models.ForeignKey(VehicleModel, on_delete=models.SET_NULL, null=True, related_name='model')
-    version = models.ForeignKey(EngineVersion, on_delete=models.SET_NULL, null=True, related_name='version')
-    hp = models.IntegerField()
-    year = models.IntegerField()
-    engine_versions = models.ManyToManyField(EngineVersion)
-    ecu = models.ForeignKey(Ecu, on_delete=models.SET_NULL, null=True, blank=True, related_name='ecu')
+    vehicles = models.ManyToManyField(Vehicle)
 
 class ConnectionTool(models.Model):
     name = models.CharField(max_length=30)
 
-class FileProcess(models.Model):
+class FileProcess(models.Model): # burada kaldım
     name = models.CharField(max_length=50)
 
 class ProcessPricing(models.Model):
-    process = models.ForeignKey(FileProcess, on_delete=models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    process = models.ForeignKey(FileProcess, on_delete=models.CASCADE, related_name='process')
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='vehicle')
     price = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['vehicle', 'process'], name='process_vehicle_unique_constraint')
+        ]
 
 class FileRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
