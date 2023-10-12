@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
+from database.models import *
+
 from datetime import datetime
 from urllib.parse import unquote
+
 import math
 
 # Create your views here.
@@ -881,20 +885,6 @@ def bosch_modal(request):
 
 @login_required
 def knowledgebase_page(request):
-    knowledge_data = [
-        {
-            'title': 'Adblue Solutions',
-            'id': 'adblue_solutions'
-        },
-        {
-            'title': 'MED17 VCDS Logging profiles',
-            'id': 'med17_vcds_logging_profiles'
-        },
-        {
-            'title': 'EGR OFF Solutions',
-            'id': 'egr_off_solutions'
-        }
-    ]
 
     context = {
         'page_title': 'Knowledgebase',
@@ -904,59 +894,36 @@ def knowledgebase_page(request):
         'file_service_until': datetime.now(),
         'username': 'yunus',
         'user_credit_amount': 13.52,
-        'knowledge_data': knowledge_data
+        'knowledge_data': Knowledge.objects.all()
     }
+    
     return render(request, "pages/knowledgebase.html", context)
 
 @login_required
 def knowledge_modal(request):
-    knowledge_data = {
-        'adblue_solutions': {
-            'modal_title': 'Adblue Solutions',
-            'desc': 'You can find Adblue Solutions in this page',
-            'inner_data': [
-                {
-                    'sub_title': "AGRALE",
-                    'bullets': [
-                        'BOSCH EDC7UC31 -  Adblue Ecu and Pump must be disconnected '
-                    ]
-                },
-                {
-                    'sub_title': "ASTRA",
-                    'bullets': [
-                        'BOSCH EDC7UC31 - Adblue ECU to be unplugged',
-                        'BOSCH EDC17CV41 - Adblue ECU and Pump to be unplugged'
-                    ]
-                }
-            ]
-        },
-        'med17_vcds_logging_profiles': {
-            'modal_title': 'MED17 VCDS Logging profiles',
-            'desc': 'Audi a5 - med171 - gen logs.zip\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
-        },
-        'egr_off_solutions': {
-            'modal_title': 'EGR OFF Solutions',
-            'inner_data': [
-                {
-                    'sub_title': 'ALFA ROMEO',
-                    'bullets': [
-                        'BOSCH EDC15C7 - Actuator to be unplugged',
-                        'BOSCH EDC17C69',
-                        'MARELLI MJ8'
-                    ]
-                },
-                {
-                    'sub_title': 'Aston Martin',
-                    'bullets': [
-                        'VISTEON EECVI  - Actuator to be unplugged'
-                    ]
-                }
-            ]
-        }
-    }
-
     params = request.GET
-    context = knowledge_data[params.get('id')]
+    knowledge = Knowledge.objects.get(id=params.get('id'))
+    inner_data = []
+    print(knowledge.knowledgepart_set.all())
+    for p in knowledge.knowledgepart_set.all():
+        bullets = []
+        for b in p.knowledgebullet_set.all():
+            bullets.append(b.content)
+
+        part = {
+            'sub_title': p.title,
+            'bullets': bullets
+        }
+
+        inner_data.append(part)
+
+    context = {
+        'modal_title': knowledge.title,
+        'desc': knowledge.desc,
+        'link_title': knowledge.link_title,
+        'link': knowledge.link,
+        'inner_data': inner_data
+    }
 
     return render(request, "modals/knowledge_modal.html", context)
 

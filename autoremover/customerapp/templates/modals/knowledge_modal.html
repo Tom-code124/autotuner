@@ -1,4 +1,7 @@
-{% extends 'modal_layout.html' %} {% block modal_layout %} {% if desc %}
+{% extends 'modal_layout.html' %} {% block modal_layout %} {% if link_title %}
+{% if link %}
+<a href="{{ link }}">{{link_title}}</a>
+{% endif %} {% endif %} {% if desc %}
 <p>{{ desc }}</p>
 {% endif %} {% if inner_data %}{% for data in inner_data %}
 <strong>{{ data.sub_title }}</strong>

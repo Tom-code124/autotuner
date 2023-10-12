@@ -1,12 +1,8 @@
 import { turnOnModal, getAndInject } from "./modals.js";
 
 function viewButtonClick(event) {
-  getAndInject(
-    "knowledge_modal?id=" + event.target.id,
-    undefined,
-    undefined,
-    turnOnModal
-  );
+  var id = event.target.id.substring(event.target.id.lastIndexOf("-") + 1);
+  getAndInject("knowledge_modal?id=" + id, undefined, undefined, turnOnModal);
 }
 
 [...document.querySelectorAll(".knowledge-button")].map((item) => {

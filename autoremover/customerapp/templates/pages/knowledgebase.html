@@ -19,7 +19,12 @@
         <tr class="row apart-children">
           <td class="title-td">{{ know.title }}</td>
           <td>
-            <button id="{{ know.id }}" class="knowledge-button">View</button>
+            <button
+              id="knowledge-button-{{ know.id }}"
+              class="knowledge-button"
+            >
+              View
+            </button>
           </td>
         </tr>
         {% endfor %}
