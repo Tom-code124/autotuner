@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 
 from database.models import *
 
 from datetime import datetime
 from urllib.parse import unquote
-
+import pandas as pd
 import math
 
 # Create your views here.
@@ -606,141 +608,39 @@ def dtc_search_page(request):
 
 @login_required
 def dtc_search_modal(request):
-    dtc_list = [
-        {
-            'code': 'P0000',
-            'desc': 'No fault'
-        },
-        {
-            'code': 'P0001',
-            'desc': 'Fuel volume regulator control -circuit open'
-        },
-        {
-            'code': 'P0002',
-            'desc': 'Fuel volume regulator control -circuit range/performance'
-        },
-        {
-            'code': 'P0003',
-            'desc': 'Fuel volume regulator control -circuit low'
-        },
-        {
-            'code': 'P0004',
-            'desc': 'Fuel volume regulator control -circuit high'
-        },
-        {
-            'code': 'P0005',
-            'desc': 'Fuel shut -off valve -circuit open'
-        },
-        {
-            'code': 'P0006',
-            'desc': 'Fuel shut -off valve -circuit low'
-        },
-        {
-            'code': 'P0007',
-            'desc': 'Fuel shut -off valve -circuit high'
-        },
-        {
-            'code': 'P0008',
-            'desc': 'Engine position system, bank 1 -engine performance'
-        },
-        {
-            'code': 'P0009',
-            'desc': 'Engine position system, bank 2 -engine performance'
-        },
-        {
-            'code': 'P000A',
-            'desc': 'No fault 2'
-        },
-        {
-            'code': 'P000B',
-            'desc': 'Fuel volume regulator control -circuit open 2'
-        },
-        {
-            'code': 'P000C',
-            'desc': 'Fuel volume regulator control -circuit range/performance 2'
-        },
-        {
-            'code': 'P000D',
-            'desc': 'Fuel volume regulator control -circuit low 2'
-        },
-        {
-            'code': 'P000E',
-            'desc': 'Fuel volume regulator control -circuit high 2'
-        },
-        {
-            'code': 'P000F',
-            'desc': 'Fuel shut -off valve -circuit open 2'
-        },
-        {
-            'code': 'P0010',
-            'desc': 'Fuel shut -off valve -circuit low 2'
-        },
-        {
-            'code': 'P0011',
-            'desc': 'Fuel shut -off valve -circuit high 2'
-        },
-        {
-            'code': 'P0012',
-            'desc': 'Engine position system, bank 1 -engine performance 2'
-        },
-        {
-            'code': 'P0013',
-            'desc': 'Engine position system, bank 2 -engine performance 2'
-        }
-    ]
 
     params = request.GET
     keyword = params.get('keyword')
-    page = params.get('page')
+    page_param = params.get('page')
 
-    search_list = []
     if keyword:
         keyword = unquote(keyword).lower()
-        for dtc in dtc_list:
-            if keyword in dtc.get('code').lower() or keyword in dtc.get('desc').lower():
-                search_list.append(dtc)
+        dtc_list = DtcInfo.objects.filter(Q(desc__icontains=keyword) | Q(code__icontains=keyword)).order_by("code")
     else:
-        search_list = dtc_list
+        dtc_list = DtcInfo.objects.all().order_by("code")
 
-    data_amount = len(search_list)
-    total_pages = math.ceil(len(search_list) / 10)
+    if page_param:
+        pagenum = int(page_param)
+    else:
+        pagenum = 1
 
-    if page:
-        page = int(page)
-        if page > total_pages:
-            page = total_pages
+    paginator = Paginator(dtc_list, 10)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = range(start_page, end_page + 1)
         
-        if page < 1:
-            page = 1
-        
-    else:
-        page = 1
-    
-    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
-
-    start_index = 10 * (page - 1)
-    end_index = min(10 * page - 1, data_amount - 1)
-    ret_list = search_list[start_index : end_index + 1]
-
-    if page_list:
-        any_previous_page = page > page_list[0]
-        any_following_page = page < page_list[-1]
-    else:
-        any_previous_page = False
-        any_following_page = False
-        page_list = [1]
-
     context = {
-        'data_amount': data_amount,
-        'start_index': start_index + 1,
-        'end_index': end_index + 1,
-        'current_page': page,
-        'previous_page_disabled': not any_previous_page,
-        'following_page_disabled': not any_following_page,
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
         'page_list': page_list,
-        'data': ret_list
+        'data': page.object_list
     }
-    
+
     return render(request, "modals/dtc_search_modal.html", context)
 
 @login_required
@@ -896,7 +796,7 @@ def knowledgebase_page(request):
         'user_credit_amount': 13.52,
         'knowledge_data': Knowledge.objects.all()
     }
-    
+
     return render(request, "pages/knowledgebase.html", context)
 
 @login_required

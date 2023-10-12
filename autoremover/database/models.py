@@ -197,8 +197,8 @@ class KnowledgeBullet(models.Model):
         ]
 
 class DtcInfo(models.Model):
-    code = models.CharField(max_length=7, unique=True)
-    desc = models.CharField(max_length=100)
+    code = models.CharField(max_length=7)
+    desc = models.TextField(max_length=1000)
 
     def __str__(self):
         return self.code
