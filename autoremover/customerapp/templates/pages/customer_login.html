@@ -5,6 +5,8 @@
   </div>
   <div id="right_col">
     <div id="login-form-container">
+      {% if messages %} {% for message in messages %} {{ message }} {% endfor %}
+      {% endif %}
       <form
         id="login-form"
         class="column apart-children"

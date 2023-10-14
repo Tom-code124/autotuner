@@ -16,9 +16,13 @@ import math
 # Create your views here.
 
 def signup_page(request):
+    user = request.user
+    if user.is_authenticated:
+        return redirect('/app/')
+
     if request.method == 'POST':
-        user_form = ExtendedUserCreationForm(request.POST)
-        customer_form = CustomerCreationForm(request.POST)
+        user_form = ExtendedUserCreationForm(request.POST or None)
+        customer_form = CustomerCreationForm(request.POST or None)
 
         if all((user_form.is_valid(), customer_form.is_valid())):
             user = user_form.save()
@@ -30,8 +34,10 @@ def signup_page(request):
             password = user_form.cleaned_data['password1']
 
             user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('/app/')
+
+            if user is not None:
+                login(request, user)
+                return redirect('/app/')
         
     else:
         user_form = ExtendedUserCreationForm()
@@ -46,88 +52,44 @@ def signup_page(request):
 
     return render(request, "pages/customer_signup.html", context)
 
-def login_page(request, status="normal"):
+def login_page(request):
+    user = request.user
+    if user.is_authenticated:
+        if user.customer is not None:
+            return redirect('/app/')
+        else:
+            messages.error(request, "You are not authorazied to do this!")
+            logout(request)
+            return redirect('/app/login/')
+
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
 
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            redirect_url = request.POST.get('next') if request.POST.get('next') else "/app/"
-            return redirect(redirect_url)
-        
-    elif request.user.is_authenticated:
-        return redirect("/app/")
-    
+            try:
+                if user.customer is not None:
+                    login(request, user)
+                    redirect_url = request.POST.get('next') if request.POST.get('next') else "/app/"
+                    return redirect(redirect_url)
+            except:
+                messages.error(request, "You are not authorazied to do this!")
+
+        else:
+            messages.error(request, "Invalid username or password")
 
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
         'script_files': ["customer_login.js"],
         }
-    
-    status = request.GET.get('status')
-
-    context["display_login_form"] = "block"
-    context["display_signup_form"] = "none"
-    
-    if status == "login_error":
-        context["login_error_message"] = "Wrong email or password"
-
-    if status == "signup_error":
-        wrong_data = request.GET.get('wrong')
-        context["signup_error_message"] = "This " + wrong_data + " is already being used by another account!"
-        context["display_login_form"] = "none"
-        context["display_signup_form"] = "block"
 
     return render(request, "pages/customer_login.html", context)
 
 def logout_view(request):
     logout(request)
     return redirect('/app/login/')
-
-def create_account(request):
-    if request.method == "POST":
-        emails = [
-            "test@test.com",
-            "test1@test1.com",
-            "test2@test2.com"
-        ]
-
-        phones = [
-            "123",
-            "123456"
-        ]
-        
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-
-        if not email in emails:
-            if not phone in phones:
-                return redirect("/app/")
-            else:
-                return redirect("/app/login?status=signup_error&wrong=phone")
-        else:
-                return redirect("/app/login?status=signup_error&wrong=email")
-
-"""
-def authenticate(request):
-    if request.method == "POST":
-        users = {
-            "test@test.com": "test",
-            "test1@test1.com": "test1",
-            "test2@test2.com": "test2"
-        }
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        if email in list(users.keys()):
-            if users[email] == password:
-                return redirect("/app/")
-            
-        return redirect('/app/login?status=login_error')
-"""
     
 @login_required
 def dashboard_page(request):
