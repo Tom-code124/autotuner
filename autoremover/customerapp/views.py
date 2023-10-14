@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.paginator import Paginator
 from django.db.models import Q
 
 from database.models import *
+from database.forms import *
 
 from datetime import datetime
 from urllib.parse import unquote
@@ -12,6 +14,37 @@ import pandas as pd
 import math
 
 # Create your views here.
+
+def signup_page(request):
+    if request.method == 'POST':
+        user_form = ExtendedUserCreationForm(request.POST)
+        customer_form = CustomerCreationForm(request.POST)
+
+        if all((user_form.is_valid(), customer_form.is_valid())):
+            user = user_form.save()
+            customer = customer_form.save(commit=False)
+            customer.user = user
+            customer.save()
+
+            username = user_form.cleaned_data['username']
+            password = user_form.cleaned_data['password1']
+
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('/app/')
+        
+    else:
+        user_form = ExtendedUserCreationForm()
+        customer_form = CustomerCreationForm()
+
+    context = {
+        'page_title': 'Sign-up',
+        'styling_files': ["customer_signup.css"],
+        'customer_form': customer_form,
+        'user_form': user_form
+    }
+
+    return render(request, "pages/customer_signup.html", context)
 
 def login_page(request, status="normal"):
     if request.method == "POST":
@@ -27,6 +60,7 @@ def login_page(request, status="normal"):
     elif request.user.is_authenticated:
         return redirect("/app/")
     
+
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
