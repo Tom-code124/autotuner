@@ -55,9 +55,10 @@ def signup_page(request):
 def login_page(request):
     user = request.user
     if user.is_authenticated:
-        if user.customer is not None:
-            return redirect('/app/')
-        else:
+        try:
+            if user.customer is not None:
+                return redirect('/app/')
+        except:
             messages.error(request, "You are not authorazied to do this!")
             logout(request)
             return redirect('/app/login/')
