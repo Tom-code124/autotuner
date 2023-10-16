@@ -91,8 +91,10 @@ function calculate(event) {
     let taxRate =
       Number(document.getElementById("tax-percentage-span").innerText) / 100;
     let newTax = sum * taxRate;
-    document.getElementById("tax-amount-span").innerText = newTax;
-    document.getElementById("total-amount-span").innerText = sum + newTax;
+    document.getElementById("tax-amount-span").innerText = newTax.toFixed(2);
+    document.getElementById("total-amount-span").innerText = (
+      sum + newTax
+    ).toFixed(2);
   } else {
     let oldLi = document.getElementById(event.target.id + "-li");
     choiceUl.removeChild(oldLi);
@@ -106,8 +108,10 @@ function calculate(event) {
       let taxRate =
         Number(document.getElementById("tax-percentage-span").innerText) / 100;
       let newTax = sum * taxRate;
-      document.getElementById("tax-amount-span").innerText = newTax;
-      document.getElementById("total-amount-span").innerText = sum + newTax;
+      document.getElementById("tax-amount-span").innerText = newTax.toFixed(2);
+      document.getElementById("total-amount-span").innerText = (
+        sum + newTax
+      ).toFixed(2);
     } else {
       choiceContent.style.display = "none";
       noChoiceContent.style.display = "block";

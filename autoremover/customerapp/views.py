@@ -451,6 +451,21 @@ def upload_page(request):
     vehicle_categories = VehicleCategory.objects.all()
     connection_tools = ConnectionTool.objects.all()
 
+    if request.method == "POST":
+
+        print(request.POST)
+        original_file = request.POST.get("original_file")
+        file_type = request.POST.get("file_type")
+        vehicle_id = request.POST.get("vehicle")
+        vehicle_engine_id = request.POST.get("vehicle_engine")
+        ecu_model_id = request.POST.get("ecu_type")
+        manual_ecu_type = request.POST.get("manual_ecu_type")
+        transmission_type = request.POST.get("transmission_type")
+        tool_id = request.POST.get("tool")
+        tool_type = request.POST.get("tool_type")
+        process_selection = request.POST.get("process_selection")
+        customer_description = request.POST.get("customer_description")
+
     context = {
         'page_title': 'Upload',
         'styling_files': ["upload.css"],

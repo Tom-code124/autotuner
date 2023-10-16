@@ -12,7 +12,13 @@
     </div>
   </div>
   <div id="card-body">
-    <form>
+    <form
+      id="file-request-form"
+      method="POST"
+      enctype="multipart/form-data"
+      action="/app/upload/"
+    >
+      {% csrf_token %}
       <div id="select-vehicle-card" class="column">
         <div class="row">
           <div class="column">
@@ -24,7 +30,7 @@
               data-max-file-size="20M"
               data-allowed-file-extensions="bin fpf dec unq cod mpc fls ori org mod zip rar tun pak slave dat dtf rar file fpf mmf bdc moc txt bak bdc sbdc"
             />
-            <select id="file-type-select">
+            <select id="file-type-select" name="file_type">
               <option value="null" disabled selected hidden>
                 Choose a file type
               </option>
@@ -34,7 +40,7 @@
           </div>
           <div id="vehicle-select-section" class="column">
             <div>Select Vehicle</div>
-            <select id="vehicle-category-select-1">
+            <select id="vehicle-category-select-1" name="vehicle_category">
               <option value="null" disabled selected hidden>
                 Choose a vehicle category
               </option>
@@ -43,31 +49,31 @@
               {% endfor %}
             </select>
 
-            <select id="vehicle-brand-select-2" disabled>
+            <select id="vehicle-brand-select-2" disabled name="vehicle_brand">
               <option value="null" disabled selected hidden>
                 Choose a vehicle brand
               </option>
             </select>
 
-            <select id="vehicle-model-select-3" disabled>
+            <select id="vehicle-model-select-3" disabled name="vehicle_model">
               <option value="null" disabled selected hidden>
                 Choose a vehicle model
               </option>
             </select>
 
-            <select id="vehicle-year-select-4" disabled>
+            <select id="vehicle-year-select-4" disabled name="vehicle">
               <option value="null" disabled selected hidden>
                 Choose a vehicle year
               </option>
             </select>
 
-            <select id="vehicle-engine-select-5" disabled>
+            <select id="vehicle-engine-select-5" disabled name="vehicle_engine">
               <option value="null" disabled selected hidden>
                 Choose a vehicle engine
               </option>
             </select>
 
-            <select id="ecu-type-select-6" disabled>
+            <select id="ecu-type-select-6" disabled name="ecu_type">
               <option value="null" disabled selected hidden>
                 Choose an ecu type
               </option>
@@ -82,9 +88,18 @@
               type="text"
               placeholder="Write your ecu type here if it's not listed'"
               disabled
+              name="manual_ecu_type"
             />
 
-            <select id="tool-select">
+            <select id="transmission-type-select" name="transmission_type">
+              <option value="null" disabled selected hidden>
+                Choose a transmission type
+              </option>
+              <option value="A">Auto</option>
+              <option value="M">Manual</option>
+            </select>
+
+            <select id="tool-select" name="tool">
               <option value="null" disabled selected hidden>
                 Choose a connection tool
               </option>
@@ -93,15 +108,7 @@
               {% endfor %}
             </select>
 
-            <select id="transmission-type-select">
-              <option value="null" disabled selected hidden>
-                Choose a transmission type
-              </option>
-              <option value="A">Auto</option>
-              <option value="M">Manual</option>
-            </select>
-
-            <select id="tool-type-select">
+            <select id="tool-type-select" name="tool_type">
               <option value="null" disabled selected hidden>
                 Choose a tool type
               </option>
@@ -141,6 +148,14 @@
             <div id="no-choice-content">Please select some options</div>
           </div>
         </div>
+        <textarea
+          name="customer_description"
+          maxlength="400"
+          minlength="50"
+          placeholder="Please provide more information about your request and explain further..."
+          required
+        ></textarea>
+        <input type="submit" />
       </div>
     </form>
   </div>
