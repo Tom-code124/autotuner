@@ -121,4 +121,22 @@ function openCalculator() {
     item.addEventListener("change", calculate);
   });
 }
-export { openCalculator };
+
+function resetCalculator() {
+  var choiceContent = document.getElementById("choice-content");
+  var noChoiceContent = document.getElementById("no-choice-content");
+
+  choiceContent.style.display = "none";
+  noChoiceContent.style.display = "block";
+
+  var selectedServices = document.getElementById("selected-services");
+  var selecteds = selectedServices.querySelectorAll(".price-li");
+
+  for (let i = 0; i < selecteds.length; i++) {
+    if (selecteds[i].id != "tax-li") {
+      selectedServices.removeChild(selecteds[i]);
+    }
+  }
+}
+
+export { openCalculator, resetCalculator };

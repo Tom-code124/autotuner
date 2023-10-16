@@ -1,5 +1,5 @@
 import { getAndInject } from "./modals.js";
-import { openCalculator } from "./price_options.js";
+import { openCalculator, resetCalculator } from "./price_options.js";
 
 var fields = document
   .getElementById("vehicle-select-section")
@@ -63,6 +63,7 @@ function openOptionsCard() {
   vehicleCard.classList.add("pasive-card");
   optionsCard.classList.remove("pasive-card");
 
+  resetCalculator();
   openCalculator();
 }
 

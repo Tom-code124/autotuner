@@ -83,7 +83,7 @@ class VehicleEngine(models.Model):
         for ftc in self.fuel_type_choices:
             if ftc[0] == self.fuel_type:
                 fuel_type = ftc[1]
-                
+
         return self.name + " - " + fuel_type + " - " + str(self.hp)
 
 class EcuBrand(models.Model):
@@ -159,7 +159,8 @@ class FileRequest(models.Model):
 
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     engine = models.ForeignKey(VehicleEngine, on_delete=models.PROTECT)
-    ecu = models.ForeignKey(EcuModel, on_delete=models.PROTECT)
+    ecu = models.ForeignKey(EcuModel, on_delete=models.PROTECT, null=True, blank=True)
+    manual_provided_ecu = models.CharField(max_length=50, null=True, blank=True)
 
     file_type = models.CharField(max_length=1, choices=file_type_choices)
     transmissin = models.CharField(max_length=1, choices=transmissin_choices)
