@@ -1,0 +1,4 @@
+<option value="null" disabled selected hidden>Choose a vehicle brand</option>
+{% for brand in data %}
+<option value="{{ brand.id }}">{{ brand }}</option>
+{% endfor %}

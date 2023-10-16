@@ -447,6 +447,40 @@ def requested_files_modal(request):
     return render(request, "modals/requested_files_modal.html", context)
 
 @login_required
+def upload_page(request):
+    vehicle_categories = VehicleCategory.objects.all()
+    connection_tools = ConnectionTool.objects.all()
+
+    context = {
+        'page_title': 'Upload',
+        'styling_files': ["upload.css"],
+        'script_files': ["upload.js"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'vehicle_category_list': vehicle_categories,
+        'connection_tool_list': connection_tools
+    }
+
+    return render(request, "pages/upload.html", context)
+
+@login_required
+def vehicle_select_modal(request):
+    params = request.GET
+    category_id = params.get('vehicle-category-select-1')
+    category = VehicleCategory.objects.get(id=category_id) 
+    vehicle_model_ids = VehicleModel.objects.filter(category=category).values('brand_id')
+    vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
+
+    print(vehicle_brands)
+
+    context = {
+        'data_type': 'brand',
+        'data': vehicle_brands
+    }
+
+    return render(request, "modals/upload_selects_modal.html", context)
+
+@login_required
 def winols_modal(request):
     context = {
         'modal_title': 'Add Your EVC WinOLS Account'

@@ -50,7 +50,7 @@
           ></path>
         </g>
       </svg>
-      <span>{{ user_credit_amount }}</span>
+      <span>{{ user.customer.credit_amount }}</span>
       <a href="/app/logout/">
         <svg
           class="sidebar_icon"
@@ -87,7 +87,7 @@
           </g>
         </svg>
       </a>
-      <a id="profile-anchor"><span>Hi, {{ user }}</span></a>
+      <a id="profile-anchor"><span>Hi, {{ user.first_name }}</span></a>
     </div>
   </header>
   <div class="row">
@@ -165,7 +165,7 @@
             <h5 class="color_white">Files</h5>
           </li>
         </a>
-        <a class="sidebar-anchor">
+        <a class="sidebar-anchor" href="/app/upload/">
           <li class="sidebar_item">
             <svg
               class="sidebar_icon"
