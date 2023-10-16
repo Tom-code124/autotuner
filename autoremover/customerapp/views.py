@@ -1,73 +1,98 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+from database.models import *
+from database.forms import *
+
 from datetime import datetime
 from urllib.parse import unquote
+import pandas as pd
 import math
 
 # Create your views here.
 
-def login_page(request, status="normal"):
+def signup_page(request):
+    user = request.user
+    if user.is_authenticated:
+        return redirect('/app/')
+
+    if request.method == 'POST':
+        user_form = ExtendedUserCreationForm(request.POST or None)
+        customer_form = CustomerCreationForm(request.POST or None)
+
+        if all((user_form.is_valid(), customer_form.is_valid())):
+            user = user_form.save()
+            customer = customer_form.save(commit=False)
+            customer.user = user
+            customer.save()
+
+            username = user_form.cleaned_data['username']
+            password = user_form.cleaned_data['password1']
+
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect('/app/')
+        
+    else:
+        user_form = ExtendedUserCreationForm()
+        customer_form = CustomerCreationForm()
+
+    context = {
+        'page_title': 'Sign-up',
+        'styling_files': ["customer_signup.css"],
+        'customer_form': customer_form,
+        'user_form': user_form
+    }
+
+    return render(request, "pages/customer_signup.html", context)
+
+def login_page(request):
+    user = request.user
+    if user.is_authenticated:
+        try:
+            if user.customer is not None:
+                return redirect('/app/')
+        except:
+            messages.error(request, "You are not authorazied to do this!")
+            logout(request)
+            return redirect('/app/login/')
+
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            try:
+                if user.customer is not None:
+                    login(request, user)
+                    redirect_url = request.POST.get('next') if request.POST.get('next') else "/app/"
+                    return redirect(redirect_url)
+            except:
+                messages.error(request, "You are not authorazied to do this!")
+
+        else:
+            messages.error(request, "Invalid username or password")
+
     context = {
         'page_title': 'Log-in',
         'styling_files': ["customer_login.css"],
         'script_files': ["customer_login.js"],
         }
-    
-    status = request.GET.get('status')
-
-    context["display_login_form"] = "block"
-    context["display_signup_form"] = "none"
-    
-    if status == "login_error":
-        context["login_error_message"] = "Wrong email or password"
-
-    if status == "signup_error":
-        wrong_data = request.GET.get('wrong')
-        context["signup_error_message"] = "This " + wrong_data + " is already being used by another account!"
-        context["display_login_form"] = "none"
-        context["display_signup_form"] = "block"
 
     return render(request, "pages/customer_login.html", context)
 
-def create_account(request):
-    if request.method == "POST":
-        emails = [
-            "test@test.com",
-            "test1@test1.com",
-            "test2@test2.com"
-        ]
-
-        phones = [
-            "123",
-            "123456"
-        ]
-        
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-
-        if not email in emails:
-            if not phone in phones:
-                return redirect("/app/")
-            else:
-                return redirect("/app/login?status=signup_error&wrong=phone")
-        else:
-                return redirect("/app/login?status=signup_error&wrong=email")
-
-def authenticate(request):
-    if request.method == "POST":
-        users = {
-            "test@test.com": "test",
-            "test1@test1.com": "test1",
-            "test2@test2.com": "test2"
-        }
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        if email in list(users.keys()):
-            if users[email] == password:
-                return redirect("/app/")
-            
-        return redirect('/app/login?status=login_error')
+def logout_view(request):
+    logout(request)
+    return redirect('/app/login/')
     
+@login_required
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]
     months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
@@ -140,6 +165,7 @@ def dashboard_page(request):
     
     return render(request, "pages/dashboard.html", context)
 
+@login_required
 def files_page(request):
     context = {
         'page_title': 'Your Files',
@@ -154,6 +180,7 @@ def files_page(request):
     return render(request, "pages/files.html", context)
 
 
+@login_required
 def requested_files_modal(request):
     req_file_list = [
         {
@@ -419,6 +446,41 @@ def requested_files_modal(request):
     
     return render(request, "modals/requested_files_modal.html", context)
 
+@login_required
+def upload_page(request):
+    vehicle_categories = VehicleCategory.objects.all()
+    connection_tools = ConnectionTool.objects.all()
+
+    context = {
+        'page_title': 'Upload',
+        'styling_files': ["upload.css"],
+        'script_files': ["upload.js"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'vehicle_category_list': vehicle_categories,
+        'connection_tool_list': connection_tools
+    }
+
+    return render(request, "pages/upload.html", context)
+
+@login_required
+def vehicle_select_modal(request):
+    params = request.GET
+    category_id = params.get('vehicle-category-select-1')
+    category = VehicleCategory.objects.get(id=category_id) 
+    vehicle_model_ids = VehicleModel.objects.filter(category=category).values('brand_id')
+    vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
+
+    print(vehicle_brands)
+
+    context = {
+        'data_type': 'brand',
+        'data': vehicle_brands
+    }
+
+    return render(request, "modals/upload_selects_modal.html", context)
+
+@login_required
 def winols_modal(request):
     context = {
         'modal_title': 'Add Your EVC WinOLS Account'
@@ -426,6 +488,7 @@ def winols_modal(request):
 
     return render(request, "modals/winols_modal.html", context)
 
+@login_required
 def expense_history_page(request):
     context = {
         'page_title': 'Expense History',
@@ -439,6 +502,7 @@ def expense_history_page(request):
 
     return render(request, "pages/expense_history.html", context)
 
+@login_required
 def expenses_modal(request):
     expenses_data = [
         {
@@ -559,6 +623,7 @@ def expenses_modal(request):
 
     return render(request, "modals/expenses_modal.html", context)
 
+@login_required
 def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
@@ -572,144 +637,44 @@ def dtc_search_page(request):
     
     return render(request, "pages/dtc_search.html", context)
 
+@login_required
 def dtc_search_modal(request):
-    dtc_list = [
-        {
-            'code': 'P0000',
-            'desc': 'No fault'
-        },
-        {
-            'code': 'P0001',
-            'desc': 'Fuel volume regulator control -circuit open'
-        },
-        {
-            'code': 'P0002',
-            'desc': 'Fuel volume regulator control -circuit range/performance'
-        },
-        {
-            'code': 'P0003',
-            'desc': 'Fuel volume regulator control -circuit low'
-        },
-        {
-            'code': 'P0004',
-            'desc': 'Fuel volume regulator control -circuit high'
-        },
-        {
-            'code': 'P0005',
-            'desc': 'Fuel shut -off valve -circuit open'
-        },
-        {
-            'code': 'P0006',
-            'desc': 'Fuel shut -off valve -circuit low'
-        },
-        {
-            'code': 'P0007',
-            'desc': 'Fuel shut -off valve -circuit high'
-        },
-        {
-            'code': 'P0008',
-            'desc': 'Engine position system, bank 1 -engine performance'
-        },
-        {
-            'code': 'P0009',
-            'desc': 'Engine position system, bank 2 -engine performance'
-        },
-        {
-            'code': 'P000A',
-            'desc': 'No fault 2'
-        },
-        {
-            'code': 'P000B',
-            'desc': 'Fuel volume regulator control -circuit open 2'
-        },
-        {
-            'code': 'P000C',
-            'desc': 'Fuel volume regulator control -circuit range/performance 2'
-        },
-        {
-            'code': 'P000D',
-            'desc': 'Fuel volume regulator control -circuit low 2'
-        },
-        {
-            'code': 'P000E',
-            'desc': 'Fuel volume regulator control -circuit high 2'
-        },
-        {
-            'code': 'P000F',
-            'desc': 'Fuel shut -off valve -circuit open 2'
-        },
-        {
-            'code': 'P0010',
-            'desc': 'Fuel shut -off valve -circuit low 2'
-        },
-        {
-            'code': 'P0011',
-            'desc': 'Fuel shut -off valve -circuit high 2'
-        },
-        {
-            'code': 'P0012',
-            'desc': 'Engine position system, bank 1 -engine performance 2'
-        },
-        {
-            'code': 'P0013',
-            'desc': 'Engine position system, bank 2 -engine performance 2'
-        }
-    ]
 
     params = request.GET
     keyword = params.get('keyword')
-    page = params.get('page')
+    page_param = params.get('page')
 
-    search_list = []
     if keyword:
         keyword = unquote(keyword).lower()
-        for dtc in dtc_list:
-            if keyword in dtc.get('code').lower() or keyword in dtc.get('desc').lower():
-                search_list.append(dtc)
+        dtc_list = DtcInfo.objects.filter(Q(desc__icontains=keyword) | Q(code__icontains=keyword)).order_by("code")
     else:
-        search_list = dtc_list
+        dtc_list = DtcInfo.objects.all().order_by("code")
 
-    data_amount = len(search_list)
-    total_pages = math.ceil(len(search_list) / 10)
+    if page_param:
+        pagenum = int(page_param)
+    else:
+        pagenum = 1
 
-    if page:
-        page = int(page)
-        if page > total_pages:
-            page = total_pages
+    paginator = Paginator(dtc_list, 10)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = range(start_page, end_page + 1)
         
-        if page < 1:
-            page = 1
-        
-    else:
-        page = 1
-    
-    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
-
-    start_index = 10 * (page - 1)
-    end_index = min(10 * page - 1, data_amount - 1)
-    ret_list = search_list[start_index : end_index + 1]
-
-    if page_list:
-        any_previous_page = page > page_list[0]
-        any_following_page = page < page_list[-1]
-    else:
-        any_previous_page = False
-        any_following_page = False
-        page_list = [1]
-
     context = {
-        'data_amount': data_amount,
-        'start_index': start_index + 1,
-        'end_index': end_index + 1,
-        'current_page': page,
-        'previous_page_disabled': not any_previous_page,
-        'following_page_disabled': not any_following_page,
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
         'page_list': page_list,
-        'data': ret_list
+        'data': page.object_list
     }
-    
+
     return render(request, "modals/dtc_search_modal.html", context)
 
+@login_required
 def bosch_search_page(request):
     context = {
         'page_title': 'Bosch Search',
@@ -723,6 +688,7 @@ def bosch_search_page(request):
 
     return render(request, "pages/bosch_search.html", context)
 
+@login_required
 def bosch_modal(request):
     ecu_list = [
         {
@@ -848,22 +814,8 @@ def bosch_modal(request):
 
     return render(request, "modals/bosch_modal.html", context)
 
-
+@login_required
 def knowledgebase_page(request):
-    knowledge_data = [
-        {
-            'title': 'Adblue Solutions',
-            'id': 'adblue_solutions'
-        },
-        {
-            'title': 'MED17 VCDS Logging profiles',
-            'id': 'med17_vcds_logging_profiles'
-        },
-        {
-            'title': 'EGR OFF Solutions',
-            'id': 'egr_off_solutions'
-        }
-    ]
 
     context = {
         'page_title': 'Knowledgebase',
@@ -873,61 +825,40 @@ def knowledgebase_page(request):
         'file_service_until': datetime.now(),
         'username': 'yunus',
         'user_credit_amount': 13.52,
-        'knowledge_data': knowledge_data
+        'knowledge_data': Knowledge.objects.all()
     }
+
     return render(request, "pages/knowledgebase.html", context)
 
+@login_required
 def knowledge_modal(request):
-    knowledge_data = {
-        'adblue_solutions': {
-            'modal_title': 'Adblue Solutions',
-            'desc': 'You can find Adblue Solutions in this page',
-            'inner_data': [
-                {
-                    'sub_title': "AGRALE",
-                    'bullets': [
-                        'BOSCH EDC7UC31 -  Adblue Ecu and Pump must be disconnected '
-                    ]
-                },
-                {
-                    'sub_title': "ASTRA",
-                    'bullets': [
-                        'BOSCH EDC7UC31 - Adblue ECU to be unplugged',
-                        'BOSCH EDC17CV41 - Adblue ECU and Pump to be unplugged'
-                    ]
-                }
-            ]
-        },
-        'med17_vcds_logging_profiles': {
-            'modal_title': 'MED17 VCDS Logging profiles',
-            'desc': 'Audi a5 - med171 - gen logs.zip\n\nGeneral logging profiles for the Med17.1 Vag ECU - VCDS Advanced - Open the unzipped file and it will populate the logging profile for you.\nGeneral sweep 1500rpm - redline needed for full scope, highest gear possible for more info'
-        },
-        'egr_off_solutions': {
-            'modal_title': 'EGR OFF Solutions',
-            'inner_data': [
-                {
-                    'sub_title': 'ALFA ROMEO',
-                    'bullets': [
-                        'BOSCH EDC15C7 - Actuator to be unplugged',
-                        'BOSCH EDC17C69',
-                        'MARELLI MJ8'
-                    ]
-                },
-                {
-                    'sub_title': 'Aston Martin',
-                    'bullets': [
-                        'VISTEON EECVI  - Actuator to be unplugged'
-                    ]
-                }
-            ]
-        }
-    }
-
     params = request.GET
-    context = knowledge_data[params.get('id')]
+    knowledge = Knowledge.objects.get(id=params.get('id'))
+    inner_data = []
+    print(knowledge.knowledgepart_set.all())
+    for p in knowledge.knowledgepart_set.all():
+        bullets = []
+        for b in p.knowledgebullet_set.all():
+            bullets.append(b.content)
+
+        part = {
+            'sub_title': p.title,
+            'bullets': bullets
+        }
+
+        inner_data.append(part)
+
+    context = {
+        'modal_title': knowledge.title,
+        'desc': knowledge.desc,
+        'link_title': knowledge.link_title,
+        'link': knowledge.link,
+        'inner_data': inner_data
+    }
 
     return render(request, "modals/knowledge_modal.html", context)
 
+@login_required
 def pricing_modal(request):
 
     context = {
@@ -936,6 +867,7 @@ def pricing_modal(request):
     }
     return render(request, "modals/pricing_modal.html", context)
 
+@login_required
 def price_options_modal(request):
     data = {
         'cars': [

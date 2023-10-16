@@ -3,14 +3,16 @@ from django.urls import path
 from .views  import *
 
 urlpatterns = [
-    path('login/', login_page, name="Log-in"),
-    path('authenticate', authenticate, name="Log-in Try"),
-    path('create_account', create_account, name="Create Account"),
+    path('signup/', signup_page, name="Signup"),
+    path('login/', login_page, name="Login"),
+    path('logout/', logout_view, name="Logout"),
     path('', dashboard_page, name="Dashboard"),
     path('pricing_modal/', pricing_modal, name="File Pricing"),
     path('price_options_modal', price_options_modal, name="Price Options Modal"),
     path('files/', files_page, name="Your Files"),
     path('files/requested_files', requested_files_modal, name="Requested Files"),
+    path('upload/', upload_page, name="Upload"),
+    path('upload/get_vehicle/', vehicle_select_modal, name="Vehicle Select Modal"),
     path('winols_modal/', winols_modal, name='WinOLS Modal'),
     path('expense_history/', expense_history_page, name="Expense History"),
     path('expense_history/expenses_modal', expenses_modal, name="Expenses Modal"),
