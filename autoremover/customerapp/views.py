@@ -454,6 +454,7 @@ def upload_page(request):
     if request.method == "POST":
 
         print(request.POST)
+        print(request.FILES)
         original_file = request.POST.get("original_file")
         file_type = request.POST.get("file_type")
         vehicle_id = request.POST.get("vehicle")
