@@ -13,6 +13,11 @@
   background-color: #f3f6f9;
 }
 
+.card-header-tab:hover {
+  cursor: pointer;
+  border: rgb(236, 231, 231) 1px solid;
+}
+
 .active-tab {
   pointer-events: none;
   background-color: #fff;
@@ -28,4 +33,61 @@
 
 select {
   margin: 20px;
+}
+
+.pasive-card {
+  display: none;
+}
+
+#proceeding-error {
+  color: red;
+  display: none;
+}
+
+.price-option-label {
+  justify-content: space-between;
+  width: 90%;
+  background-color: #8648e7;
+}
+
+#price-options-form {
+  width: 70%;
+}
+
+.price-option-box {
+  width: 100%;
+}
+
+#calculator-box {
+  width: 30%;
+}
+
+#calculator-header {
+  border-radius: calc(0.42rem - 1px) calc(0.42rem - 1px) 0 0;
+  background-color: #8950fc;
+  padding: 10px;
+  width: 90%;
+  height: 20px;
+}
+
+#calculator-body {
+  border-radius: 0 0 calc(0.42rem - 1px) calc(0.42rem - 1px);
+  background-color: #f3f6f9;
+  padding: 10px;
+  width: 90%;
+}
+
+#selected-services {
+  list-style-type: none;
+  padding-inline-start: 0;
+  margin-top: 5px;
+}
+
+.price-li {
+  border-bottom: rgb(236, 231, 231) 1px solid;
+  margin-top: 10px;
+}
+
+#choice-content {
+  display: none;
 }

@@ -458,7 +458,8 @@ def upload_page(request):
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'vehicle_category_list': vehicle_categories,
-        'connection_tool_list': connection_tools
+        'connection_tool_list': connection_tools,
+        'tax_percentage': 20
     }
 
     return render(request, "pages/upload.html", context)
@@ -466,19 +467,66 @@ def upload_page(request):
 @login_required
 def vehicle_select_modal(request):
     params = request.GET
-    category_id = params.get('vehicle-category-select-1')
-    category = VehicleCategory.objects.get(id=category_id) 
-    vehicle_model_ids = VehicleModel.objects.filter(category=category).values('brand_id')
-    vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
 
-    print(vehicle_brands)
+    requested = params.get('requested')
+     
+    if requested == 'vehicle-brand-select-2':
+        category_id = params.get('vehicle-category-select-1')
+        category = VehicleCategory.objects.get(id=category_id) 
+        vehicle_model_ids = VehicleModel.objects.filter(category=category).values('brand_id')
+        vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
+        data_type = 'vehicle brand'
+        data = vehicle_brands
+
+    elif requested == 'vehicle-model-select-3':
+        category_id = params.get('vehicle-category-select-1')
+        brand_id = params.get('vehicle-brand-select-2')
+        category = VehicleCategory.objects.get(id=category_id)
+        brand = VehicleBrand.objects.get(id=brand_id)
+        vehicle_models = VehicleModel.objects.filter(category=category, brand=brand)
+        data_type = 'vehicle model'
+        data = vehicle_models
+    
+    elif requested == 'vehicle-year-select-4':
+        model_id = params.get('vehicle-model-select-3')
+        model = VehicleModel.objects.get(id=model_id)
+        years = Vehicle.objects.filter(model=model)
+        data_type = 'vehicle year'
+        data = years
+
+    elif requested == 'vehicle-engine-select-5':
+        vehicle_id = params.get('vehicle-year-select-4')
+        vehicle = Vehicle.objects.get(id=vehicle_id)
+        engines = VehicleEngine.objects.filter(vehicle=vehicle)
+        data_type = 'vehicle engine'
+        data = engines
+
+    elif requested == 'ecu-type-select-6':
+        vehicle_id = params.get('vehicle-year-select-4')
+        vehicle = Vehicle.objects.get(id=vehicle_id)
+        ecu_models = EcuModel.objects.filter(vehicles__id=vehicle_id)
+        data_type = 'ecu type'
+        data = ecu_models
 
     context = {
-        'data_type': 'brand',
-        'data': vehicle_brands
+        'data_type': data_type,
+        'data': data
     }
 
     return render(request, "modals/upload_selects_modal.html", context)
+
+@login_required
+def process_options_modal(request):
+    params = request.GET
+
+    vehicle_id = params.get("vehicle_id")
+    pricing_options = ProcessPricing.objects.filter(vehicle_id=vehicle_id)
+
+    context = {
+        'options': pricing_options
+    }
+
+    return render(request, "modals/price_options_modal.html", context)
 
 @login_required
 def winols_modal(request):
@@ -873,31 +921,31 @@ def price_options_modal(request):
         'cars': [
             {
                 'id': 'stage-one-tune',
-                'name': 'Stage one tune',
+                'process': 'Stage one tune',
                 'price': '50'
             },
             {
                 'id': 'stage-two-tune',
-                'name': 'Stage two tune',
+                'process': 'Stage two tune',
                 'price': '60'
             }
         ],
         'agricultural': [
             {
                 'id': 'gear-box',
-                'name': 'Gear box',
+                'process': 'Gear box',
                 'price': '30'
             }
         ],
         'trucks': [
             {
                 'id': 'file-check',
-                'name': 'File check',
+                'process': 'File check',
                 'price': '10'
             },
             {
                 'id': 'egr-off',
-                'name': 'EGR off',
+                'process': 'EGR off',
                 'price': '30'
             }
         ]

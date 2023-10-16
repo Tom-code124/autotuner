@@ -80,7 +80,11 @@ class VehicleEngine(models.Model):
         ]
 
     def __str__(self):
-        return self.name + " - " + self.fuel_type + " - " + str(self.hp)
+        for ftc in self.fuel_type_choices:
+            if ftc[0] == self.fuel_type:
+                fuel_type = ftc[1]
+                
+        return self.name + " - " + fuel_type + " - " + str(self.hp)
 
 class EcuBrand(models.Model):
     name = models.CharField(max_length=50, unique=True)

@@ -13,6 +13,7 @@ urlpatterns = [
     path('files/requested_files', requested_files_modal, name="Requested Files"),
     path('upload/', upload_page, name="Upload"),
     path('upload/get_vehicle/', vehicle_select_modal, name="Vehicle Select Modal"),
+    path('upload/get_process_options/', process_options_modal, name="Vehicle Process Options Modal"),
     path('winols_modal/', winols_modal, name='WinOLS Modal'),
     path('expense_history/', expense_history_page, name="Expense History"),
     path('expense_history/expenses_modal', expenses_modal, name="Expenses Modal"),
