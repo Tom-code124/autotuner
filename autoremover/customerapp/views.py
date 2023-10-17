@@ -567,6 +567,28 @@ def process_options_modal(request):
     return render(request, "modals/price_options_modal.html", context)
 
 @login_required
+def shop_page(request):
+
+    context = {
+        'page_title': 'File Shop',
+        'styling_files': ["shop.css"],
+        'script_files': ["shop.js"],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+    }
+
+    return render(request, "pages/shop.html", context)
+
+@login_required
+def shop_modal(request):
+
+    context = {
+        
+    }
+
+    return render(request, "modals/shop_modal.html", context)
+
+@login_required
 def winols_modal(request):
     context = {
         'modal_title': 'Add Your EVC WinOLS Account'
@@ -582,8 +604,6 @@ def expense_history_page(request):
         'script_files': ["expense_history.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
-        'username': 'yunus',
-        'user_credit_amount': 13.52
     }
 
     return render(request, "pages/expense_history.html", context)
