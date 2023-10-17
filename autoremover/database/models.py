@@ -83,7 +83,7 @@ class VehicleEngine(models.Model):
         for ftc in self.fuel_type_choices:
             if ftc[0] == self.fuel_type:
                 fuel_type = ftc[1]
-                
+
         return self.name + " - " + fuel_type + " - " + str(self.hp)
 
 class EcuBrand(models.Model):
@@ -159,23 +159,32 @@ class FileRequest(models.Model):
 
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     engine = models.ForeignKey(VehicleEngine, on_delete=models.PROTECT)
-    ecu = models.ForeignKey(EcuModel, on_delete=models.PROTECT)
+    ecu_model = models.ForeignKey(EcuModel, on_delete=models.PROTECT, null=True, blank=True)
+    manual_provided_ecu = models.CharField(max_length=50, null=True, blank=True)
 
     file_type = models.CharField(max_length=1, choices=file_type_choices)
-    transmissin = models.CharField(max_length=1, choices=transmissin_choices)
+    transmission = models.CharField(max_length=1, choices=transmissin_choices)
     tool = models.ForeignKey(ConnectionTool, on_delete=models.PROTECT)
     tool_type = models.CharField(max_length=1, choices=tool_type_choices)
     
     processes = models.ManyToManyField(FileProcess)
-    customer_description = models.TextField(max_length=400)
-    total_price = models.IntegerField()
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer_description = models.TextField(max_length=400)
     original_file = models.FileField(upload_to="uploads/original/")
     
     employee_description = models.TextField(max_length=400, null=True, blank=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, null=True, blank=True)
     processed_file = models.FileField(upload_to="uploads/processed/", null=True, blank=True)
+
+    @property
+    def total_price(self):
+        total = 0
+        
+        for process in self.processes.all():
+            total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).price
+
+        return total
     
 class Knowledge(models.Model):
     title = models.CharField(max_length=100, unique=True)

@@ -3,8 +3,9 @@
   <input
     type="checkbox"
     id="{{ option.id }}"
-    value="{{ option.process }}"
+    value="{{ option.process.id }}"
     class="price-option-check"
+    name="process_selection"
   />
   <label for="{{ option.id }}" class="price-option-label row">
     <span id="{{ option.id }}-name-span"> {{ option.process }}</span>

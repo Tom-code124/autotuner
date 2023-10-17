@@ -91,8 +91,10 @@ function calculate(event) {
     let taxRate =
       Number(document.getElementById("tax-percentage-span").innerText) / 100;
     let newTax = sum * taxRate;
-    document.getElementById("tax-amount-span").innerText = newTax;
-    document.getElementById("total-amount-span").innerText = sum + newTax;
+    document.getElementById("tax-amount-span").innerText = newTax.toFixed(2);
+    document.getElementById("total-amount-span").innerText = (
+      sum + newTax
+    ).toFixed(2);
   } else {
     let oldLi = document.getElementById(event.target.id + "-li");
     choiceUl.removeChild(oldLi);
@@ -106,8 +108,10 @@ function calculate(event) {
       let taxRate =
         Number(document.getElementById("tax-percentage-span").innerText) / 100;
       let newTax = sum * taxRate;
-      document.getElementById("tax-amount-span").innerText = newTax;
-      document.getElementById("total-amount-span").innerText = sum + newTax;
+      document.getElementById("tax-amount-span").innerText = newTax.toFixed(2);
+      document.getElementById("total-amount-span").innerText = (
+        sum + newTax
+      ).toFixed(2);
     } else {
       choiceContent.style.display = "none";
       noChoiceContent.style.display = "block";
@@ -121,4 +125,22 @@ function openCalculator() {
     item.addEventListener("change", calculate);
   });
 }
-export { openCalculator };
+
+function resetCalculator() {
+  var choiceContent = document.getElementById("choice-content");
+  var noChoiceContent = document.getElementById("no-choice-content");
+
+  choiceContent.style.display = "none";
+  noChoiceContent.style.display = "block";
+
+  var selectedServices = document.getElementById("selected-services");
+  var selecteds = selectedServices.querySelectorAll(".price-li");
+
+  for (let i = 0; i < selecteds.length; i++) {
+    if (selecteds[i].id != "tax-li") {
+      selectedServices.removeChild(selecteds[i]);
+    }
+  }
+}
+
+export { openCalculator, resetCalculator };
