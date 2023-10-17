@@ -452,20 +452,42 @@ def upload_page(request):
     connection_tools = ConnectionTool.objects.all()
 
     if request.method == "POST":
+        # print(request.POST)
+        # print(request.FILES)
 
-        print(request.POST)
-        print(request.FILES)
-        original_file = request.POST.get("original_file")
+        original_file = request.FILES.get("original_file")
         file_type = request.POST.get("file_type")
-        vehicle_id = request.POST.get("vehicle")
-        vehicle_engine_id = request.POST.get("vehicle_engine")
+        vehicle_id = int(request.POST.get("vehicle"))
+        vehicle_engine_id = int(request.POST.get("vehicle_engine"))
         ecu_model_id = request.POST.get("ecu_type")
         manual_ecu_type = request.POST.get("manual_ecu_type")
         transmission_type = request.POST.get("transmission_type")
-        tool_id = request.POST.get("tool")
+        tool_id = int(request.POST.get("tool"))
         tool_type = request.POST.get("tool_type")
-        process_selection = request.POST.get("process_selection")
+        process_selection = request.POST.getlist("process_selection")
         customer_description = request.POST.get("customer_description")
+
+        file_request = FileRequest.objects.create(
+            customer=request.user.customer,
+            vehicle_id=vehicle_id,
+            engine_id=vehicle_engine_id,
+            file_type=file_type,
+            transmission=transmission_type,
+            tool_id=tool_id,
+            tool_type=tool_type,
+            customer_description=customer_description,
+            original_file=original_file
+            )
+        
+        if ecu_model_id == "null":
+            file_request.manual_provided_ecu = manual_ecu_type
+        else:
+            file_request.ecu_model = EcuModel.objects.get(id=int(ecu_model_id))
+
+        file_request.save()
+
+        for p in process_selection:
+            file_request.processes.add(int(p))
 
     context = {
         'page_title': 'Upload',
