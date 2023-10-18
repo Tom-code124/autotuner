@@ -1,6 +1,16 @@
-import { getAndInject } from "./modals.js";
+import { turnOnModal, getAndInject } from "./modals.js";
 
 var searchInput = document.getElementById("search-input");
+
+function openProductModal(event) {
+  var id = Number(
+    event.currentTarget.id.substring(
+      event.currentTarget.id.lastIndexOf("-") + 1
+    )
+  );
+  var url = "product_modal?id=" + id;
+  getAndInject(url, undefined, undefined, turnOnModal);
+}
 
 function loadPagination(event) {
   var currentPage = Number(
@@ -16,7 +26,7 @@ function loadPagination(event) {
 
   if (page != currentPage) {
     var keyword = searchInput.value;
-    var url = "dtc_search_modal?page=" + page;
+    var url = "get_products?page=" + page;
 
     if (keyword.trim().length != 0) {
       url += "&keyword=" + encodeURIComponent(keyword);
@@ -30,6 +40,11 @@ function afterFunc() {
   var paginationButtons = [...document.querySelectorAll(".pagination-button")];
   paginationButtons.map((item) => {
     item.addEventListener("click", loadPagination);
+  });
+
+  var buyButtons = [...document.querySelectorAll(".buy-button")];
+  buyButtons.map((item) => {
+    item.addEventListener("click", openProductModal);
   });
 }
 

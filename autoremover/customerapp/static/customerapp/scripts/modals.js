@@ -23,7 +23,10 @@ function turnOffModal(event) {
   profile_card.classList.remove("on-screen");
 
   if (
-    !(event.target.id == "modal-background" || event.target.id == "modal-close")
+    !(
+      event.currentTarget.id == "modal-background" ||
+      event.currentTarget.id == "modal-close"
+    )
   ) {
     return;
   }

@@ -1,6 +1,9 @@
 {% extends "layout.html" %} {% block layout %}
 
 <div id="container" class="column">
+  {% if messages %} {% for message in messages %}
+  <p>{{ message }}</p>
+  {% endfor %} {% endif %}
   <div id="card-header" class="row apart-children">
     <div id="processed-files-tab" class="card-header-tab column active-tab">
       <span>Requested files</span>

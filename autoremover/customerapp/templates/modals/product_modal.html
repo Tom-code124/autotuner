@@ -1,0 +1,14 @@
+{% extends 'modal_layout.html' %} {% block modal_layout %} {% load static %}
+<p>for {{ file.vehicle }}</p>
+<p>{{ file.desc }}</p>
+<form
+  method="POST"
+  enctype="multipart/form-data"
+  action="/app/shop/purchase_file/"
+>
+  {% csrf_token %}
+  <button type="submit" name="file_id" value="{{file.id}}">
+    Buy: {{ file.price }} credits
+  </button>
+</form>
+{% endblock %}

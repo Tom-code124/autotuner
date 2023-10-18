@@ -1,7 +1,9 @@
 import { turnOnModal, getAndInject } from "./modals.js";
 
 function viewButtonClick(event) {
-  var id = event.target.id.substring(event.target.id.lastIndexOf("-") + 1);
+  var id = event.currentTarget.id.substring(
+    event.currentTarget.id.lastIndexOf("-") + 1
+  );
   getAndInject("knowledge_modal?id=" + id, undefined, undefined, turnOnModal);
 }
 

@@ -7,7 +7,9 @@ var fields = document
 
 function loadNext(event) {
   var nextIndex = parseInt(
-    event.target.id.substring(event.target.id.lastIndexOf("-") + 1)
+    event.currentTarget.id.substring(
+      event.currentTarget.id.lastIndexOf("-") + 1
+    )
   );
 
   var nextId = fields[nextIndex].id;
@@ -17,7 +19,7 @@ function loadNext(event) {
     modelFields[fields[i].id] = fields[i].value;
   }
 
-  if (event.target.value != "not-listed") {
+  if (event.currentTarget.value != "not-listed") {
     if (nextIndex == 6) {
       fields[nextIndex].disabled = true;
     } else {

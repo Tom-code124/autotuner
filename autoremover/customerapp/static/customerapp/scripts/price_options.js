@@ -65,20 +65,20 @@ function calculate(event) {
   var choiceUl = document.getElementById("selected-services");
   var taxLi = document.getElementById("tax-li");
 
-  if (event.target.checked) {
+  if (event.currentTarget.checked) {
     choiceContent.style.display = "block";
     noChoiceContent.style.display = "none";
 
     var newName = document.getElementById(
-      event.target.id + "-name-span"
+      event.currentTarget.id + "-name-span"
     ).innerText;
     var newAmount = Number(
-      document.getElementById(event.target.id + "-price-span").innerText
+      document.getElementById(event.currentTarget.id + "-price-span").innerText
     );
 
     var li = document.createElement("li");
     li.classList.add("price-li");
-    li.id = event.target.id + "-li";
+    li.id = event.currentTarget.id + "-li";
 
     li.innerHTML = `<div class="row apart-children"><span>${newName}</span><div><span class="price-span">${newAmount}</span>$</div></div>`;
 
@@ -96,7 +96,7 @@ function calculate(event) {
       sum + newTax
     ).toFixed(2);
   } else {
-    let oldLi = document.getElementById(event.target.id + "-li");
+    let oldLi = document.getElementById(event.currentTarget.id + "-li");
     choiceUl.removeChild(oldLi);
 
     let sum = 0;
