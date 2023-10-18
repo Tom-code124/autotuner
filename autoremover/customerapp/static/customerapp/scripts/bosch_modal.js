@@ -6,11 +6,11 @@ var searchInputHeader = document.getElementById("bosch-search-input");
 function balance(event) {
   var searchInputBody = document.getElementById("bosch-search-input-2");
   var inputToChange =
-    event.target.id == "bosch-search-input"
+    event.currentTarget.id == "bosch-search-input"
       ? searchInputBody
       : searchInputHeader;
 
-  inputToChange.value = event.target.value;
+  inputToChange.value = event.currentTarget.value;
 }
 
 function afterFuncEmpty() {
@@ -27,11 +27,11 @@ function loadPagination(event) {
   var currentPage = Number(
     document.getElementById("current-page-button").innerText
   );
-  var page = Number(event.target.innerText);
+  var page = Number(event.currentTarget.innerText);
 
-  if (event.target.id == "previous-page-button") {
+  if (event.currentTarget.id == "previous-page-button") {
     page = currentPage - 1;
-  } else if (event.target.id == "following-page-button") {
+  } else if (event.currentTarget.id == "following-page-button") {
     page = currentPage + 1;
   }
 

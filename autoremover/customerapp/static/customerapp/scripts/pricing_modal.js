@@ -3,7 +3,7 @@ import { openCalculator } from "./price_options.js";
 
 function categoryChange(event) {
   getAndInject(
-    "price_options_modal?category=" + event.target.value,
+    "price_options_modal?category=" + event.currentTarget.value,
     "price-options-form",
     undefined,
     openCalculator

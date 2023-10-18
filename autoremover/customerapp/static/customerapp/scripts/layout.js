@@ -7,7 +7,6 @@ function winolsClick() {
     undefined,
     turnOnModal
   );
-  turnOnModal();
 }
 
 document

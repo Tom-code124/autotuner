@@ -10,7 +10,6 @@ from database.forms import *
 
 from datetime import datetime
 from urllib.parse import unquote
-import pandas as pd
 import math
 
 # Create your views here.
@@ -452,42 +451,55 @@ def upload_page(request):
     connection_tools = ConnectionTool.objects.all()
 
     if request.method == "POST":
-        # print(request.POST)
-        # print(request.FILES)
-
-        original_file = request.FILES.get("original_file")
-        file_type = request.POST.get("file_type")
-        vehicle_id = int(request.POST.get("vehicle"))
-        vehicle_engine_id = int(request.POST.get("vehicle_engine"))
-        ecu_model_id = request.POST.get("ecu_type")
-        manual_ecu_type = request.POST.get("manual_ecu_type")
-        transmission_type = request.POST.get("transmission_type")
-        tool_id = int(request.POST.get("tool"))
-        tool_type = request.POST.get("tool_type")
         process_selection = request.POST.getlist("process_selection")
-        customer_description = request.POST.get("customer_description")
+        vehicle_id = int(request.POST.get("vehicle"))
 
-        file_request = FileRequest.objects.create(
-            customer=request.user.customer,
-            vehicle_id=vehicle_id,
-            engine_id=vehicle_engine_id,
-            file_type=file_type,
-            transmission=transmission_type,
-            tool_id=tool_id,
-            tool_type=tool_type,
-            customer_description=customer_description,
-            original_file=original_file
-            )
-        
-        if ecu_model_id == "null":
-            file_request.manual_provided_ecu = manual_ecu_type
-        else:
-            file_request.ecu_model = EcuModel.objects.get(id=int(ecu_model_id))
-
-        file_request.save()
-
+        total_price = 0
         for p in process_selection:
-            file_request.processes.add(int(p))
+            pricing = ProcessPricing.objects.get(vehicle_id=vehicle_id, process_id=int(p))
+            total_price += pricing.price
+        
+        if request.user.customer.credit_amount >= total_price:
+            original_file = request.FILES.get("original_file")
+            file_type = request.POST.get("file_type")
+            vehicle_engine_id = int(request.POST.get("vehicle_engine"))
+            ecu_model_id = request.POST.get("ecu_type")
+            manual_ecu_type = request.POST.get("manual_ecu_type")
+            transmission_type = request.POST.get("transmission_type")
+            tool_id = int(request.POST.get("tool"))
+            tool_type = request.POST.get("tool_type")
+            customer_description = request.POST.get("customer_description")
+
+            file_request = FileRequest.objects.create(
+                customer=request.user.customer,
+                vehicle_id=vehicle_id,
+                engine_id=vehicle_engine_id,
+                file_type=file_type,
+                transmission=transmission_type,
+                tool_id=tool_id,
+                tool_type=tool_type,
+                customer_description=customer_description,
+                original_file=original_file
+                )
+            
+            if ecu_model_id == "null":
+                file_request.manual_provided_ecu = manual_ecu_type
+            else:
+                file_request.ecu_model = EcuModel.objects.get(id=int(ecu_model_id))
+
+            file_request.save()
+
+            for p in process_selection:
+                file_request.processes.add(int(p))
+
+            request.user.customer.credit_amount -= total_price
+            request.user.customer.save()
+
+            messages.success(request, "File successfully requested!")
+            return redirect("/app/files")
+        
+        else:
+            messages.error(request, "You don't have enough credits to request these processes. Please buy some credits.")
 
     context = {
         'page_title': 'Upload',
@@ -582,11 +594,80 @@ def shop_page(request):
 @login_required
 def shop_modal(request):
 
-    context = {
+    params = request.GET
+    keyword = params.get('keyword')
+    page_param = params.get('page')
+
+    if keyword:
+        keyword = unquote(keyword).lower()
+        file_list = FileSale.objects.filter(Q(title__icontains=keyword) | Q(desc__icontains=keyword)).order_by("-created_at")
+    else:
+        file_list = FileSale.objects.all().order_by("-created_at")
+
+    if page_param:
+        pagenum = int(page_param)
+    else:
+        pagenum = 1
+
+    paginator = Paginator(file_list, 20)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = range(start_page, end_page + 1)
+    data = []
+
+    for p in page.object_list:
+        hash = {
+            'file': p,
+            'ownership_bool': request.user.customer in p.owners.all()
+        }
+
+        data.append(hash)
         
+    context = {
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
+        'page_list': page_list,
+        'data': data
     }
 
     return render(request, "modals/shop_modal.html", context)
+
+@login_required
+def product_modal(request):
+    params = request.GET
+    file_id = int(params.get("id"))
+
+    file = FileSale.objects.get(id=file_id)
+
+    context = {
+        'modal_title': file.title,
+        'file': file
+    }
+
+    return render(request, "modals/product_modal.html", context)
+
+@login_required
+def purchase_file(request):
+
+    params = request.POST
+    file_id = int(params.get("file_id"))
+    file = FileSale.objects.get(id=file_id)
+
+    if request.user.customer.credit_amount >= file.price:
+        file.owners.add(request.user.customer)
+        request.user.customer.credit_amount -= file.price
+        request.user.customer.save()
+        messages.success(request, "File bought successfully!")
+        return redirect('/app/files?subpage=bought_files')
+    else:
+        messages.error(request, "You don't have enough credits to buy this file. Please buy some credits.")
+        return redirect("/app/shop/")
+
 
 @login_required
 def winols_modal(request):

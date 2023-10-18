@@ -224,6 +224,7 @@ class DtcInfo(models.Model):
         return self.code
 
 class FileSale(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=60, unique=True)
     file = models.FileField(upload_to="uploads/for_sale/", unique=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
