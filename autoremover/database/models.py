@@ -149,9 +149,16 @@ class FileRequest(models.Model):
         ("E", "ECU file"),
         ("T", "Transmission File")
     ]
+
     tool_type_choices = [
         ("S", "Slave"),
         ("M", "Master")
+    ]
+
+    status_choices = [
+        ("D", "Done"),
+        ("C", "Cancelled"),
+        ("O", "Ongoing")
     ]
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -176,6 +183,8 @@ class FileRequest(models.Model):
     employee_description = models.TextField(max_length=400, null=True, blank=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, null=True, blank=True)
     processed_file = models.FileField(upload_to="uploads/processed/", null=True, blank=True)
+
+    status = models.CharField(max_length=1, choices=status_choices, default="O")
 
     @property
     def total_price(self):

@@ -1,30 +1,32 @@
 <table class="table">
     <thead>
       <tr>
-        <th>#</th>
+        <th>Status</th>
         <th>Vehicle</th>
+        <th>Engine</th>
         <th>ECU</th>
         <th>Process</th>
-        <th>Requested at</th>
         <th>Last updated</th>
-        <th>Status</th>
-        <th>Original File</th>
-        <th>Processed File</th>
+        <th>Files</th>
       </tr>
     </thead>
     <tbody>
     {% if requested_file_data %}
       {% for file in requested_file_data %}
       <tr class="table-data-row">
-        <td><span class="file-num-span">{{ file.num }}</span></td>
-        <td>{{ file.vehicle }}</td>
-        <td>{{ file.ecu }}</td>
-        <td>{{ file.process }}</td>
-        <td>{{ file.requested_at }}</td>
-        <td>{{ file.updated_at }}</td>
         <td>{{ file.status }}</td>
+        <td>{{ file.vehicle }}</td>
+        <td>{{ file.engine }}</td>
+        {% if file.ecu_model %}
+        <td>{{ file.ecu_model }}</td>
+        {% else %}
+          <td>{{ file.manual_provided_ecu }}</td>
+        {% endif %}
+        <td>{{ file.processes }}</td>
+        <td>{{ file.updated_at }}</td>
         <td>
-          <div class="download-div">
+          <div class="row">
+          <div class="download-div column">
             <svg
             width="24px"
             height="24px"
@@ -66,10 +68,9 @@
               ></path>
             </g>
           </svg>
+          <span>Original</span>
           </div>
-        </td>
-        <td>
-          <div class="download-div">
+          <div class="download-div column">
           <svg
             width="24px"
             height="24px"
@@ -111,7 +112,9 @@
               ></path>
             </g>
           </svg>
+          <span>Processed</span>
           </div>
+        </div>
         </td>
       </tr>
       {% endfor %}

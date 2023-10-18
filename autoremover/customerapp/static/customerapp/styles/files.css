@@ -76,10 +76,11 @@ form {
 .table td {
   border-top: rgb(236, 231, 231) 1px solid;
   height: 50px;
+  text-align: center;
 }
 
 .table th {
-  text-align: left;
+  text-align: center;
 }
 
 #current-page-button {
@@ -97,4 +98,5 @@ form {
 .download-div {
   width: 50%;
   margin: auto;
+  align-items: center;
 }
