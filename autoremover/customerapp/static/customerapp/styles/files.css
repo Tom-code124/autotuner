@@ -76,13 +76,18 @@ form {
 .table td {
   border-top: rgb(236, 231, 231) 1px solid;
   height: 50px;
+  text-align: center;
 }
 
 .table th {
-  text-align: left;
+  text-align: center;
 }
 
 #current-page-button {
+  background-color: #1bc5bd;
+}
+
+#current-page-button-2 {
   background-color: #1bc5bd;
 }
 
@@ -90,11 +95,24 @@ form {
   list-style-type: none;
 }
 
+#pagination-ul-2 {
+  list-style-type: none;
+}
+
 .pagination-li {
+  margin: 5px;
+}
+
+.pagination-li-2 {
   margin: 5px;
 }
 
 .download-div {
   width: 50%;
   margin: auto;
+  align-items: center;
+}
+
+.files-div {
+  justify-content: space-around;
 }

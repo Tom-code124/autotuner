@@ -5,30 +5,41 @@
   <p>{{ message }}</p>
   {% endfor %} {% endif %}
   <div id="card-header" class="row apart-children">
-    <div id="processed-files-tab" class="card-header-tab column active-tab">
+    <div id="requested-files-tab"
+    {% if not boughts_open %}
+      class="card-header-tab column active-tab"
+      {% else %}
+      class="card-header-tab column"
+    {% endif %} >
       <span>Requested files</span>
       <span>Files uploaded by you and requested to be processed</span>
     </div>
-    <div id="bought-files-tab" class="card-header-tab column">
+    <div id="bought-files-tab" 
+    {% if boughts_open %}
+      class="card-header-tab column active-tab"
+      {% else %}
+      class="card-header-tab column"
+    {% endif %} >
       <span>Bought files</span>
       <span>Files bought from shop</span>
     </div>
   </div>
   <div id="card-body" class="columns">
-    <form id="req-files-search-form" class="row">
-      <div id="req-files-search-box" class="row search-box">
-        <input
-          id="req-files-search-input"
-          type="text"
-          placeholder="Search..."
-        />
-      </div>
-      <button type="submit" id="req-files-search-button" class="search-button">
-        Search
-      </button>
-    </form>
-    <div id="page-content"></div>
+    <div
+      id="requested-files-page"
+      class="subpage column"
+      {% if boughts_open %}
+      style="display: none"
+      {% endif %}
+    ></div>
+    <div
+      id="bought-files-page"
+      class="subpage column"
+      {% if not boughts_open %}
+      style="display: none"
+      {% endif %}
+    ></div>
   </div>
 </div>
 
-{% endblock %}
+{% endblock layout %}

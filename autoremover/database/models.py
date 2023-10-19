@@ -84,7 +84,7 @@ class VehicleEngine(models.Model):
             if ftc[0] == self.fuel_type:
                 fuel_type = ftc[1]
 
-        return self.name + " - " + fuel_type + " - " + str(self.hp)
+        return self.name + " - " + fuel_type + " - " + str(self.hp) + " hp"
 
 class EcuBrand(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -103,7 +103,7 @@ class EcuModel(models.Model): # for ecu type
         ]
 
     def __str__(self):
-        return self.name
+        return str(self.brand) + " " + self.name
     
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
@@ -149,9 +149,16 @@ class FileRequest(models.Model):
         ("E", "ECU file"),
         ("T", "Transmission File")
     ]
+
     tool_type_choices = [
         ("S", "Slave"),
         ("M", "Master")
+    ]
+
+    status_choices = [
+        ("D", "Done"),
+        ("C", "Cancelled"),
+        ("O", "Ongoing")
     ]
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -177,6 +184,8 @@ class FileRequest(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, null=True, blank=True)
     processed_file = models.FileField(upload_to="uploads/processed/", null=True, blank=True)
 
+    status = models.CharField(max_length=1, choices=status_choices, default="O")
+
     @property
     def total_price(self):
         total = 0
@@ -185,6 +194,20 @@ class FileRequest(models.Model):
             total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).price
 
         return total
+    
+    @property
+    def processes_string(self):
+        p_list = ""
+
+        for process in self.processes.all():
+            p_list += str(process) + ", "
+
+        return p_list[0:-2]
+    
+    @property
+    def status_long(self):
+        return next((y for x, y in self.status_choices if x == self.status), None)
+
     
 class Knowledge(models.Model):
     title = models.CharField(max_length=100, unique=True)
@@ -230,10 +253,20 @@ class FileSale(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     desc = models.TextField(max_length=400)
     price = models.IntegerField()
-    owners = models.ManyToManyField(Customer, blank=True)
     
     def __str__(self):
         return self.title
+    
+class FilePurchase(models.Model):
+    bought_at = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    file_sale = models.ForeignKey(FileSale, on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['customer', 'file_sale'], name='filepurchase_customer_filesale_unique_constraint')
+        ]
+
 
 class Transaction(models.Model):
     transaction_type_choices = [
