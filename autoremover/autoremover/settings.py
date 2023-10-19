@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'maintenancemode',
     'customerapp',
     'database'
 ]
@@ -49,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
 ]
 
 ROOT_URLCONF = 'autoremover.urls'
@@ -130,3 +133,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/app/login'
+
+SITE_ID = 1
+
+MAINTENANCE_503_TEMPLATE = "errors/503.html"
