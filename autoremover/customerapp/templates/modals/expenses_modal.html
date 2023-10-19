@@ -1,4 +1,5 @@
 <table class="table">
+  {% if data %}
     <thead>
       <tr>
         <th>Amount</th>
@@ -8,13 +9,12 @@
       </tr>
     </thead>
     <tbody>
-    {% if data %}
-      {% for expense in data %}
+      {% for transaction in data %}
       <tr class="table-data-row">
-        <td>{{ expense.amount }}</td>
-        <td>{{ expense.type }}</td>
-        <td>{{ expense.category }}</td>
-        <td>{{ expense.desc }}</td>
+        <td>{{ transaction.amount }}</td>
+        <td>{{ transaction.type_long }}</td>
+        <td>{{ transaction.category }}</td>
+        <td>{{ transaction.desc }}</td>
       </tr>
       {% endfor %}
     {% else %}
