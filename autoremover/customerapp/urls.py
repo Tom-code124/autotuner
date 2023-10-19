@@ -11,6 +11,7 @@ urlpatterns = [
     path('price_options_modal', price_options_modal, name="Price Options Modal"),
     path('files/', files_page, name="Your Files"),
     path('files/requested_files', requested_files_modal, name="Requested Files"),
+    path('files/bought_files', bought_files_modal, name="Bought Files"),
     path('upload/', upload_page, name="Upload"),
     path('upload/get_vehicle/', vehicle_select_modal, name="Vehicle Select Modal"),
     path('upload/get_process_options/', process_options_modal, name="Vehicle Process Options Modal"),

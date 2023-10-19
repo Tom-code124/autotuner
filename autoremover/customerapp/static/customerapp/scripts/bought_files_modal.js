@@ -4,33 +4,33 @@ import { getAndInject } from "./modals.js";
 
 function loadPagination(event) {
   var currentPage = Number(
-    document.getElementById("current-page-button").innerText
+    document.getElementById("current-page-button-2").innerText
   );
   var page = Number(event.currentTarget.innerText);
 
-  if (event.currentTarget.id == "previous-page-button") {
+  if (event.currentTarget.id == "previous-page-button-2") {
     page = currentPage - 1;
-  } else if (event.currentTarget.id == "following-page-button") {
+  } else if (event.currentTarget.id == "following-page-button-2") {
     page = currentPage + 1;
   }
 
   if (page != currentPage) {
     // var keyword = searchInput.value;
-    var url = "requested_files?page=" + page;
+    var url = "bought_files?page=" + page;
 
     /* if (keyword.trim().length != 0) {
       url += "&keyword=" + encodeURIComponent(keyword);
     } */
 
-    getAndInject(url, "requested-files-page", undefined, afterFunc);
+    getAndInject(url, "bought-files-page", undefined, afterFuncBought);
   }
 }
 
-function afterFunc() {
-  var paginationButtons = [...document.querySelectorAll(".pagination-button")];
+function afterFuncBought() {
+  var paginationButtons = [...document.querySelectorAll(".pagination-button-2")];
   paginationButtons.map((item) => {
     item.addEventListener("click", loadPagination);
   });
 }
 
-export { afterFunc };
+export { afterFuncBought };

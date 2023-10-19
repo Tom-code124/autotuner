@@ -5,7 +5,7 @@
   <p>{{ message }}</p>
   {% endfor %} {% endif %}
   <div id="card-header" class="row apart-children">
-    <div id="processed-files-tab"
+    <div id="requested-files-tab"
     {% if not boughts_open %}
       class="card-header-tab column active-tab"
       {% else %}
@@ -25,32 +25,21 @@
     </div>
   </div>
   <div id="card-body" class="columns">
-    <p>Click on the items to see the details...</p>
-    <hr />
     <div
       id="requested-files-page"
-      {%
-      if
-      boughts_open
-      %}
+      class="subpage column"
+      {% if boughts_open %}
       style="display: none"
-      {%
-      endif
-      %}
+      {% endif %}
     ></div>
     <div
       id="bought-files-page"
-      {%
-      if
-      not
-      boughts_open
-      %}
+      class="subpage column"
+      {% if not boughts_open %}
       style="display: none"
-      {%
-      endif
-      %}
+      {% endif %}
     ></div>
   </div>
 </div>
 
-{% endblock %}
+{% endblock layout %}

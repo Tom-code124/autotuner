@@ -219,6 +219,43 @@ def requested_files_modal(request):
     return render(request, "modals/requested_files_modal.html", context)
 
 @login_required
+def bought_files_modal(request):
+    params = request.GET
+    keyword = params.get('keyword')
+    page_param = params.get('page')
+
+    if keyword:
+        keyword = unquote(keyword)
+        key_file_list = FileSale.objects.filter(Q(title__icontains=keyword) | Q(desc__icontains=keyword))
+        bought_file_list = FilePurchase.objects.filter(Q(customer_id=request.user.customer.id) | Q(file_sale__in=key_file_list)).order_by("-bought_at")
+    else:
+        bought_file_list = FilePurchase.objects.filter(customer=request.user.customer).order_by("-bought_at")
+
+    if page_param:
+        pagenum = int(page_param)
+    else:
+        pagenum = 1
+
+    paginator = Paginator(bought_file_list, 10)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = range(start_page, end_page + 1)
+
+    context = {
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
+        'page_list': page_list,
+        'data': bought_file_list
+    }
+
+    return render(request, "modals/bought_files_modal.html", context)
+
+@login_required
 def upload_page(request):
     vehicle_categories = VehicleCategory.objects.all()
     connection_tools = ConnectionTool.objects.all()
@@ -390,9 +427,10 @@ def shop_modal(request):
     data = []
 
     for p in page.object_list:
+        ownership_bool = FilePurchase.objects.filter(customer=request.user.customer, file_sale=p).count() > 0
         hash = {
             'file': p,
-            'ownership_bool': request.user.customer in p.owners.all()
+            'ownership_bool': ownership_bool
         }
 
         data.append(hash)
@@ -432,7 +470,8 @@ def purchase_file(request):
     file = FileSale.objects.get(id=file_id)
 
     if request.user.customer.credit_amount >= file.price:
-        file.owners.add(request.user.customer)
+        file_purchase = FilePurchase.objects.create(file_sale=file, customer=request.user.customer)
+        file_purchase.save()
         request.user.customer.credit_amount -= file.price
         request.user.customer.save()
         messages.success(request, "File bought successfully!")

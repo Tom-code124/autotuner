@@ -87,11 +87,23 @@ form {
   background-color: #1bc5bd;
 }
 
+#current-page-button-2 {
+  background-color: #1bc5bd;
+}
+
 #pagination-ul {
   list-style-type: none;
 }
 
+#pagination-ul-2 {
+  list-style-type: none;
+}
+
 .pagination-li {
+  margin: 5px;
+}
+
+.pagination-li-2 {
   margin: 5px;
 }
 

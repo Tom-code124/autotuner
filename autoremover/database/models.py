@@ -253,10 +253,20 @@ class FileSale(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     desc = models.TextField(max_length=400)
     price = models.IntegerField()
-    owners = models.ManyToManyField(Customer, blank=True)
     
     def __str__(self):
         return self.title
+    
+class FilePurchase(models.Model):
+    bought_at = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    file_sale = models.ForeignKey(FileSale, on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['customer', 'file_sale'], name='filepurchase_customer_filesale_unique_constraint')
+        ]
+
 
 class Transaction(models.Model):
     transaction_type_choices = [
