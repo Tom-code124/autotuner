@@ -84,7 +84,7 @@ class VehicleEngine(models.Model):
             if ftc[0] == self.fuel_type:
                 fuel_type = ftc[1]
 
-        return self.name + " - " + fuel_type + " - " + str(self.hp)
+        return self.name + " - " + fuel_type + " - " + str(self.hp) + " hp"
 
 class EcuBrand(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -103,7 +103,7 @@ class EcuModel(models.Model): # for ecu type
         ]
 
     def __str__(self):
-        return self.name
+        return str(self.brand) + " " + self.name
     
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
@@ -194,6 +194,20 @@ class FileRequest(models.Model):
             total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).price
 
         return total
+    
+    @property
+    def processes_string(self):
+        p_list = ""
+
+        for process in self.processes.all():
+            p_list += str(process) + ", "
+
+        return p_list[0:-2]
+    
+    @property
+    def status_long(self):
+        return next((y for x, y in self.status_choices if x == self.status), None)
+
     
 class Knowledge(models.Model):
     title = models.CharField(max_length=100, unique=True)

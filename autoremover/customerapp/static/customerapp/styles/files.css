@@ -100,3 +100,7 @@ form {
   margin: auto;
   align-items: center;
 }
+
+.files-div {
+  justify-content: space-around;
+}

@@ -166,14 +166,21 @@ def dashboard_page(request):
 
 @login_required
 def files_page(request):
+    params = request.GET
+    subpage = params.get("subpage")
+
+    boughts_open = False
+
+    if subpage == "bought_files":
+        boughts_open = True
+
     context = {
         'page_title': 'Your Files',
         'styling_files': ["files.css"],
         'script_files': ["files.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
-        'username': 'yunus',
-        'user_credit_amount': 13.52,
+        'boughts_open': boughts_open
     }
 
     return render(request, "pages/files.html", context)

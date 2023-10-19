@@ -1,7 +1,7 @@
 import { getAndInject } from "./modals.js";
 import { afterFunc } from "./requested_files_modal.js";
 
-getAndInject("requested_files", "page-content", undefined, afterFunc);
+getAndInject("requested_files", "requested-files-page", undefined, afterFunc);
 
 var searchInput = document.getElementById("req-files-search-input");
 var searchButton = document.getElementById("req-files-search-button");
@@ -16,7 +16,7 @@ function search(event) {
     url += "?keyword=" + encodeURIComponent(keyword);
   }
 
-  getAndInject(url, "page-content", undefined, afterFunc);
+  getAndInject(url, "requested-files-page", undefined, afterFunc);
 }
 
 searchButton.addEventListener("click", search);
