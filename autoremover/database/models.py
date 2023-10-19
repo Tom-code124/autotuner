@@ -207,7 +207,6 @@ class FileRequest(models.Model):
     @property
     def status_long(self):
         return next((y for x, y in self.status_choices if x == self.status), None)
-
     
 class Knowledge(models.Model):
     title = models.CharField(max_length=100, unique=True)
@@ -267,7 +266,6 @@ class FilePurchase(models.Model):
             models.UniqueConstraint(fields=['customer', 'file_sale'], name='filepurchase_customer_filesale_unique_constraint')
         ]
 
-
 class Transaction(models.Model):
     transaction_type_choices = [
         ("E", "Expense"),
@@ -275,10 +273,52 @@ class Transaction(models.Model):
     ]
     
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    category = models.CharField(max_length=1, choices=transaction_type_choices)
+    type = models.CharField(max_length=1, choices=transaction_type_choices)
     
     file_request = models.OneToOneField(FileRequest, on_delete=models.CASCADE, null=True, blank=True)
     file_bought = models.OneToOneField(FileSale, on_delete=models.CASCADE, null=True, blank=True)
 
     amount = models.IntegerField()
+
+    @property
+    def desc(self):
+        if self.type == "D":
+            return "You have deposited " + str(self.amount) + " credits."
+        
+        else:
+            if self.file_request is not None:
+                return 'You have requested: "' + self.file_request.processes_string + '" for ' + str(self.file_request.vehicle) + " " + str(self.file_request.engine) + "."
+            else:
+                return "You have bought: " + str(self.file_bought)
+            
+    @property
+    def category(self):
+        if self.type == "D":
+            return "Deposit"
+
+        else:
+            if self.file_request is not None:
+                return "File request"
+            
+            else:
+                return "File purchase"
+    
+    @property
+    def type_long(self):
+        return next((y for x, y in self.transaction_type_choices if x == self.type), None)
+
+            
+    def save(self, *args, **kwargs):
+        super(Transaction, self).save(*args, **kwargs)
+
+        if self.pk is not None:
+            if self.type == "D":
+                self.customer.credit_amount += self.amount
+                self.customer.save()
+
+            else:
+                self.customer.credit_amount -= self.amount
+                self.customer.save()

@@ -301,9 +301,9 @@ def upload_page(request):
 
             for p in process_selection:
                 file_request.processes.add(int(p))
-
-            request.user.customer.credit_amount -= total_price
-            request.user.customer.save()
+                
+            transaction = Transaction.objects.create(customer=request.user.customer, type="E", file_request=file_request, amount=file_request.total_price)
+            transaction.save()
 
             messages.success(request, "File successfully requested!")
             return redirect("/app/files")
@@ -472,8 +472,10 @@ def purchase_file(request):
     if request.user.customer.credit_amount >= file.price:
         file_purchase = FilePurchase.objects.create(file_sale=file, customer=request.user.customer)
         file_purchase.save()
-        request.user.customer.credit_amount -= file.price
-        request.user.customer.save()
+
+        transaction = Transaction.objects.create(customer=request.user.customer, type="E", file_bought=file_purchase.file_sale, amount=file_purchase.file_sale.price)
+        transaction.save()
+
         messages.success(request, "File bought successfully!")
         return redirect('/app/files?subpage=bought_files')
     else:
@@ -503,121 +505,32 @@ def expense_history_page(request):
 
 @login_required
 def expenses_modal(request):
-    expenses_data = [
-        {
-            'amount': '150',
-            'type': 'Expense',
-            'category': 'File process',
-            'desc': 'DPF off, Stage-1 tuning requested for Ford Focus 20118'
-        },
-        {
-            'amount': '50',
-            'type': 'Expense',
-            'category': 'File purchase',
-            'desc': 'Original file of Ford Focus 20147'
-        },
-        {
-            'amount': '100',
-            'type': 'Expense',
-            'category': 'File process',
-            'desc': 'EGR off requested for Ford Focus 20166'
-        },
-        {
-            'amount': '190',
-            'type': 'Deposit',
-            'category': 'Deposit',
-            'desc': 'You have deposited 900 credits'
-        },
-        {
-            'amount': '150',
-            'type': 'Expense',
-            'category': 'File process',
-            'desc': 'DPF off, Stage-1 tuning requested for Ford Focus 20115'
-        },
-        {
-            'amount': '50',
-            'type': 'Expense',
-            'category': 'File purchase',
-            'desc': 'Original file of Ford Focus 20144'
-        },
-        {
-            'amount': '100',
-            'type': 'Expense',
-            'category': 'File process',
-            'desc': 'EGR off requested for Ford Focus 20163'
-        },
-        {
-            'amount': '100',
-            'type': 'Deposit',
-            'category': 'Deposit',
-            'desc': 'You have deposited 100 credits'
-        },
-        {
-            'amount': '120',
-            'type': 'Expense',
-            'category': 'File process',
-            'desc': 'DPF off, Stage-1 tuning requested for Ford Focus 2012'
-        },
-        {
-            'amount': '51',
-            'type': 'Expense',
-            'category': 'File purchase',
-            'desc': 'Original file of Ford Focus 2011'
-        },
-        {
-            'amount': '110',
-            'type': 'Expense',
-            'category': 'File process',
-            'desc': 'EGR off requested for Ford Focus 2011'
-        },
-        {
-            'amount': '1000',
-            'type': 'Deposit',
-            'category': 'Deposit',
-            'desc': 'You have deposited 1000 credits'
-        },
-    ]
 
     params = request.GET
-    page = params.get('page')
+    page_param = params.get('page')
 
-    data_amount = len(expenses_data)
-    total_pages = math.ceil(data_amount / 10)
+    expenses_data = Transaction.objects.filter(customer=request.user.customer).order_by("-updated_at")
 
-    if page:
-        page = int(page)
-        if page > total_pages:
-            page = total_pages
-        
-        if page < 1:
-            page = 1
-        
+    if page_param:
+        pagenum = int(page_param)
     else:
-        page = 1
+        pagenum = 1
 
-    page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
-
-    start_index = 10 * (page - 1)
-    end_index = min(10 * page - 1, data_amount - 1)
-    ret_list = expenses_data[start_index : end_index + 1]
-
-    if page_list:
-        any_previous_page = page > page_list[0]
-        any_following_page = page < page_list[-1]
-    else:
-        any_previous_page = False
-        any_following_page = False
-        page_list = [1]
-
+    paginator = Paginator(expenses_data, 10)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = range(start_page, end_page + 1)
+        
     context = {
-        'data_amount': data_amount,
-        'start_index': start_index + 1,
-        'end_index': end_index + 1,
-        'current_page': page,
-        'previous_page_disabled': not any_previous_page,
-        'following_page_disabled': not any_following_page,
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
         'page_list': page_list,
-        'data': ret_list
+        'data': page.object_list
     }
 
     return render(request, "modals/expenses_modal.html", context)
