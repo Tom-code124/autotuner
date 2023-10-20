@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Customer(models.Model):
     phone_regex_validator = RegexValidator(regex=r'^[0-9]{7,13}$', message="Up to 15 digits allowed for phone number.")
@@ -42,8 +42,8 @@ class VehicleBrand(models.Model):
     
 class VehicleModel(models.Model):
     name = models.CharField(max_length=50)
-    category = models.ForeignKey(VehicleCategory, on_delete=models.PROTECT)
     brand = models.ForeignKey(VehicleBrand, on_delete=models.CASCADE)
+    category = models.ForeignKey(VehicleCategory, on_delete=models.PROTECT)
 
     class Meta:
         constraints = [
@@ -52,33 +52,30 @@ class VehicleModel(models.Model):
 
     def __str__(self):
         return str(self.brand) + " " + self.name
-
-class Vehicle(models.Model):
+    
+class VehicleYear(models.Model):
     model = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
     year = models.IntegerField()
-
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['model', 'year'], name='vehicle_model_year_constraint')
+            models.UniqueConstraint(fields=['model', 'year'], name='vehicleyear_model_year_constraint')
         ]
 
     def __str__(self):
         return str(self.model) + " " + str(self.year)
-
-class VehicleEngine(models.Model):
+    
+class VehicleVersion(models.Model):
     fuel_type_choices = [
         ("P", "Petrol"),
         ("D", "Diesel")
     ]
     
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    hp = models.IntegerField()
     fuel_type = models.CharField(max_length=1, choices=fuel_type_choices)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['vehicle', 'name', 'hp'], name='vehicleengine_vehicle_name_hp_unique_constraint')
+            models.UniqueConstraint(fields=['vehicle', 'name', 'hp'], name='vehicleversion_vehicle_name_hp_unique_constraint')
         ]
 
     def __str__(self):
@@ -86,8 +83,8 @@ class VehicleEngine(models.Model):
             if ftc[0] == self.fuel_type:
                 fuel_type = ftc[1]
 
-        return self.name + " - " + fuel_type + " - " + str(self.hp) + " hp"
-
+        return self.name + " - " + fuel_type
+    
 class EcuBrand(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -97,7 +94,6 @@ class EcuBrand(models.Model):
 class EcuModel(models.Model): # for ecu type
     name = models.CharField(max_length=50)
     brand = models.ForeignKey(EcuBrand, on_delete=models.CASCADE)
-    vehicles = models.ManyToManyField(Vehicle, blank=True)
 
     class Meta:
         constraints = [
@@ -106,6 +102,35 @@ class EcuModel(models.Model): # for ecu type
 
     def __str__(self):
         return str(self.brand) + " " + self.name
+    
+class Vehicle(models.Model):
+    vehicle_year = models.ForeignKey(VehicleYear, on_delete=models.CASCADE)
+    version = models.ForeignKey(VehicleVersion, on_delete=models.PROTECT)
+    ecu_model = models.ForeignKey(EcuModel, on_delete=models.PROTECT) # can it be blank?
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['vehicle_year', 'version', 'ecu_model'], name='vehicle_vehicleyear_version_ecumodel_unique_constraint')
+        ]
+    
+    @classmethod
+    def get_version_option_list(cls, **kwargs):
+        ret_list = []
+        for instance in cls.objects.filter(kwargs):
+            if instance.version not in ret_list:
+                ret_list.append(instance.version)
+
+        return ret_list
+    
+    @classmethod
+    def get_ecu_model_option_list(cls, **kwargs):
+        ret_list = []
+        for instance in cls.objects.filter(kwargs):
+            if instance.version not in ret_list:
+                ret_list.append(instance.ecu_model)
+                
+        return ret_list
+
     
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
@@ -132,9 +157,9 @@ class FileProcess(models.Model):
         return self.name
 
 class ProcessPricing(models.Model):
-    process = models.ForeignKey(FileProcess, on_delete=models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
-    price = models.IntegerField()
+    process = models.ForeignKey(FileProcess, on_delete=models.CASCADE)
+    price = models.PositiveIntegerField()
 
     class Meta:
         constraints = [
@@ -167,16 +192,12 @@ class FileRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
-    engine = models.ForeignKey(VehicleEngine, on_delete=models.PROTECT)
-    ecu_model = models.ForeignKey(EcuModel, on_delete=models.PROTECT, null=True, blank=True)
-    manual_provided_ecu = models.CharField(max_length=50, null=True, blank=True)
+    tool = models.ForeignKey(ConnectionTool, on_delete=models.PROTECT)
+    processes = models.ManyToManyField(FileProcess)
 
     file_type = models.CharField(max_length=1, choices=file_type_choices)
     transmission = models.CharField(max_length=1, choices=transmissin_choices)
-    tool = models.ForeignKey(ConnectionTool, on_delete=models.PROTECT)
     tool_type = models.CharField(max_length=1, choices=tool_type_choices)
-    
-    processes = models.ManyToManyField(FileProcess)
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     customer_description = models.TextField(max_length=400)
@@ -240,6 +261,10 @@ class KnowledgeBullet(models.Model):
             models.UniqueConstraint(fields=['content', 'part'], name='knowledgebullet_content_part_unique_constraint')
         ]
 
+class KnowledgeAd(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    announcement = models.CharField(max_length=100)
+
 class DtcInfo(models.Model):
     code = models.CharField(max_length=7)
     desc = models.TextField(max_length=1000)
@@ -251,9 +276,9 @@ class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=60, unique=True)
     file = models.FileField(upload_to="uploads/for_sale/", unique=True)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
-    desc = models.TextField(max_length=400)
-    price = models.IntegerField()
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT) # is it?
+    desc = models.TextField(max_length=600)
+    price = models.PositiveIntegerField()
     
     def __str__(self):
         return self.title
@@ -292,7 +317,7 @@ class Transaction(models.Model):
         
         else:
             if self.file_request is not None:
-                return 'You have requested: "' + self.file_request.processes_string + '" for ' + str(self.file_request.vehicle) + " " + str(self.file_request.engine) + "."
+                return 'You have requested: "' + self.file_request.processes_string + '" for ' + str(self.file_request.vehicle) + "."
             else:
                 return "You have bought: " + str(self.file_bought)
             
@@ -333,6 +358,81 @@ class Transaction(models.Model):
                 self.customer.credit_amount -= self.amount
                 self.customer.save()
 
+class FileService(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
+    manual_status = models.BooleanField()
+    is_scheduled = models.BooleanField()
+
+    @property
+    def status(self):
+        if self.is_scheduled:
+            now = datetime.now()
+            for schedule in self.file_service_schedule_set.all():
+                if now.strftime("%a") == schedule.day and int(now.strftime("%H")) >= schedule.starting_hour and int(now.strftime("%H")) < schedule.ending_hour:
+                    return "ONLINE"
+        else:
+            if self.is_online:
+                return "ONLINE"
+        
+        return "OFFLINE"
+
+    @classmethod
+    def system_status(cls):
+        for instance in cls.objects.all():
+            if instance.status == "ONLINE":
+                return "ONLINE"
+            
+        return "OFFLINE"
+    
+    @classmethod
+    def next_turn(cls): # REWRITE the second part of this method since tomorrow does not have to be a workday!
+        today = datetime.now()
+        today_short = today.strftime("%a")
+        today_hour = int(today.strftime("%H"))
+
+        if cls.system_status() == "ONLINE":
+            last = -1
+            for instance in cls.objects.all():
+                if instance.is_scheduled and instance.status == "ONLINE":
+                    schedule = FileServiceSchedule.objects.filter(day=today_short, file_service=instance).afirst()
+                    if schedule:
+                        if schedule.ending_hour > last:
+                            last = schedule.ending_hour
+            
+            if last == -1:
+                return today.replace(hour=23, minute=59)
+            else:
+                return today.replace(hour=last, minute=0)
+        
+        else:
+            first = 26
+
+            for instance in cls.objects.all():
+                if instance.is_scheduled:
+                    schedule = FileServiceSchedule.objects.filter(day=today_short, file_service=instance).afirst()
+                    if schedule:
+                        if schedule.starting_hour > today_hour and schedule.starting_hour < first:
+                            first = schedule.starting_hour
+            
+            if first != 26:
+                return today.replace(hour=first, minute=0)
+            
+            tomorrow = today + timedelta(1)
+            tomorrow_short = tomorrow.strftime("%a")
+
+            for instance in cls.objects.all():
+                if instance.is_scheduled:
+                    schedule = FileServiceSchedule.objects.filter(day=tomorrow_short, file_service=instance).afirst()
+                    if schedule:
+                        if schedule.starting_hour < first:
+                            first = schedule.starting_hour
+            
+            if first != 26:
+                return tomorrow.replace(hour=first, minute=0)
+            else:
+                pass
+
+
 class FileServiceSchedule(models.Model):
     day_choices = [
         ("Mon", "Monday"),
@@ -345,30 +445,28 @@ class FileServiceSchedule(models.Model):
         ]
 
     day = models.CharField(max_length=3, choices=day_choices)
-    starting_hour = models.IntegerField()
-    duration = models.IntegerField()
+    starting_hour = models.PositiveIntegerField()
+    ending_hour = models.PositiveIntegerField()
+    file_service = models.ForeignKey(FileService, on_delete=models.CASCADE)
 
-    @property
-    def ending_hour(self):
-        return self.starting_hour + self.duration
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_starting_hour_range",
+                check=models.Q(starting_hour__range=(0, 24)),
+            ),
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_ending_hour_range",
+                check=models.Q(ending_hour__range=(0, 24)),
+            ),
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_endinghour_greater_than_startinghour",
+                check=models.Q(ending_hour__gt=models.F("starting_hour")),
+            ),
+            models.UniqueConstraint(
+                fields=['file_service', 'day'],
+                name='file_service_schedule_day_fileservice_unique_constraint'
+            )
+        ]
 
-class FileServiceStatus(models.Model):
-    is_online = models.BooleanField()
-    is_scheduled = models.BooleanField()
-
-    @property
-    def status(self):
-        if self.is_scheduled:
-            now = datetime.now()
-            for schedule in FileServiceSchedule.objects.all():
-                if now.strftime("%a") == schedule.day and int(now.strftime("%H")) >= schedule.starting_hour and int(now.strftime("%H")) < schedule.ending_hour:
-                    return "ONLINE"
-        else:
-            if self.is_online:
-                return "ONLINE"
-        
-        return "OFFLINE"
     
-class KnowledgeAd(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    announcement = models.CharField(max_length=100)
