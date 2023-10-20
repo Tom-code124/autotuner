@@ -130,7 +130,26 @@ class Vehicle(models.Model):
                 ret_list.append(instance.ecu_model)
                 
         return ret_list
+    
+    def __str__(self):
+        return str(self.vehicle_year) + " - " + str(self.version) + " - " + str(self.ecu_model)  
 
+class ConnectionTool(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    
+    def __str__(self):
+        return self.name
+    
+class VehiclePotential(models.Model):
+    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE)
+    old_hp = models.PositiveIntegerField()
+    new_hp = models.PositiveIntegerField()
+    old_nm = models.PositiveIntegerField()
+    new_nm = models.PositiveIntegerField()
+    known_reading_methods = models.ManyToManyField(ConnectionTool)
+
+    def __str__(self):
+        return str(self.vehicle) + " potential"
     
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
@@ -143,12 +162,6 @@ class Ecu(models.Model):
     
     def __str__(self):
         return self.number
-
-class ConnectionTool(models.Model):
-    name = models.CharField(max_length=30, unique=True)
-    
-    def __str__(self):
-        return self.name
 
 class FileProcess(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -270,18 +283,18 @@ class DtcInfo(models.Model):
     desc = models.TextField(max_length=1000)
 
     def __str__(self):
-        return self.code
+        return self.code + " dtc"
 
 class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=60, unique=True)
     file = models.FileField(upload_to="uploads/for_sale/", unique=True)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT) # is it?
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT) # is it vehicle?
     desc = models.TextField(max_length=600)
     price = models.PositiveIntegerField()
     
     def __str__(self):
-        return self.title
+        return self.title + " filesale"
     
 class FilePurchase(models.Model):
     bought_at = models.DateTimeField(auto_now_add=True)
