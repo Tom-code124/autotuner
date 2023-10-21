@@ -42,7 +42,7 @@ class VehicleBrand(models.Model):
         return self.name
     
 class VehicleModel(models.Model):
-    name = models.CharField(max_length=20) # check max length
+    name = models.CharField(max_length=40)
     brand = models.ForeignKey(VehicleBrand, on_delete=models.CASCADE)
     category = models.ForeignKey(VehicleCategory, on_delete=models.PROTECT)
 
@@ -71,7 +71,7 @@ class VehicleVersion(models.Model):
         ("D", "Diesel")
     ]
     
-    name = models.CharField(max_length=50) # check max length
+    name = models.CharField(max_length=60)
     fuel_type = models.CharField(max_length=1, choices=fuel_type_choices)
 
     class Meta:
@@ -87,13 +87,13 @@ class VehicleVersion(models.Model):
         return self.name + " - " + fuel_type
     
 class EcuBrand(models.Model):
-    name = models.CharField(max_length=20, unique=True) # check max length
+    name = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.name
     
 class EcuModel(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=30)
     brand = models.ForeignKey(EcuBrand, on_delete=models.CASCADE)
 
     class Meta:
@@ -260,7 +260,7 @@ class FileRequest(models.Model):
             
 class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=60, unique=True) # check max length
+    title = models.CharField(max_length=80, unique=True)
     file = models.FileField(upload_to="uploads/for_sale/", unique=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     desc = models.TextField(max_length=600)
