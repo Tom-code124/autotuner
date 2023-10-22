@@ -93,7 +93,7 @@ class EcuBrand(models.Model):
         return self.name
     
 class EcuModel(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=30)
     brand = models.ForeignKey(EcuBrand, on_delete=models.CASCADE)
 
     class Meta:
@@ -155,7 +155,7 @@ class VehiclePotential(models.Model):
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
     number = models.CharField(max_length=10)
-    carmanufacturers = models.CharField(max_length=130)
+    carmanufacturers = models.CharField(max_length=130, null=True, blank=True)
 
     class Meta:
         constraints = [
