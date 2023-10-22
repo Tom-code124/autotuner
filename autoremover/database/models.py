@@ -76,7 +76,7 @@ class VehicleVersion(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['vehicle', 'name', 'hp'], name='vehicleversion_vehicle_name_hp_unique_constraint')
+            models.UniqueConstraint(fields=['name', 'fuel_type'], name='vehicleversion_name_fueltype_unique_constraint')
         ]
 
     def __str__(self):
@@ -93,7 +93,7 @@ class EcuBrand(models.Model):
         return self.name
     
 class EcuModel(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=20)
     brand = models.ForeignKey(EcuBrand, on_delete=models.CASCADE)
 
     class Meta:
@@ -154,7 +154,8 @@ class VehiclePotential(models.Model):
     
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
-    number = models.CharField(max_length=20) # check max length
+    number = models.CharField(max_length=10)
+    carmanufacturers = models.CharField(max_length=130)
 
     class Meta:
         constraints = [
@@ -262,7 +263,6 @@ class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=80, unique=True)
     file = models.FileField(upload_to="uploads/for_sale/", unique=True)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.PROTECT)
     desc = models.TextField(max_length=600)
     price = models.PositiveIntegerField()
     
