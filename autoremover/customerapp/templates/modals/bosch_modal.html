@@ -1,4 +1,4 @@
-{% if results %}
+{% if data %}
 
 <table class="table">
   <thead>
@@ -9,17 +9,13 @@
     </tr>
   </thead>
   <tbody>
-    {% if results.search_data %}
-    {% for ecu in results.search_data %}
+    {% for ecu in data %}
     <tr class="table-data-row">
-      <td><span class="ecu-type-span">{{ ecu.type }}</span></td>
+      <td><span class="ecu-type-span">{{ ecu.model.name }}</span></td>
       <td>{{ ecu.number }}</td>
-      <td>{{ ecu.car_manufacturer }}</td>
+      <td>{{ ecu.carmanufacturers }}</td>
     </tr>
     {% endfor %}
-    {% else %}
-    <div>There is no such ECU, try again</div>
-    {% endif %}
   </tbody>
 </table>
 <div class="row apart-children">
@@ -28,27 +24,27 @@
       <button
         id="previous-page-button"
         class="pagination-button"
-        {% if results.previous_page_disabled %}
+        {% if previous_page_disabled %}
         disabled
         {% endif %}
       >
         Previous page
       </button>
     </li>
-    {% for page in results.page_list %} 
-    <li {% if page == results.current_page %} id="current-page-li" {% endif %} class="pagination-li">
+    {% for page in page_list %} 
+    <li {% if page == current_page %} id="current-page-li" {% endif %} class="pagination-li">
         <button 
-        {% if page == results.current_page %} id="current-page-button" {% endif %}
+        {% if page == current_page %} id="current-page-button" {% endif %}
         class="pagination-button">
           {{ page }}
         </button>
     </li>
-      {% endfor %}
+     {% endfor %}
     <li class="pagination-li">
       <button
         id="following-page-button"
         class="pagination-button"
-        {% if results.following_page_disabled %}
+        {% if following_page_disabled %}
         disabled
         {% endif %}
       >
@@ -56,7 +52,7 @@
       </button>
     </li>
   </ul>
-  <span>Showing {{ results.start_index }} - {{ results.end_index }} of {{ results.data_amount }}</span>
+  <span>Showing {{ start_index }} - {{ end_index }} of {{ data_amount }}</span>
 </div>
   
 {% else %}
