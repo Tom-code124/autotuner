@@ -260,6 +260,8 @@ def upload_page(request):
     vehicle_categories = VehicleCategory.objects.all()
     connection_tools = ConnectionTool.objects.all()
 
+    tax_percentage = SystemSetting.objects.all()[0].tax_percentage
+
     if request.method == "POST":
         process_selection = request.POST.getlist("process_selection")
         vehicle_year_id = int(request.POST.get("vehicle_year"))
@@ -271,6 +273,8 @@ def upload_page(request):
         for p in process_selection:
             pricing = ProcessPricing.objects.get(vehicle=vehicle, process_id=int(p))
             total_price += pricing.price
+        
+        total_price *= 1 + (tax_percentage / 100)
         
         if request.user.customer.credit_amount >= total_price:
             original_file = request.FILES.get("original_file")
@@ -313,7 +317,7 @@ def upload_page(request):
         'file_service_until': datetime.now(),
         'vehicle_category_list': vehicle_categories,
         'connection_tool_list': connection_tools,
-        'tax_percentage': 20
+        'tax_percentage': tax_percentage
     }
 
     return render(request, "pages/upload.html", context)
