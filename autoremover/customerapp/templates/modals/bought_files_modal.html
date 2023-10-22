@@ -12,7 +12,6 @@
   <thead>
     <tr>
       <th>Title</th>
-      <th>Vehicle</th>
       <th>Bought at</th>
       <th>File</th>
       <th>Description</th>
@@ -22,7 +21,6 @@
       {% for purchase in data %}
       <tr>
       <td>{{ purchase.file_sale.title }}</td>
-      <td>{{ purchase.file_sale.vehicle }}</td>
       <td>{{ purchase.bought_at }}</td>
       <td>
         <a href="{{ purchase.file_sale.file }}">

@@ -1,14 +1,15 @@
-{% extends 'modal_layout.html' %} {% block modal_layout %} {% load static %}
-<p>for {{ file.vehicle }}</p>
+{% extends "modal_layout.html" %}
+{% block modal_layout %}
+{% load static %}
 <p>{{ file.desc }}</p>
 <form
-  method="POST"
+  method="post"
   enctype="multipart/form-data"
-  action="/app/shop/purchase_file/"
+  action="{% url "purchase_file" %}"
 >
   {% csrf_token %}
   <button type="submit" name="file_id" value="{{file.id}}">
     Buy: {{ file.price }} credits
   </button>
 </form>
-{% endblock %}
+{% endblock modal_layout %}

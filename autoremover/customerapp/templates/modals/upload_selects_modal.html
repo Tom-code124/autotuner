@@ -1,8 +1,7 @@
-<option value="null" disabled selected hidden>Choose a {{ data_type }}</option>
+<option value="null" disabled selected hidden>
+  Choose a {{ data_type }}
+</option>
+
 {% for d in data %}
 <option value="{{ d.id }}">{{ d }}</option>
-{% endfor %} {% if data_type == 'ecu type' %}
-<option id="ecu-type-not-listed-option" value="not-listed">
-  Not in the list (please write below)
-</option>
-{% endif %}
+{% endfor %}

@@ -16,31 +16,25 @@ function loadNext(event) {
   var modelFields = {};
 
   for (let i = 0; i < nextIndex; i++) {
-    modelFields[fields[i].id] = fields[i].value;
+    modelFields[fields[i].name] = fields[i].value;
   }
 
-  if (event.currentTarget.value != "not-listed") {
-    if (nextIndex == 6) {
-      fields[nextIndex].disabled = true;
-    } else {
-      var url = "get_vehicle?requested=" + nextId;
-      Object.keys(modelFields).forEach((key) => {
-        url += "&" + key + "=" + modelFields[key];
-      });
+  var nextName = fields[nextIndex].name;
+  var url = "get_vehicle?requested=" + nextName;
+  Object.keys(modelFields).forEach((key) => {
+    url += "&" + key + "=" + modelFields[key];
+  });
 
-      getAndInject(url, nextId, undefined, undefined);
-      document.getElementById(nextId).disabled = false;
+  getAndInject(url, nextId, undefined, undefined);
+  document.getElementById(nextId).disabled = false;
 
-      for (let i = nextIndex + 1; i < 7; i++) {
-        fields[i].disabled = true;
-      }
-    }
-  } else {
-    fields[nextIndex].disabled = false;
+  for (let i = nextIndex + 1; i < 6; i++) {
+    fields[i].value = null;
+    fields[i].disabled = true;
   }
 }
 
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 5; i++) {
   fields[i].addEventListener("change", loadNext);
 }
 
@@ -73,7 +67,9 @@ var firstFormFields = document
   .getElementById("select-vehicle-card")
   .querySelectorAll("input, select");
 
-var oldVehicleId = -1;
+var oldVehicleYearId = -1;
+var oldVehicleVersionId = -1;
+var oldEcuModelId = -1;
 
 function proceedToOptions(event) {
   var readyToProceed = true;
@@ -82,40 +78,35 @@ function proceedToOptions(event) {
     if (firstFormFields[i].value === "null") {
       readyToProceed = false;
     }
+  }
 
-    var ecuTypeSelect = document.getElementById("ecu-type-select-6");
-    var ecuTypeInput = document.getElementById("manual-ecu-type-input");
+  var fileInput = document.getElementById("file-input");
 
-    if (
-      ecuTypeSelect.value == "not-listed" &&
-      ecuTypeInput.value.trim().length == 0
-    ) {
-      readyToProceed = false;
-    }
+  if (fileInput.value == "") {
+    readyToProceed = false;
+  }
 
-    var fileInput = document.getElementById("file-input");
+  var proceedingError = document.getElementById("proceeding-error");
 
-    if (fileInput.value == "") {
-      readyToProceed = false;
-    }
+  if (readyToProceed) {
+    proceedingError.style.display = "none";
 
-    var proceedingError = document.getElementById("proceeding-error");
+    var vehicleYearId = document.getElementById("vehicle-year-select-4").value;
+    var vehicleVersionId = document.getElementById("vehicle-version-select-5").value;
+    var ecuModelId = document.getElementById("ecu-type-select-6").value;
 
-    if (readyToProceed) {
-      proceedingError.style.display = "none";
+    if (vehicleYearId != oldVehicleYearId || vehicleVersionId != oldVehicleVersionId || ecuModelId != oldEcuModelId) {
+      var url = "get_process_options?vehicle_year_id=" + vehicleYearId + "&vehicle_version_id=" + vehicleVersionId + "&ecu_model_id=" + ecuModelId;
+      getAndInject(url, "price-options-form", undefined, openOptionsCard);
 
-      var vehicleId = document.getElementById("vehicle-year-select-4").value;
-
-      if (vehicleId != oldVehicleId) {
-        var url = "get_process_options?vehicle_id=" + vehicleId;
-        getAndInject(url, "price-options-form", undefined, openOptionsCard);
-        oldVehicleId = vehicleId;
-      } else {
-        openOptionsCard();
-      }
+      oldVehicleYearId = vehicleYearId;
+      oldVehicleVersionId = vehicleVersionId;
+      oldEcuModelId = ecuModelId;
     } else {
-      proceedingError.style.display = "block";
+      openOptionsCard();
     }
+  } else {
+    proceedingError.style.display = "block";
   }
 }
 
