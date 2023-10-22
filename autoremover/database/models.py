@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil import relativedelta
 
 class Customer(models.Model):
@@ -13,7 +13,7 @@ class Customer(models.Model):
     company_name = models.CharField(max_length=200)
     phone_zone = models.CharField(choices=phone_zone_choices, default='+90')
     phone_number = models.CharField(validators=[phone_regex_validator], max_length=16)
-    credit_amount = models.IntegerField(default=0)
+    credit_amount = models.FloatField(default=0)
 
     class Meta:
         constraints = [
@@ -183,7 +183,7 @@ class FileProcess(models.Model):
 class ProcessPricing(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     process = models.ForeignKey(FileProcess, on_delete=models.CASCADE)
-    price = models.PositiveIntegerField()
+    price = models.FloatField()
 
     class Meta:
         constraints = [
@@ -240,6 +240,9 @@ class FileRequest(models.Model):
         for process in self.processes.all():
             total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).price
 
+        tax_percentage = SystemSetting.objects.all()[0].tax_percentage
+        total *= 1 + (tax_percentage / 100)
+
         return total
     
     @property
@@ -273,7 +276,7 @@ class FileSale(models.Model):
     title = models.CharField(max_length=80, unique=True)
     file = models.FileField(upload_to="uploads/for_sale/", unique=True)
     desc = models.TextField(max_length=600)
-    price = models.PositiveIntegerField()
+    price = models.FloatField()
     
     def __str__(self):
         return self.title + " filesale"
@@ -303,7 +306,7 @@ class Transaction(models.Model):
     file_request = models.OneToOneField(FileRequest, on_delete=models.CASCADE, null=True, blank=True)
     file_bought = models.OneToOneField(FileSale, on_delete=models.CASCADE, null=True, blank=True)
 
-    amount = models.PositiveIntegerField()
+    amount = models.FloatField()
 
     @property
     def desc(self):
@@ -491,10 +494,6 @@ class FileService(models.Model):
     
     @classmethod
     def next_turn(cls):
-        today = datetime.now()
-        today_short = today.strftime("%a")
-        today_hour = int(today.strftime("%H"))
-
         if cls.system_status() == "ONLINE":
             l = []
             for instance in cls.objects.all():
@@ -558,4 +557,5 @@ class FileServiceSchedule(models.Model):
             )
         ]
 
-    
+class SystemSetting(models.Model):
+    tax_percentage = models.FloatField()
