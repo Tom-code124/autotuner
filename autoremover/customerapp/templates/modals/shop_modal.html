@@ -1,8 +1,7 @@
 <div id="products">
   {% for file in data %}
-  <div id="product-card-{{file.file.id}}" class="product-card">
+  <div id="product-card-{{ file.file.id }}" class="product-card">
     <h4>{{ file.file.title }}</h4>
-    <p>for {{ file.file.vehicle }}</p>
     {% if file.ownership_bool %}
     <button disabled>You have it</button>
       {% else %}

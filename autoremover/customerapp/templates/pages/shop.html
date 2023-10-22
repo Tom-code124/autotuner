@@ -1,8 +1,10 @@
 {% extends "layout.html" %} {% block layout %}
-<p></p>
-{% if messages %} {% for message in messages %}
-<p>{{ message }}</p>
-{% endfor %} {% endif %}
+
+{% if messages %}
+  {% for message in messages %}
+    <p>{{ message }}</p>
+  {% endfor %}
+{% endif %}
 <div id="container" class="column">
   <form class="row">
     <div id="search-box" class="row">
@@ -13,4 +15,4 @@
   <div id="card-body" class="column"></div>
 </div>
 
-{% endblock %}
+{% endblock layout %}

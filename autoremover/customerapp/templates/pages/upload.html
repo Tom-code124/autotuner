@@ -17,9 +17,9 @@
     {% endfor %} {% endif %}
     <form
       id="file-request-form"
-      method="POST"
+      method="post"
       enctype="multipart/form-data"
-      action="/app/upload/"
+      action="{% url 'upload' %}"
     >
       {% csrf_token %}
       <div id="select-vehicle-card" class="column">
@@ -64,15 +64,15 @@
               </option>
             </select>
 
-            <select id="vehicle-year-select-4" disabled name="vehicle">
+            <select id="vehicle-year-select-4" disabled name="vehicle_year">
               <option value="null" disabled selected hidden>
                 Choose a vehicle year
               </option>
             </select>
 
-            <select id="vehicle-engine-select-5" disabled name="vehicle_engine">
+            <select id="vehicle-version-select-5" disabled name="vehicle_version">
               <option value="null" disabled selected hidden>
-                Choose a vehicle engine
+                Choose a vehicle version
               </option>
             </select>
 
@@ -80,19 +80,7 @@
               <option value="null" disabled selected hidden>
                 Choose an ecu type
               </option>
-
-              <option id="ecu-type-not-listed-option" value="not-listed">
-                Not in the list (please write below)
-              </option>
             </select>
-
-            <input
-              id="manual-ecu-type-input"
-              type="text"
-              placeholder="Write your ecu type here if it's not listed'"
-              disabled
-              name="manual_ecu_type"
-            />
 
             <select id="transmission-type-select" name="transmission_type">
               <option value="null" disabled selected hidden>
@@ -164,4 +152,4 @@
   </div>
 </div>
 
-{% endblock %}
+{% endblock layout %}

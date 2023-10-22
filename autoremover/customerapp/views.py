@@ -262,19 +262,19 @@ def upload_page(request):
 
     if request.method == "POST":
         process_selection = request.POST.getlist("process_selection")
-        vehicle_id = int(request.POST.get("vehicle"))
+        vehicle_year_id = int(request.POST.get("vehicle_year"))
+        version_id = int(request.POST.get("vehicle_version"))
+        ecu_model_id = int(request.POST.get("ecu_type"))
+        vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
 
         total_price = 0
         for p in process_selection:
-            pricing = ProcessPricing.objects.get(vehicle_id=vehicle_id, process_id=int(p))
+            pricing = ProcessPricing.objects.get(vehicle=vehicle, process_id=int(p))
             total_price += pricing.price
         
         if request.user.customer.credit_amount >= total_price:
             original_file = request.FILES.get("original_file")
             file_type = request.POST.get("file_type")
-            vehicle_engine_id = int(request.POST.get("vehicle_engine"))
-            ecu_model_id = request.POST.get("ecu_type")
-            manual_ecu_type = request.POST.get("manual_ecu_type")
             transmission_type = request.POST.get("transmission_type")
             tool_id = int(request.POST.get("tool"))
             tool_type = request.POST.get("tool_type")
@@ -282,8 +282,7 @@ def upload_page(request):
 
             file_request = FileRequest.objects.create(
                 customer=request.user.customer,
-                vehicle_id=vehicle_id,
-                engine_id=vehicle_engine_id,
+                vehicle=vehicle,
                 file_type=file_type,
                 transmission=transmission_type,
                 tool_id=tool_id,
@@ -291,11 +290,6 @@ def upload_page(request):
                 customer_description=customer_description,
                 original_file=original_file
                 )
-            
-            if ecu_model_id == "null":
-                file_request.manual_provided_ecu = manual_ecu_type
-            else:
-                file_request.ecu_model = EcuModel.objects.get(id=int(ecu_model_id))
 
             file_request.save()
 
@@ -330,41 +324,38 @@ def vehicle_select_modal(request):
 
     requested = params.get('requested')
      
-    if requested == 'vehicle-brand-select-2':
-        category_id = params.get('vehicle-category-select-1')
-        category = VehicleCategory.objects.get(id=category_id) 
-        vehicle_model_ids = VehicleModel.objects.filter(category=category).values('brand_id')
+    if requested == 'vehicle_brand':
+        category_id = int(params.get('vehicle_category'))
+        vehicle_model_ids = VehicleModel.objects.filter(category_id=category_id).values('brand_id')
         vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
         data_type = 'vehicle brand'
         data = vehicle_brands
 
-    elif requested == 'vehicle-model-select-3':
-        category_id = params.get('vehicle-category-select-1')
-        brand_id = params.get('vehicle-brand-select-2')
-        category = VehicleCategory.objects.get(id=category_id)
-        brand = VehicleBrand.objects.get(id=brand_id)
-        vehicle_models = VehicleModel.objects.filter(category=category, brand=brand)
+    elif requested == 'vehicle_model':
+        category_id = int(params.get('vehicle_category'))
+        brand_id = int(params.get('vehicle_brand'))
+        vehicle_models = VehicleModel.objects.filter(category_id=category_id, brand_id=brand_id)
         data_type = 'vehicle model'
         data = vehicle_models
     
-    elif requested == 'vehicle-year-select-4':
-        model_id = params.get('vehicle-model-select-3')
-        model = VehicleModel.objects.get(id=model_id)
-        years = Vehicle.objects.filter(model=model)
+    elif requested == 'vehicle_year':
+        model_id = int(params.get('vehicle_model'))
+        years = VehicleYear.objects.filter(model_id=model_id)
         data_type = 'vehicle year'
         data = years
 
-    elif requested == 'vehicle-engine-select-5':
-        vehicle_id = params.get('vehicle-year-select-4')
-        vehicle = Vehicle.objects.get(id=vehicle_id)
-        engines = VehicleEngine.objects.filter(vehicle=vehicle)
-        data_type = 'vehicle engine'
+    elif requested == 'vehicle_version':
+        vehicle_year_id = int(params.get('vehicle_year'))
+        vehicle_version_ids = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id).values('version_id')
+        engines = VehicleVersion.objects.filter(id__in=vehicle_version_ids)
+        data_type = 'vehicle version'
         data = engines
 
-    elif requested == 'ecu-type-select-6':
-        vehicle_id = params.get('vehicle-year-select-4')
-        vehicle = Vehicle.objects.get(id=vehicle_id)
-        ecu_models = EcuModel.objects.filter(vehicles__id=vehicle_id)
+    elif requested == 'ecu_type':
+        vehicle_year_id = int(params.get('vehicle_year'))
+        version_id = int(params.get('vehicle_version'))
+        ecu_model_ids = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id, version_id=version_id).values('ecu_model_id')
+        ecu_models = EcuModel.objects.filter(id__in=ecu_model_ids)
         data_type = 'ecu type'
         data = ecu_models
 
@@ -379,8 +370,13 @@ def vehicle_select_modal(request):
 def process_options_modal(request):
     params = request.GET
 
-    vehicle_id = params.get("vehicle_id")
-    pricing_options = ProcessPricing.objects.filter(vehicle_id=vehicle_id)
+    vehicle_year_id = int(params.get("vehicle_year_id"))
+    version_id = int(params.get("vehicle_version_id"))
+    ecu_model_id = int(params.get("ecu_model_id"))
+
+    vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
+    
+    pricing_options = ProcessPricing.objects.filter(vehicle=vehicle)
 
     context = {
         'options': pricing_options
@@ -594,135 +590,168 @@ def bosch_search_page(request):
         'script_files': ["bosch_search.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
-        'username': 'yunus',
-        'user_credit_amount': 13.52
     }
 
     return render(request, "pages/bosch_search.html", context)
 
 @login_required
 def bosch_modal(request):
-    ecu_list = [
-        {
-            'type': 'MED9.5.10',
-            'number': '0261S021861',
-            'car_manufacturer': 'VW'
-        },
-        {
-            'type': 'MED9.5.10',
-            'number': '0261S021372',
-            'car_manufacturer': 'AUDI'
-        },
-        {
-            'type': 'MED9.1',
-            'number': '0261S021863',
-            'car_manufacturer': 'BMW'
-        },
-        {
-            'type': 'MED9.2',
-            'number': '0261S021864',
-            'car_manufacturer': 'VW'
-        },
-        {
-            'type': 'MED9.3',
-            'number': '0261S021865',
-            'car_manufacturer': 'AUDI'
-        },
-        {
-            'type': 'MED9.4',
-            'number': '0261S021866',
-            'car_manufacturer': 'BMW'
-        },
-        {
-            'type': 'MED9.5',
-            'number': '0261S021867',
-            'car_manufacturer': 'VW'
-        },
-        {
-            'type': 'MED9.6',
-            'number': '0261S021868',
-            'car_manufacturer': 'AUDI'
-        },
-        {
-            'type': 'MED9.7',
-            'number': '0261S021869',
-            'car_manufacturer': 'BMW'
-        },
-        {
-            'type': 'MED9.8',
-            'number': '0261S0218610',
-            'car_manufacturer': 'VW'
-        },
-        {
-            'type': 'MED9.9',
-            'number': '0261S0218611',
-            'car_manufacturer': 'AUDI'
-        },
-        {
-            'type': 'MED9.10',
-            'number': '0261S0218612',
-            'car_manufacturer': 'BMW'
-        },
-        {
-            'type': 'MED9.11',
-            'number': '0261S0218613',
-            'car_manufacturer': 'VW'
-        }
-    ]
+    # ecu_list = [
+    #     {
+    #         'type': 'MED9.5.10',
+    #         'number': '0261S021861',
+    #         'car_manufacturer': 'VW'
+    #     },
+    #     {
+    #         'type': 'MED9.5.10',
+    #         'number': '0261S021372',
+    #         'car_manufacturer': 'AUDI'
+    #     },
+    #     {
+    #         'type': 'MED9.1',
+    #         'number': '0261S021863',
+    #         'car_manufacturer': 'BMW'
+    #     },
+    #     {
+    #         'type': 'MED9.2',
+    #         'number': '0261S021864',
+    #         'car_manufacturer': 'VW'
+    #     },
+    #     {
+    #         'type': 'MED9.3',
+    #         'number': '0261S021865',
+    #         'car_manufacturer': 'AUDI'
+    #     },
+    #     {
+    #         'type': 'MED9.4',
+    #         'number': '0261S021866',
+    #         'car_manufacturer': 'BMW'
+    #     },
+    #     {
+    #         'type': 'MED9.5',
+    #         'number': '0261S021867',
+    #         'car_manufacturer': 'VW'
+    #     },
+    #     {
+    #         'type': 'MED9.6',
+    #         'number': '0261S021868',
+    #         'car_manufacturer': 'AUDI'
+    #     },
+    #     {
+    #         'type': 'MED9.7',
+    #         'number': '0261S021869',
+    #         'car_manufacturer': 'BMW'
+    #     },
+    #     {
+    #         'type': 'MED9.8',
+    #         'number': '0261S0218610',
+    #         'car_manufacturer': 'VW'
+    #     },
+    #     {
+    #         'type': 'MED9.9',
+    #         'number': '0261S0218611',
+    #         'car_manufacturer': 'AUDI'
+    #     },
+    #     {
+    #         'type': 'MED9.10',
+    #         'number': '0261S0218612',
+    #         'car_manufacturer': 'BMW'
+    #     },
+    #     {
+    #         'type': 'MED9.11',
+    #         'number': '0261S0218613',
+    #         'car_manufacturer': 'VW'
+    #     }
+    # ]
+
+    # params = request.GET
+    # keyword = params.get('keyword')
+    # page = params.get('page')
+
+    # ecu_list = Ecu.objects
+
+    # context = {}
+
+    # if keyword:
+    #     search_list = []
+    #     keyword = unquote(keyword).lower()
+    #     for ecu in ecu_list:
+    #         if keyword in ecu.get('number').lower():
+    #             search_list.append(ecu)
+
+    #     data_amount = len(search_list)
+    #     total_pages = math.ceil(len(search_list) / 10)
+
+    #     if page:
+    #         page = int(page)
+    #         if page > total_pages:
+    #             page = total_pages
+            
+    #         if page < 1:
+    #             page = 1
+            
+    #     else:
+    #         page = 1
+        
+    #     page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
+
+    #     start_index = 10 * (page - 1)
+    #     end_index = min(10 * page - 1, data_amount - 1)
+    #     ret_list = search_list[start_index : end_index + 1]
+
+    #     if page_list:
+    #         any_previous_page = page > page_list[0]
+    #         any_following_page = page < page_list[-1]
+    #     else:
+    #         any_previous_page = False
+    #         any_following_page = False
+    #         page_list = [1]
+
+    #     context = {
+    #         'results': {
+    #             'data_amount': data_amount,
+    #             'start_index': start_index + 1,
+    #             'end_index': end_index + 1,
+    #             'current_page': page,
+    #             'previous_page_disabled': not any_previous_page,
+    #             'following_page_disabled': not any_following_page,
+    #             'page_list': page_list,
+    #             'search_data': ret_list
+    #         }
+    #     }
 
     params = request.GET
     keyword = params.get('keyword')
-    page = params.get('page')
-
-    context = {}
+    page_param = params.get('page')
 
     if keyword:
-        search_list = []
         keyword = unquote(keyword).lower()
-        for ecu in ecu_list:
-            if keyword in ecu.get('number').lower():
-                search_list.append(ecu)
+        ecu_list = Ecu.objects.filter(Q(number__icontains=keyword)).order_by("id")
 
-        data_amount = len(search_list)
-        total_pages = math.ceil(len(search_list) / 10)
-
-        if page:
-            page = int(page)
-            if page > total_pages:
-                page = total_pages
-            
-            if page < 1:
-                page = 1
-            
+        if page_param:
+            pagenum = int(page_param)
         else:
-            page = 1
-        
-        page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
+            pagenum = 1
 
-        start_index = 10 * (page - 1)
-        end_index = min(10 * page - 1, data_amount - 1)
-        ret_list = search_list[start_index : end_index + 1]
-
-        if page_list:
-            any_previous_page = page > page_list[0]
-            any_following_page = page < page_list[-1]
-        else:
-            any_previous_page = False
-            any_following_page = False
-            page_list = [1]
-
+        paginator = Paginator(ecu_list, 10)
+        page = paginator.page(int(pagenum))
+        start_page = max(1, page.number - 5)
+        end_page = min(paginator.num_pages, max(page.number + 5, 10))
+        page_list = range(start_page, end_page + 1)
+   
         context = {
-            'results': {
-                'data_amount': data_amount,
-                'start_index': start_index + 1,
-                'end_index': end_index + 1,
-                'current_page': page,
-                'previous_page_disabled': not any_previous_page,
-                'following_page_disabled': not any_following_page,
-                'page_list': page_list,
-                'search_data': ret_list
-            }
-        }
+            'data_amount': paginator.count,
+            'start_index': page.start_index(),
+            'end_index': page.end_index(),
+            'current_page': page.number,
+            'previous_page_disabled': not page.has_previous(),
+            'following_page_disabled': not page.has_next(),
+            'page_list': page_list,
+            'data': page.object_list
+    }
+    
+    else:
+        context = {}
 
     return render(request, "modals/bosch_modal.html", context)
 

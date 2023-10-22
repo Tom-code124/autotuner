@@ -17,13 +17,9 @@
     {% for file in requested_file_data %}
     <tr class="table-data-row">
       <td>{{ file.status_long }}</td>
-      <td>{{ file.vehicle }}</td>
-      <td>{{ file.engine }}</td>
-      {% if file.ecu_model %}
-      <td>{{ file.ecu_model }}</td>
-      {% else %}
-        <td>{{ file.manual_provided_ecu }}</td>
-      {% endif %}
+      <td>{{ file.vehicle.vehicle_year }}</td>
+      <td>{{ file.vehicle.version }}</td>
+      <td>{{ file.vehicle.ecu_model }}</td>
       <td>{{ file.processes_string }}</td>
       <td>{{ file.updated_at }}</td>
       <td>
