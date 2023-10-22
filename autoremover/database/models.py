@@ -36,7 +36,7 @@ class VehicleCategory(models.Model):
         return self.name
 
 class VehicleBrand(models.Model):
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=40, unique=True)
 
     def __str__(self):
         return self.name
@@ -48,7 +48,7 @@ class VehicleModel(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['brand', 'name'], name='vehiclemodel_brand_name_unique_constraint')
+            models.UniqueConstraint(fields=['brand', 'name', 'category'], name='vehiclemodel_brand_name_category_unique_constraint')
         ]
 
     def __str__(self):
@@ -57,6 +57,7 @@ class VehicleModel(models.Model):
 class VehicleYear(models.Model):
     model = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
     year = models.PositiveIntegerField()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['model', 'year'], name='vehicleyear_model_year_constraint')
@@ -68,11 +69,19 @@ class VehicleYear(models.Model):
 class VehicleVersion(models.Model):
     fuel_type_choices = [
         ("P", "Petrol"),
-        ("D", "Diesel")
+        ("D", "Diesel"),
+        ("EL", "Electric"),
+        ("L", "LPG"),
+        ("E", "Ethanol"),
+        ("C", "CNG"),
+        ("PL", "Petrol/LPG"),
+        ("PE", "Petrol/Ethanol"),
+        ("PC", "Petrol/CNG"),
+        ("H", "Hybrid"),
     ]
     
     name = models.CharField(max_length=60)
-    fuel_type = models.CharField(max_length=1, choices=fuel_type_choices)
+    fuel_type = models.CharField(max_length=2, choices=fuel_type_choices)
 
     class Meta:
         constraints = [
@@ -93,7 +102,7 @@ class EcuBrand(models.Model):
         return self.name
     
 class EcuModel(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=30)
     brand = models.ForeignKey(EcuBrand, on_delete=models.CASCADE)
 
     class Meta:
@@ -155,7 +164,7 @@ class VehiclePotential(models.Model):
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
     number = models.CharField(max_length=10)
-    carmanufacturers = models.CharField(max_length=130)
+    carmanufacturers = models.CharField(max_length=130, null=True, blank=True)
 
     class Meta:
         constraints = [
