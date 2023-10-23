@@ -299,9 +299,6 @@ def upload_page(request):
 
             for p in process_selection:
                 file_request.processes.add(int(p))
-                
-            transaction = Transaction.objects.create(customer=request.user.customer, type="E", file_request=file_request, amount=file_request.total_price)
-            transaction.save()
 
             messages.success(request, "File successfully requested!")
             return redirect("/app/files")

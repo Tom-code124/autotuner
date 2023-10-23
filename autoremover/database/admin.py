@@ -3,7 +3,15 @@ from .models import *
 
 # Register your models here.
 
-admin.site.register(Employee)
+@admin.register(Employee)
+class EmployeeAdmin(admin.ModelAdmin):
+    readonly_fields = []
+    
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            return ['user']
+        return self.readonly_fields
+
 admin.site.register(VehicleCategory)
 admin.site.register(VehicleBrand)
 admin.site.register(VehicleModel)
@@ -14,12 +22,53 @@ admin.site.register(EcuBrand)
 admin.site.register(EcuModel)
 admin.site.register(Ecu)
 admin.site.register(ConnectionTool)
-admin.site.register(VehiclePotential) # custom page needed
+
+@admin.register(VehiclePotential)
+class VehiclePotentialAdmin(admin.ModelAdmin): # custom page needed
+    readonly_fields = []
+    
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            return ['vehicle']
+        return self.readonly_fields
+    
 admin.site.register(FileProcess)
-admin.site.register(ProcessPricing) # custom page needed
-admin.site.register(FileRequest) # custom page needed for employee side , or readonly fields can solve the issue
+
+@admin.register(ProcessPricing)
+class ProcessPricingAdmin(admin.ModelAdmin): # custom page needed
+    def get_readonly_fields(self, request, obj=None):
+        self.readonly_fields = []
+
+        if obj: # editing an existing object
+            return ["vehicle"]
+        return self.readonly_fields
+
+@admin.register(FileRequest)
+class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue
+    fields = ["status", "employee", "processes", "processed_file", "employee_description", "vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type"]
+    readonly_fields = ["vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type", "customer"]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            return self.readonly_fields
+        return self.readonly_fields
+
 admin.site.register(FileSale)
-admin.site.register(Transaction) # custom page needed (only deposit)
+
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue
+    fields = []
+    readonly_fields = []
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            l = ["customer", "file_request", "file_bought", "type"]
+            if obj.category != "Deposit":
+                l.append("amount")
+            l.extend(self.readonly_fields)
+            return l
+        return self.readonly_fields
+    
 admin.site.register(Knowledge)
 admin.site.register(KnowledgePart)
 admin.site.register(KnowledgeBullet)

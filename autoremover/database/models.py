@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from django.db.models.signals import post_save, m2m_changed
+from django.dispatch import receiver
 
 from datetime import datetime
 from dateutil import relativedelta
@@ -270,6 +272,19 @@ class FileRequest(models.Model):
 
             self.transaction.amount = self.total_price
             self.transaction.save()
+
+@receiver(post_save, sender=FileRequest, dispatch_uid="update_transaction")
+def create_transaction(sender, instance, **kwargs):
+    transaction, created = Transaction.objects.get_or_create(
+        customer=instance.customer,
+        file_request=instance,
+        defaults={'amount': instance.total_price, "type": "E"}
+        )
+
+@receiver(m2m_changed, sender=FileRequest.processes.through)
+def update_transaction(sender, instance, **kwargs):
+    instance.transaction.amount = instance.total_price
+    instance.transaction.save()
             
 class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
