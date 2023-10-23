@@ -17,7 +17,12 @@ admin.site.register(VehicleBrand)
 admin.site.register(VehicleModel)
 admin.site.register(VehicleYear)
 admin.site.register(VehicleVersion)
-admin.site.register(Vehicle)
+
+@admin.register(Vehicle)
+class VehicleAdmin(admin.ModelAdmin):
+    fields = ("vehicle_year", "version", "ecu_model", "potential")
+    search_fields = ["vehicle_year", "version"] # cannot search on vehicle year
+
 admin.site.register(EcuBrand)
 admin.site.register(EcuModel)
 admin.site.register(Ecu)
@@ -29,7 +34,7 @@ class VehiclePotentialAdmin(admin.ModelAdmin): # custom page needed
     
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
-            return ['vehicle']
+            return self.readonly_fields
         return self.readonly_fields
     
 admin.site.register(FileProcess)
@@ -47,6 +52,7 @@ class ProcessPricingAdmin(admin.ModelAdmin): # custom page needed
 class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue
     fields = ["status", "employee", "processes", "processed_file", "employee_description", "vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type"]
     readonly_fields = ["vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type", "customer"]
+    list_display = ("status", "employee", "vehicle", "processes_string", "file_type", "customer")
 
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
@@ -56,9 +62,14 @@ class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side
 admin.site.register(FileSale)
 
 @admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue
-    fields = []
-    readonly_fields = []
+class TransactionAdmin(admin.ModelAdmin):
+    fields = ["customer", "type", "amount"]
+    readonly_fields = ["type"]
+    list_display = ("type",  "customer", "amount", "updated_at")
+    
+    def get_queryset(self, request):
+        qs = super(TransactionAdmin, self).get_queryset(request)
+        return qs.filter(type="D")
 
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object

@@ -115,10 +115,24 @@ class EcuModel(models.Model):
     def __str__(self):
         return str(self.brand) + " " + self.name
     
+class ConnectionTool(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    
+    def __str__(self):
+        return self.name
+    
+class VehiclePotential(models.Model):
+    old_hp = models.PositiveIntegerField()
+    new_hp = models.PositiveIntegerField()
+    old_nm = models.PositiveIntegerField()
+    new_nm = models.PositiveIntegerField()
+    known_reading_methods = models.ManyToManyField(ConnectionTool)
+    
 class Vehicle(models.Model):
     vehicle_year = models.ForeignKey(VehicleYear, on_delete=models.CASCADE)
     version = models.ForeignKey(VehicleVersion, on_delete=models.PROTECT)
     ecu_model = models.ForeignKey(EcuModel, on_delete=models.PROTECT)
+    potential = models.OneToOneField(VehiclePotential, on_delete=models.SET_NULL, null=True, blank=True, related_name="vehicle")
 
     class Meta:
         constraints = [
@@ -145,23 +159,6 @@ class Vehicle(models.Model):
     
     def __str__(self):
         return str(self.vehicle_year) + " - " + str(self.version) + " - " + str(self.ecu_model)  
-
-class ConnectionTool(models.Model):
-    name = models.CharField(max_length=30, unique=True)
-    
-    def __str__(self):
-        return self.name
-    
-class VehiclePotential(models.Model):
-    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE)
-    old_hp = models.PositiveIntegerField()
-    new_hp = models.PositiveIntegerField()
-    old_nm = models.PositiveIntegerField()
-    new_nm = models.PositiveIntegerField()
-    known_reading_methods = models.ManyToManyField(ConnectionTool)
-
-    def __str__(self):
-        return str(self.vehicle) + " potential"
     
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
@@ -316,7 +313,7 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    type = models.CharField(max_length=1, choices=transaction_type_choices)
+    type = models.CharField(max_length=1, choices=transaction_type_choices, default="D")
     
     file_request = models.OneToOneField(FileRequest, on_delete=models.CASCADE, null=True, blank=True)
     file_bought = models.OneToOneField(FileSale, on_delete=models.CASCADE, null=True, blank=True)
@@ -370,6 +367,9 @@ class Transaction(models.Model):
                     self.customer.credit_amount += old_amount
                 self.customer.credit_amount -= self.amount
                 self.customer.save()
+    
+    def __str__(self):
+        return self.type_long + " | " + str(self.customer) + " | " + str(self.id)
 
 class Knowledge(models.Model):
     title = models.CharField(max_length=100, unique=True)
