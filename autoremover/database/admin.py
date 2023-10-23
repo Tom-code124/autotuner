@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.forms import FloatField, Form, IntegerField
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from .models import *
 
 # Register your models here.
@@ -21,7 +24,32 @@ admin.site.register(VehicleVersion)
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     fields = ("vehicle_year", "version", "ecu_model", "potential")
-    search_fields = ["vehicle_year", "version"] # cannot search on vehicle year
+    list_filter = ("ecu_model", "version")
+    actions = ['make_pricing']
+    
+    @admin.action
+    def make_pricing(self, request, queryset):
+        if 'apply' in request.POST:
+            vehicle_ids = request.POST.getlist("_selected_action")
+            price = float(request.POST.get("price"))
+            process_id = int(request.POST.get("process"))
+
+            for vehicle_id in vehicle_ids:
+                pricing, created = ProcessPricing.objects.get_or_create(vehicle_id=int(vehicle_id), process_id=process_id, defaults={"price": price})
+
+                if not created:
+                    pricing.price = price
+                    pricing.save()
+            
+            self.message_user(request, "Pricing is done as " + str(price) + " with process id: " + str(process_id) + " on " + str(len(vehicle_ids)) + " vehicles!")
+            return HttpResponseRedirect(request.get_full_path())
+
+        processes = FileProcess.objects.all()
+        context = {
+            'vehicles': queryset,
+            'processes': processes
+        }
+        return render(request, 'admin/make_pricing.html', context)
 
 admin.site.register(EcuBrand)
 admin.site.register(EcuModel)
