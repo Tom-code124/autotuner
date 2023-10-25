@@ -24,7 +24,7 @@
       <td>{{ file.updated_at }}</td>
       <td>
         <div class="row files-div">
-          <a href="{{ file.original_file }}">
+          <a href="/app/download?file_type=request&which=original&id={{ file.id }}" download>
             <div class="download-div column">
               <svg
               width="24px"
@@ -71,7 +71,7 @@
             </div>
           </a>
           {% if file.processed_file %}
-            <a href="{{ file.processed_file }}">
+            <a href="/app/download?file_type=request&which=processed&id={{ file.id }}" download>
               <div class="download-div column">
                 <svg
                 width="24px"

@@ -1,3 +1,4 @@
+from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -853,5 +854,28 @@ def price_options_modal(request):
 
     return render(request, "modals/price_options_modal.html", context)
 
+@login_required
+def download_file(request):
+    customer = request.user.customer
+    params = request.GET
 
+    file_type = params.get("file_type")
+    model_id = int(params.get("id"))
+
+    if file_type is not None:
+        if file_type == "request":
+            l = customer.filerequest_set.filter(id=model_id)
+            if l.count() > 0:
+                file_request = l[0]
+                which = params.get("which")
+                if which == "original":
+                    return FileResponse(file_request.original_file, as_attachment=True)
+                elif which == "processed":
+                    return FileResponse(file_request.processed_file, as_attachment=True)
+
+        elif file_type == "sale":
+            l = customer.filepurchase_set.filter(file_sale_id=model_id)
+            if l.count() > 0:
+                file_sale = l[0].file_sale
+                return FileResponse(file_sale.file)
 
