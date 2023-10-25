@@ -23,7 +23,7 @@
       <td>{{ purchase.file_sale.title }}</td>
       <td>{{ purchase.bought_at }}</td>
       <td>
-        <a href="{{ purchase.file_sale.file }}">
+        <a href="/app/download?file_type=sale&id={{ purchase.file_sale.id }}" download>
           <div class="download-div">
             <svg
             width="24px"

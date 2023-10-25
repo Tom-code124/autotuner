@@ -224,11 +224,11 @@ class FileRequest(models.Model):
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     customer_description = models.TextField(max_length=400)
-    original_file = models.FileField(upload_to="uploads/original/")
+    original_file = models.FileField(upload_to="processing/original/")
     
     employee_description = models.TextField(max_length=400, null=True, blank=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, null=True, blank=True)
-    processed_file = models.FileField(upload_to="uploads/processed/", null=True, blank=True)
+    processed_file = models.FileField(upload_to="processing/processed/", null=True, blank=True)
 
     status = models.CharField(max_length=1, choices=status_choices, default="O")
 
@@ -286,7 +286,7 @@ def update_transaction(sender, instance, **kwargs):
 class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=80, unique=True)
-    file = models.FileField(upload_to="uploads/for_sale/", unique=True)
+    file = models.FileField(upload_to="sale/", unique=True)
     desc = models.TextField(max_length=600)
     price = models.FloatField()
     
