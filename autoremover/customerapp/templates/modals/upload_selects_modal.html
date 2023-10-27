@@ -3,5 +3,11 @@
 </option>
 
 {% for d in data %}
-<option value="{{ d.id }}">{{ d }}</option>
+<option value="{{ d.id }}">
+  {% if d.model %}
+    {{ d.year }}
+  {% else %}
+    {{ d.name }}
+  {% endif %}
+</option>
 {% endfor %}

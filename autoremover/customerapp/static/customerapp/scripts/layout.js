@@ -22,9 +22,9 @@ function profileClick() {
     .addEventListener("click", turnOffModal);
 }
 
-document
-  .getElementById("profile-anchor")
-  .addEventListener("click", profileClick);
+// document
+//   .getElementById("profile-anchor")
+//   .addEventListener("click", profileClick);
 
 var profileModals = [...document.querySelectorAll(".modal")];
 

@@ -115,24 +115,10 @@ class EcuModel(models.Model):
     def __str__(self):
         return str(self.brand) + " " + self.name
     
-class ConnectionTool(models.Model):
-    name = models.CharField(max_length=30, unique=True)
-    
-    def __str__(self):
-        return self.name
-    
-class VehiclePotential(models.Model):
-    old_hp = models.PositiveIntegerField()
-    new_hp = models.PositiveIntegerField()
-    old_nm = models.PositiveIntegerField()
-    new_nm = models.PositiveIntegerField()
-    known_reading_methods = models.ManyToManyField(ConnectionTool)
-    
 class Vehicle(models.Model):
     vehicle_year = models.ForeignKey(VehicleYear, on_delete=models.CASCADE)
     version = models.ForeignKey(VehicleVersion, on_delete=models.PROTECT)
     ecu_model = models.ForeignKey(EcuModel, on_delete=models.PROTECT)
-    potential = models.OneToOneField(VehiclePotential, on_delete=models.SET_NULL, null=True, blank=True, related_name="vehicle")
 
     class Meta:
         constraints = [
@@ -159,7 +145,21 @@ class Vehicle(models.Model):
     
     def __str__(self):
         return str(self.vehicle_year) + " - " + str(self.version) + " - " + str(self.ecu_model)  
+
+class ConnectionTool(models.Model):
+    name = models.CharField(max_length=30, unique=True)
     
+    def __str__(self):
+        return self.name
+    
+class VehiclePotential(models.Model):
+    vehicle = models.OneToOneField(Vehicle, on_delete=models.CASCADE)
+    old_hp = models.PositiveIntegerField()
+    new_hp = models.PositiveIntegerField()
+    old_nm = models.PositiveIntegerField()
+    new_nm = models.PositiveIntegerField()
+    known_reading_methods = models.ManyToManyField(ConnectionTool)
+
 class Ecu(models.Model):
     model = models.ForeignKey(EcuModel, on_delete=models.CASCADE)
     number = models.CharField(max_length=10)
@@ -277,11 +277,16 @@ def create_transaction(sender, instance, **kwargs):
         file_request=instance,
         defaults={'amount': instance.total_price, "type": "E"}
         )
+    
+    if instance.status == "C":
+        instance.transaction.amount = 0
+        instance.transaction.save()
 
 @receiver(m2m_changed, sender=FileRequest.processes.through)
 def update_transaction(sender, instance, **kwargs):
-    instance.transaction.amount = instance.total_price
-    instance.transaction.save()
+    if instance.status != "C":
+        instance.transaction.amount = instance.total_price
+        instance.transaction.save()
             
 class FileSale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -574,3 +579,6 @@ class FileServiceSchedule(models.Model):
 
 class SystemSetting(models.Model):
     tax_percentage = models.FloatField()
+
+    def __str__(self):
+        return "System settings"
