@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'admin_auto_filters',
     'maintenancemode',
     'customerapp',
     'database'

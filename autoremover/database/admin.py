@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.forms import FloatField, Form, IntegerField
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .models import *
+from admin_auto_filters.filters import AutocompleteFilter
 
 # Register your models here.
 
@@ -17,15 +17,49 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 admin.site.register(VehicleCategory)
 admin.site.register(VehicleBrand)
-admin.site.register(VehicleModel)
-admin.site.register(VehicleYear)
-admin.site.register(VehicleVersion)
+
+class VehicleYearInline(admin.TabularInline):
+    model = VehicleYear
+    extra = 1
+
+@admin.register(VehicleModel)
+class VehicleModelAdmin(admin.ModelAdmin):
+    inlines = [VehicleYearInline]
+    search_fields = ("brand__name", "name", )
+    list_per_page = 20
+
+@admin.register(VehicleYear)
+class VehicleYearAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("model", )
+    search_fields = ("model__name", "model__brand__name")
+    list_per_page = 10
+
+@admin.register(VehicleVersion)
+class VehicleVersionAdmin(admin.ModelAdmin):
+    search_fields = ("name", )
+    list_per_page = 10
+
+class EcuModelFilter(AutocompleteFilter):
+    title = 'Ecu Model'
+    field_name = 'ecu_model'
+
+class VehicleYearFilter(AutocompleteFilter):
+    title = 'Vehicle Year'
+    field_name = 'vehicle_year'
+
+class PotentialInline(admin.TabularInline):
+    model = VehiclePotential
+    extra = 1
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    fields = ("vehicle_year", "version", "ecu_model", "potential")
-    list_filter = ("ecu_model", "version")
+    inlines = [PotentialInline]
+    fields = ("vehicle_year", "version", "ecu_model")
+    autocomplete_fields = ("vehicle_year", "version", "ecu_model")
     actions = ['make_pricing']
+    list_filter = [EcuModelFilter, VehicleYearFilter]
+    list_display = ("vehicle_year", "version", "ecu_model")
+    list_per_page = 10
     
     @admin.action
     def make_pricing(self, request, queryset):
@@ -52,35 +86,24 @@ class VehicleAdmin(admin.ModelAdmin):
         return render(request, 'admin/make_pricing.html', context)
 
 admin.site.register(EcuBrand)
-admin.site.register(EcuModel)
+@admin.register(EcuModel)
+class EcuModelAdmin(admin.ModelAdmin):
+    search_fields = ("name", )
+    list_filter = ("brand", )
+    list_display = ("name", "brand")
+    list_per_page = 20
+
 admin.site.register(Ecu)
 admin.site.register(ConnectionTool)
-
-@admin.register(VehiclePotential)
-class VehiclePotentialAdmin(admin.ModelAdmin): # custom page needed
-    readonly_fields = []
-    
-    def get_readonly_fields(self, request, obj=None):
-        if obj: # editing an existing object
-            return self.readonly_fields
-        return self.readonly_fields
     
 admin.site.register(FileProcess)
 
-@admin.register(ProcessPricing)
-class ProcessPricingAdmin(admin.ModelAdmin): # custom page needed
-    def get_readonly_fields(self, request, obj=None):
-        self.readonly_fields = []
-
-        if obj: # editing an existing object
-            return ["vehicle"]
-        return self.readonly_fields
-
 @admin.register(FileRequest)
 class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue
-    fields = ["status", "employee", "processes", "processed_file", "employee_description", "vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type"]
+    fields = ["status", "employee", "processes", "processed_file", "employee_description", "vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type", "customer"]
     readonly_fields = ["vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type", "customer"]
     list_display = ("status", "employee", "vehicle", "processes_string", "file_type", "customer")
+    list_filter = ("status",)
 
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
@@ -115,4 +138,15 @@ admin.site.register(KnowledgeAd)
 admin.site.register(DtcInfo)
 admin.site.register(FileService) # custom page needed (only employee)
 admin.site.register(FileServiceSchedule) # custom page needed (only employee)
-admin.site.register(SystemSetting)
+
+@admin.register(SystemSetting)
+class SystemSettingAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+
+        return actions

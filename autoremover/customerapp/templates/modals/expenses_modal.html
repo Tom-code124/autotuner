@@ -14,7 +14,12 @@
         <td>{{ transaction.amount }}</td>
         <td>{{ transaction.type_long }}</td>
         <td>{{ transaction.category }}</td>
-        <td>{{ transaction.desc }}</td>
+        <td>
+          {% if transaction.file_request.status == "C" %}
+            (Cancelled) 
+          {% endif %} 
+          {{ transaction.desc }}
+        </td>
       </tr>
       {% endfor %}
     {% else %}
