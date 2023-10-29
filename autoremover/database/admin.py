@@ -6,6 +6,11 @@ from admin_auto_filters.filters import AutocompleteFilter
 
 # Register your models here.
 
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    fields = ["company_name", "phone_zone", "phone_number", "pricing_class"]
+    readonly_fields = ["company_name", "phone_zone", "phone_number"]
+
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
     readonly_fields = []
@@ -65,17 +70,25 @@ class VehicleAdmin(admin.ModelAdmin):
     def make_pricing(self, request, queryset):
         if 'apply' in request.POST:
             vehicle_ids = request.POST.getlist("_selected_action")
-            price = float(request.POST.get("price"))
+            master_price = float(request.POST.get("master_price"))
+            slave_price = float(request.POST.get("slave_price"))
+            euro_price = float(request.POST.get("euro_price"))
             process_id = int(request.POST.get("process"))
 
             for vehicle_id in vehicle_ids:
-                pricing, created = ProcessPricing.objects.get_or_create(vehicle_id=int(vehicle_id), process_id=process_id, defaults={"price": price})
+                pricing, created = ProcessPricing.objects.get_or_create(vehicle_id=int(vehicle_id), process_id=process_id, defaults={
+                    "master_price": master_price,
+                    "slave_price": slave_price,
+                    "euro_price": euro_price
+                    })
 
                 if not created:
-                    pricing.price = price
+                    pricing.master_price = master_price
+                    pricing.slave_price = slave_price
+                    pricing.euro_price = euro_price
                     pricing.save()
             
-            self.message_user(request, "Pricing is done as " + str(price) + " with process id: " + str(process_id) + " on " + str(len(vehicle_ids)) + " vehicles!")
+            self.message_user(request, "Pricing is done as " + str(master_price) + ", " + str(slave_price) + ", " + str(euro_price) + " with process id: " + str(process_id) + " on " + str(len(vehicle_ids)) + " vehicles!")
             return HttpResponseRedirect(request.get_full_path())
 
         processes = FileProcess.objects.all()
