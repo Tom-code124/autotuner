@@ -11,7 +11,6 @@ from database.forms import *
 
 from datetime import datetime
 from urllib.parse import unquote
-import math
 
 # Create your views here.
 
@@ -270,10 +269,18 @@ def upload_page(request):
         ecu_model_id = int(request.POST.get("ecu_type"))
         vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
 
+        pricing_class = request.user.customer.pricing_class
+
         total_price = 0
         for p in process_selection:
             pricing = ProcessPricing.objects.get(vehicle=vehicle, process_id=int(p))
-            total_price += pricing.price
+            
+            if pricing_class == "M":
+                total_price += pricing.master_price
+            elif pricing_class == "S":
+                total_price += pricing.slave_price
+            elif pricing_class == "E":
+                total_price += pricing.euro_price
         
         total_price *= 1 + (tax_percentage / 100)
         
@@ -282,7 +289,7 @@ def upload_page(request):
             file_type = request.POST.get("file_type")
             transmission_type = request.POST.get("transmission_type")
             tool_id = int(request.POST.get("tool"))
-            tool_type = request.POST.get("tool_type")
+            tool_type = request.user.customer.pricing_class
             customer_description = request.POST.get("customer_description")
 
             file_request = FileRequest.objects.create(
@@ -598,129 +605,6 @@ def bosch_search_page(request):
 
 @login_required
 def bosch_modal(request):
-    # ecu_list = [
-    #     {
-    #         'type': 'MED9.5.10',
-    #         'number': '0261S021861',
-    #         'car_manufacturer': 'VW'
-    #     },
-    #     {
-    #         'type': 'MED9.5.10',
-    #         'number': '0261S021372',
-    #         'car_manufacturer': 'AUDI'
-    #     },
-    #     {
-    #         'type': 'MED9.1',
-    #         'number': '0261S021863',
-    #         'car_manufacturer': 'BMW'
-    #     },
-    #     {
-    #         'type': 'MED9.2',
-    #         'number': '0261S021864',
-    #         'car_manufacturer': 'VW'
-    #     },
-    #     {
-    #         'type': 'MED9.3',
-    #         'number': '0261S021865',
-    #         'car_manufacturer': 'AUDI'
-    #     },
-    #     {
-    #         'type': 'MED9.4',
-    #         'number': '0261S021866',
-    #         'car_manufacturer': 'BMW'
-    #     },
-    #     {
-    #         'type': 'MED9.5',
-    #         'number': '0261S021867',
-    #         'car_manufacturer': 'VW'
-    #     },
-    #     {
-    #         'type': 'MED9.6',
-    #         'number': '0261S021868',
-    #         'car_manufacturer': 'AUDI'
-    #     },
-    #     {
-    #         'type': 'MED9.7',
-    #         'number': '0261S021869',
-    #         'car_manufacturer': 'BMW'
-    #     },
-    #     {
-    #         'type': 'MED9.8',
-    #         'number': '0261S0218610',
-    #         'car_manufacturer': 'VW'
-    #     },
-    #     {
-    #         'type': 'MED9.9',
-    #         'number': '0261S0218611',
-    #         'car_manufacturer': 'AUDI'
-    #     },
-    #     {
-    #         'type': 'MED9.10',
-    #         'number': '0261S0218612',
-    #         'car_manufacturer': 'BMW'
-    #     },
-    #     {
-    #         'type': 'MED9.11',
-    #         'number': '0261S0218613',
-    #         'car_manufacturer': 'VW'
-    #     }
-    # ]
-
-    # params = request.GET
-    # keyword = params.get('keyword')
-    # page = params.get('page')
-
-    # ecu_list = Ecu.objects
-
-    # context = {}
-
-    # if keyword:
-    #     search_list = []
-    #     keyword = unquote(keyword).lower()
-    #     for ecu in ecu_list:
-    #         if keyword in ecu.get('number').lower():
-    #             search_list.append(ecu)
-
-    #     data_amount = len(search_list)
-    #     total_pages = math.ceil(len(search_list) / 10)
-
-    #     if page:
-    #         page = int(page)
-    #         if page > total_pages:
-    #             page = total_pages
-            
-    #         if page < 1:
-    #             page = 1
-            
-    #     else:
-    #         page = 1
-        
-    #     page_list = range(10 * math.floor(page / 10) + 1, min(10 * math.ceil(page / 10), total_pages) + 1)
-
-    #     start_index = 10 * (page - 1)
-    #     end_index = min(10 * page - 1, data_amount - 1)
-    #     ret_list = search_list[start_index : end_index + 1]
-
-    #     if page_list:
-    #         any_previous_page = page > page_list[0]
-    #         any_following_page = page < page_list[-1]
-    #     else:
-    #         any_previous_page = False
-    #         any_following_page = False
-    #         page_list = [1]
-
-    #     context = {
-    #         'results': {
-    #             'data_amount': data_amount,
-    #             'start_index': start_index + 1,
-    #             'end_index': end_index + 1,
-    #             'current_page': page,
-    #             'previous_page_disabled': not any_previous_page,
-    #             'following_page_disabled': not any_following_page,
-    #             'page_list': page_list,
-    #             'search_data': ret_list
-    #         }
-    #     }
 
     params = request.GET
     keyword = params.get('keyword')
