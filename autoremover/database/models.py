@@ -588,6 +588,12 @@ class FileServiceSchedule(models.Model):
 
 class SystemSetting(models.Model):
     tax_percentage = models.FloatField()
+    iban_number = models.CharField(max_length=36)
+    swift_number = models.CharField(max_length=12)
+    bank_name = models.CharField(max_length=200)
+    bank_account_owner_name = models.CharField(max_length=100)
+    credit_try_price = models.FloatField(default=1)
+    credit_eur_price = models.FloatField(default=1)
 
     def __str__(self):
         return "System settings"

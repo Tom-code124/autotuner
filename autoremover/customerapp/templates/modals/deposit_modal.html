@@ -1,0 +1,22 @@
+{% extends 'modal_layout.html' %} {% block modal_layout %} {% load static %}
+<div class="column">
+    <div class="column">
+        <h3>Pricing</h3>
+        <p>
+            1 Credit = 
+            {% if user.customer.pricing_class == "E" %}
+                {{ eur_price }} €
+            {% else %}
+                {{ try_price }} ₺
+            {% endif %}
+        </p>
+    </div>
+    <div>
+        <h3>Bank Account Information</h3>
+        <p>Bank: {{ bank_name }}</p>
+        <p>Swift Number: {{ swift_num }}</p>
+        <p>IBAN Number: {{ iban_num }}</p>
+        <p>Account Owner: {{ account_owner }}</p>
+    </div>
+</div>
+{% endblock modal_layout %}

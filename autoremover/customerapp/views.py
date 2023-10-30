@@ -87,9 +87,26 @@ def login_page(request):
 
     return render(request, "pages/customer_login.html", context)
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('/app/login/')
+
+@login_required
+def deposit_modal(request):
+    system_setting = SystemSetting.objects.all()[0]
+
+    context = {
+        'modal_title': "Deposit Credits",
+        'bank_name': system_setting.bank_name,
+        'swift_num': system_setting.swift_number,
+        'iban_num': system_setting.iban_number,
+        'account_owner': system_setting.bank_account_owner_name,
+        'try_price': system_setting.credit_try_price,
+        'eur_price': system_setting.credit_eur_price
+    }
+
+    return render(request, "modals/deposit_modal.html", context)
     
 @login_required
 def dashboard_page(request):
@@ -312,7 +329,7 @@ def upload_page(request):
             return redirect("/app/files")
         
         else:
-            messages.error(request, "You don't have enough credits to request these processes. Please buy some credits.")
+            messages.error(request, "You don't have enough credits to request these processes. You can see the depositing details by clicking the wallet sign at the top right corner of the page.")
 
     context = {
         'page_title': 'Upload',
@@ -484,7 +501,7 @@ def purchase_file(request):
         messages.success(request, "File bought successfully!")
         return redirect('/app/files?subpage=bought_files')
     else:
-        messages.error(request, "You don't have enough credits to buy this file. Please buy some credits.")
+        messages.error(request, "You don't have enough credits to buy this file. You can see the depositing details by clicking the wallet sign at the top right corner of the page.")
         return redirect("/app/shop/")
 
 

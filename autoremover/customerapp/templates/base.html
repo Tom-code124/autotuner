@@ -14,7 +14,9 @@
   </head>
   <body>
     <div id="modal-background"></div>
-    {% block base %} {% endblock %} {% for script in script_files %}
+    {% block base %}
+    {% endblock base %}
+    {% for script in script_files %}
     <script
       type="module"
       src="{% static 'customerapp/scripts/' %}{{ script }}"

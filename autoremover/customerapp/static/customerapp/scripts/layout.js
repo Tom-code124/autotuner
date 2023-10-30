@@ -13,6 +13,17 @@ document
   .getElementById("winols-sidebar-icon")
   .addEventListener("click", winolsClick);
 
+function depositClick(){
+  getAndInject(
+    "/app/deposit_modal/",
+    undefined,
+    undefined,
+    turnOnModal
+  )
+}
+
+document.getElementById("credit-div").addEventListener("click", depositClick);
+
 function profileClick() {
   turnOnModal();
   document.getElementById("profile-card").classList.add("on-screen");
