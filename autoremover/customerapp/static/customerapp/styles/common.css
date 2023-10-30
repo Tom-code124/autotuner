@@ -204,3 +204,7 @@ a {
 .modal {
   display: none;
 }
+
+#credit-div:hover {
+  cursor: pointer;
+}

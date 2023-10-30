@@ -1,8 +1,13 @@
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect
+from django.http.request import HttpRequest
 from django.shortcuts import render
 from .models import *
 from admin_auto_filters.filters import AutocompleteFilter
+from django.db.models import Q
+from django.contrib.auth.models import User
 
 # Register your models here.
 
@@ -60,9 +65,9 @@ class PotentialInline(admin.TabularInline):
 class VehicleAdmin(admin.ModelAdmin):
     inlines = [PotentialInline]
     fields = ("vehicle_year", "version", "ecu_model")
+    search_fields = ["vehicle_year__model__name", "vehicle_year__model__brand__name", "version__name", "ecu_model__name"]
     autocomplete_fields = ("vehicle_year", "version", "ecu_model")
     actions = ['make_pricing']
-    list_filter = [EcuModelFilter, VehicleYearFilter]
     list_display = ("vehicle_year", "version", "ecu_model")
     list_per_page = 10
     
@@ -97,6 +102,17 @@ class VehicleAdmin(admin.ModelAdmin):
             'processes': processes
         }
         return render(request, 'admin/make_pricing.html', context)
+    
+    def get_actions(self, request):
+        actions = super(VehicleAdmin, self).get_actions(request)
+        if not request.user.is_superuser:
+            del actions['make_pricing']
+        return actions
+    
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return [EcuModelFilter, VehicleYearFilter]
+        return []
 
 admin.site.register(EcuBrand)
 @admin.register(EcuModel)
@@ -122,6 +138,24 @@ class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side
         if obj: # editing an existing object
             return self.readonly_fields
         return self.readonly_fields
+    
+    def get_queryset(self, request):
+        qs = super(FileRequestAdmin, self).get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.filter(Q(employee__isnull=True) | Q(employee=request.user.employee))
+        return qs
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if request.user.is_superuser:
+            return super(FileRequestAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        else:
+            if db_field.name == "employee":
+                # This next line only shows owned objects
+                # but you can write your own query!
+                kwargs["queryset"] = db_field.related_model.objects.filter(id=request.user.employee.id)
+
+            return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    
 
 admin.site.register(FileSale)
 
@@ -148,9 +182,70 @@ admin.site.register(Knowledge)
 admin.site.register(KnowledgePart)
 admin.site.register(KnowledgeBullet)
 admin.site.register(KnowledgeAd)
-admin.site.register(DtcInfo)
-admin.site.register(FileService) # custom page needed (only employee)
-admin.site.register(FileServiceSchedule) # custom page needed (only employee)
+
+@admin.register(DtcInfo)
+class DtcInfoAdmin(admin.ModelAdmin):
+    search_fields = ['code', 'desc']
+    list_display = ['code', 'desc']
+
+class FileServiceScheduleInline(admin.TabularInline):
+    model = FileServiceSchedule
+    extra = 1
+
+@admin.register(FileService)
+class FileServiceAdmin(admin.ModelAdmin):
+    fields = ['is_scheduled', 'manual_status']
+    inlines = [FileServiceScheduleInline]
+    
+    def get_queryset(self, request):
+        qs = super(FileServiceAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(employee=request.user.employee)
+    
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['employee']
+        return []
+        
+    def get_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['employee'] + self.fields 
+        return self.fields
+    
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            if not hasattr(obj, 'employee'):
+                obj.employee = request.user.employee
+
+        super().save_model(request, obj, form, change)
+
+@admin.register(FileServiceSchedule) # custom page needed (only employee)
+class FileServiceScheduleAdmin(admin.ModelAdmin):
+    fields = ['day', 'starting_hour', 'ending_hour']
+
+    def get_queryset(self, request):
+        qs = super(FileServiceScheduleAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(file_service__employee=request.user.employee)
+    
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['file_service']
+        return []
+    
+    def get_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['file_service'] + self.fields 
+        return self.fields
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            if not hasattr(obj, 'file_service'):
+                obj.file_service = request.user.employee.fileservice
+
+        super().save_model(request, obj, form, change)
 
 @admin.register(SystemSetting)
 class SystemSettingAdmin(admin.ModelAdmin):

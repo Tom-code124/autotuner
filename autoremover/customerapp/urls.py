@@ -6,6 +6,7 @@ urlpatterns = [
     path('signup/', signup_page, name="Signup"),
     path('login/', login_page, name="Login"),
     path('logout/', logout_view, name="Logout"),
+    path('deposit_modal/', deposit_modal, name="deposit_modal"),
     path('', dashboard_page, name="Dashboard"),
     path('pricing_modal/', pricing_modal, name="File Pricing"),
     path('price_options_modal', price_options_modal, name="Price Options Modal"),

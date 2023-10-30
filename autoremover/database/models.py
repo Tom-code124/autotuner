@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
@@ -36,7 +36,14 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
-    
+
+@receiver(post_save, sender=Employee, dispatch_uid="add_permission_group")
+def create_transaction(sender, instance, **kwargs):
+    g = Group.objects.get(name="employee_permission_group")
+    instance.user.groups.add(g)
+    instance.user.is_staff = True
+    instance.user.save()
+
 class VehicleCategory(models.Model):
     name = models.CharField(max_length=20, unique=True)
 
@@ -431,15 +438,18 @@ class FileService(models.Model):
     manual_status = models.BooleanField()
     is_scheduled = models.BooleanField()
 
+    def __str__(self):
+        return str(self.employee) + " file service settings"
+
     @property
     def status(self):
         if self.is_scheduled:
             now = datetime.now()
-            for schedule in self.file_service_schedule_set.all():
+            for schedule in self.fileserviceschedule_set.all():
                 if now.strftime("%a") == schedule.day and int(now.strftime("%H")) >= schedule.starting_hour and int(now.strftime("%H")) < schedule.ending_hour:
                     return "ONLINE"
         else:
-            if self.is_online:
+            if self.manual_status:
                 return "ONLINE"
         
         return "OFFLINE"
@@ -463,13 +473,10 @@ class FileService(models.Model):
             schedules = FileServiceSchedule.objects.filter(file_service=self)
             for s in schedules:
                 d = today + relativedelta.relativedelta(weekday=days[s.day])
-                d.replace(hour=s.starting_hour, minute=0)
+                l.append(d.replace(hour=s.starting_hour, minute=0, second=0, microsecond=0))
 
                 nd = today + relativedelta.relativedelta(weeks=1, weekday=days[s.day])
-                nd.replace(hour=s.starting_hour, minute=0)
-
-                l.append(d)
-                l.append(nd)
+                l.append(nd.replace(hour=s.starting_hour, minute=0, second=0, microsecond=0))
 
             l.sort()
             for d in l:
@@ -497,13 +504,10 @@ class FileService(models.Model):
             schedules = FileServiceSchedule.objects.filter(file_service=self)
             for s in schedules:
                 d = today + relativedelta.relativedelta(weekday=days[s.day])
-                d.replace(hour=s.ending_hour, minute=0)
+                l.append(d.replace(hour=s.ending_hour, minute=0, second=0, microsecond=0))
 
                 nd = today + relativedelta.relativedelta(weeks=1, weekday=days[s.day])
-                nd.replace(hour=s.ending_hour, minute=0)
-
-                l.append(d)
-                l.append(nd)
+                l.append(nd.replace(hour=s.ending_hour, minute=0, second=0, microsecond=0))
 
             l.sort()
             for d in l:
@@ -588,6 +592,12 @@ class FileServiceSchedule(models.Model):
 
 class SystemSetting(models.Model):
     tax_percentage = models.FloatField()
+    iban_number = models.CharField(max_length=36)
+    swift_number = models.CharField(max_length=12)
+    bank_name = models.CharField(max_length=200)
+    bank_account_owner_name = models.CharField(max_length=100)
+    credit_try_price = models.FloatField(default=1)
+    credit_eur_price = models.FloatField(default=1)
 
     def __str__(self):
         return "System settings"
