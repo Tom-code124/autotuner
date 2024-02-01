@@ -1,0 +1,7 @@
+**/__pycache__/
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+uploads/
+staticfiles/
+autoremover/.ssh/
