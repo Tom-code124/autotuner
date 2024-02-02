@@ -1,11 +1,12 @@
 # .gitignore
 **/__pycache__/
-# **/migrations/**
-# !**/migrations
-# !**/migrations/__init__.py
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
 # autoremover/uploads/
 # autoremover/autoremover-edd1f50d0eac.json
 # autoremover/Dockerfile
 # autoremover/.dockerignore
-# autoremover/staticfiles/
+autoremover/staticfiles/
 # autoremover/autoremover/.ssh/
+/localenv/
