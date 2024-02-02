@@ -9,4 +9,5 @@
 # autoremover/.dockerignore
 autoremover/staticfiles/
 # autoremover/autoremover/.ssh/
-/localenv/
+localenv/
+autoremover/node_modules/
