@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ page_title }}</title>
+    <meta name="description" content="Add your meta description here." />
+    <meta name="keywords" content="Add your meta keywords here." />
+    <link rel="stylesheet" href="{% static 'customerapp/styles/common.css' %}" />
+    {% for css in styling_files %}
+      <link rel="stylesheet" href="{% static 'customerapp/styles/' %}{{ css }}" />
+    {% endfor %}
+    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+  </head>
+  <body>
+    <div id="modal-background"></div>
+    {% block base %}
+    {% endblock base %}
+    {% for script in script_files %}
+      <script type="module" src="{% static 'customerapp/scripts/' %}{{ script }}"></script>
+    {% endfor %}
+  </body>
+</html>
