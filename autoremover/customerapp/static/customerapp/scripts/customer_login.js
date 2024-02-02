@@ -40,3 +40,8 @@ function checkPasswordMatch() {
 
 passInput.addEventListener("change", checkPasswordMatch);
 confirmPassInput.addEventListener("change", checkPasswordMatch);
+
+// Initialization for ES Users
+import { Input, Ripple, initTE } from "tw-elements";
+
+initTE({ Input, Ripple });

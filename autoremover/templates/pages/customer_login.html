@@ -1,41 +1,92 @@
-{% extends "base.html" %} {% block base %} {% load static %}
-<div class="row full_fit">
-  <div id="left_col" class="column">
-    <img id="logo" src="{% static 'customerapp/assets/logo.png' %}" />
-  </div>
-  <div id="right_col">
-    <div id="login-form-container">
-      {% if messages %} {% for message in messages %} {{ message }} {% endfor %}
-      {% endif %}
-      <form
-        id="login-form"
-        class="column apart-children"
-        method="POST"
-        enctype="multipart/form-data"
-        action="/app/login/"
-      >
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.GET.next }}" />
-        <h1>Welcome</h1>
-        <a href="/app/signup"> Don't have an account? Click here to signup!</a>
-        <label for="username">Username:</label>
-        <input name="username" type="text" required />
-        <div>
-          <label for="password">Password:</label>
-          <a>Forgot Password?</a>
+{% extends "base.html" %}
+{% block base %}
+  {% load static %}
+  <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->
+  <section class="gradient-form h-full min-h-dvh bg-neutral-200 dark:bg-neutral-700 flex justify-center items-center">
+    <div class="container h-full p-10">
+      <div class="g-6 flex h-full flex-wrap items-center justify-center text-neutral-800 dark:text-neutral-200">
+        <div class="w-full lg:w-10/12">
+          <div class="block rounded-lg bg-white shadow-lg dark:bg-neutral-800">
+            <div class="g-0 lg:flex lg:flex-wrap">
+              <!-- Left column container with background and description-->
+              <div class="flex items-center justify-center rounded-t-lg lg:w-6/12 lg:rounded-tr-none lg:rounded-l-lg"
+                   style="background: linear-gradient(to right, #60a5fa, #1d4ed8,#1d4ed8,#1d4ed8, #60a5fa)">
+                <div class="px-4 py-6 text-white md:mx-6 md:p-12">
+                  <img id="logo" src="{% static 'customerapp/assets/logo.png' %}" />
+                </div>
+              </div>
+              <!-- Right column container-->
+              <div class="px-4 md:px-0 lg:w-6/12">
+                <div class="md:mx-6 md:p-12">
+                  <!--Logo-->
+                  <div class="text-center">
+                    <h1 class="mb-12 mt-1 pb-1 text-5xl font-semibold">Log in</h1>
+                  </div>
+                  <form id="login-form"
+                        class="column apart-children"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="{% url 'Login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}" />
+                    <p class="mb-4">Please login to your account</p>
+                    <!--Username input-->
+                    <div class="relative mb-4" data-te-input-wrapper-init>
+                      <input name="username"
+                             type="text"
+                             class="peer block min-h-[auto] w-full rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2"
+                             id="exampleFormControlInput1"
+                             placeholder="Username"
+                             required />
+                      {% comment %} <label for="exampleFormControlInput1" class="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
+                        Username
+                      </label> {% endcomment %}
+                    </div>
+                    <!--Password input-->
+                    <div class="relative mb-4" data-te-input-wrapper-init>
+                      <input name="password"
+                             type="password"
+                             class="peer block min-h-[auto] w-full rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2"
+                             id="exampleFormControlInput11"
+                             placeholder="Password"
+                             required />
+                      {% comment %} <label for="exampleFormControlInput11" class="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary">
+                        Password
+                      </label> {% endcomment %}
+                    </div>
+                    <!--Submit button-->
+                    <div class="mb-12 pb-1 pt-1 text-center">
+                      <button class="mb-3 inline-block w-full rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_rgba(0,0,0,0.2)] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)]"
+                              type="submit"
+                              value="Submit"
+                              name="Submit"
+                              data-te-ripple-init
+                              data-te-ripple-color="light"
+                              style="background: linear-gradient(to right, #60a5fa, #1d4ed8,#1d4ed8,#1d4ed8, #60a5fa)">
+                        Log in
+                      </button>
+                      {% if login_error_message %}<span>{{ login_error_message }}</span>{% endif %}
+                      <!--Forgot password link-->
+                      <a href="#!">Forgot password?</a>
+                    </div>
+                    <!--Register button-->
+                    <div class="flex items-center justify-between pb-6">
+                      <p class="mb-0 mr-2">Don't have an account?</p>
+                      <a href="{% url 'Signup' %}">
+                        <button id="register"
+                                type="button"
+                                class="inline-block rounded border-2 border-danger px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-danger transition duration-150 ease-in-out hover:border-danger-600 hover:bg-neutral-500 hover:bg-opacity-10 hover:text-danger-600 focus:border-danger-600 focus:text-danger-600 focus:outline-none focus:ring-0 active:border-danger-700 active:text-danger-700 dark:hover:bg-neutral-100 dark:hover:bg-opacity-10"
+                                data-te-ripple-init
+                                data-te-ripple-color="light">Register</button>
+                      </a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <input name="password" type="password" required />
-        <div class="row">
-          <input type="checkbox" />
-          <label>Remember me</label>
-        </div>
-        <h3>reCaptcha</h3>
-        {% if login_error_message %}
-        <span>{{ login_error_message }}</span>
-        {% endif %}
-        <button type="submit" value="Submit" name="Submit">Sign in</button>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
-{% endblock %}
+  </section>
+{% endblock base %}
