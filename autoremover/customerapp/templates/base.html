@@ -4,12 +4,9 @@
   <head>
     <meta charset="UTF-8" />
     <title>{{ page_title }}</title>
-    <link
-      rel="stylesheet"
-      href="{% static 'customerapp/styles/common.css' %}"
-    />
+    <link rel="stylesheet" href="{% static 'customerapp/styles/common.css' %}" />
     {% for css in styling_files %}
-    <link rel="stylesheet" href="{% static 'customerapp/styles/' %}{{ css }}" />
+      <link rel="stylesheet" href="{% static 'customerapp/styles/' %}{{ css }}" />
     {% endfor %}
   </head>
   <body>
@@ -17,10 +14,7 @@
     {% block base %}
     {% endblock base %}
     {% for script in script_files %}
-    <script
-      type="module"
-      src="{% static 'customerapp/scripts/' %}{{ script }}"
-    ></script>
+      <script type="module" src="{% static 'customerapp/scripts/' %}{{ script }}"></script>
     {% endfor %}
   </body>
 </html>

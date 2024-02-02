@@ -1,0 +1,216 @@
+#container {
+  display: grid;
+  width: 100%;
+  height: 700px;
+  grid-template-columns: 2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr 1fr 1fr 2fr 2fr 2fr;
+  grid-template-rows: 5fr 3fr;
+  grid-template-areas:
+    "file-graph file-graph file-graph file-graph file-graph last-processes last-processes last-processes last-processes new-knowledge new-knowledge new-knowledge new-knowledge"
+    "file-pricing file-pricing file-pricing file-pricing bosch-search bosch-search bosch-search bosch-search dtc-search dtc-search dtc-search dtc-search dtc-search";
+  column-gap: 20px;
+  row-gap: 20px;
+  place-items: stretch;
+}
+
+.grid-items {
+  border-radius: 5px;
+  padding: 20px;
+}
+
+#file-graph-card {
+  grid-area: file-graph;
+  background-color: #fff;
+  justify-content: space-evenly;
+}
+
+#last-processes-card {
+  grid-area: last-processes;
+  background-color: #8950fc;
+}
+
+#new-knowledge-card {
+  grid-area: new-knowledge;
+  background-color: #1bc5bd;
+}
+
+#file-pricing-card {
+  grid-area: file-pricing;
+  background-color: #1bc5bd;
+}
+
+#bosch-search-card {
+  grid-area: bosch-search;
+  background-color: #fff;
+}
+
+#dtc-search-card {
+  grid-area: dtc-search;
+  background-color: #8648e7;
+}
+
+#files-submitted-header {
+  flex-grow: 2;
+}
+
+#files-submitted-graph {
+  flex-grow: 4;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
+
+.month {
+  height: 100%;
+  width: 5%;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#files-submitted-labels {
+  margin-top: 5px;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.month-label {
+  text-align: center;
+  width: 5%;
+}
+
+.graph-col {
+  background-color: #1bc5bd;
+  width: 100%;
+}
+
+#inner-boxes {
+  flex-grow: 1;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.inner-box {
+  padding: 20px;
+  border-radius: 5px;
+  width: 23%;
+}
+
+#inner-box-today {
+  background-color: #e4e6ef;
+}
+
+#inner-box-week {
+  background-color: #1bc5bd;
+}
+
+#inner-box-month {
+  background-color: #3699ff;
+}
+
+#options-container {
+  padding-top: 15px;
+  width: 50vw;
+}
+
+.price-option-label {
+  justify-content: space-between;
+  width: 90%;
+  background-color: #8648e7;
+}
+
+#price-options-form {
+  width: 70%;
+}
+
+.price-option-box {
+  width: 100%;
+}
+
+#calculator-box {
+  width: 30%;
+}
+
+#calculator-header {
+  border-radius: calc(0.42rem - 1px) calc(0.42rem - 1px) 0 0;
+  background-color: #8950fc;
+  padding: 10px;
+  width: 90%;
+  height: 20px;
+}
+
+#calculator-body {
+  border-radius: 0 0 calc(0.42rem - 1px) calc(0.42rem - 1px);
+  background-color: #f3f6f9;
+  padding: 10px;
+  width: 90%;
+}
+
+#selected-services {
+  list-style-type: none;
+  padding-inline-start: 0;
+  margin-top: 5px;
+}
+
+.price-li {
+  border-bottom: rgb(236, 231, 231) 1px solid;
+  margin-top: 10px;
+}
+
+#choice-content {
+  display: none;
+}
+
+.grid-card-header {
+  margin-bottom: 10px;
+}
+
+h3 {
+  margin: 0;
+  padding: 0;
+}
+
+#new-know-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  width: 100%;
+}
+
+#new-know-list li {
+  margin: 0;
+  margin-bottom: 5px;
+  padding: 5px;
+  background-color: #35dfd7;
+  border-radius: 5px;
+}
+
+#last-processes-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  width: 100%;
+}
+
+#last-processes-list li {
+  margin: 0;
+  margin-bottom: 5px;
+  padding: 5px;
+  background-color: #af88fd;
+  border-radius: 5px;
+}
+
+.new-know-date {
+  background-color: #1bc5bd;
+  margin-right: 10px;
+  border-radius: 5px;
+  text-align: center;
+  height: 20px;
+  padding: 5px;
+}
+
+.last-processes-date {
+  margin-right: 10px;
+  border-radius: 5px;
+  text-align: center;
+  height: 20px;
+  padding: 5px;
+}

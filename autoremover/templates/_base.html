@@ -1,0 +1,28 @@
+{% load compress %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Autoremover Project">
+        {% comment %} <meta name="keywords" content="my, keywords, for, SEO"> {% endcomment %}
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ page_title }}</title>
+        {% compress css %}
+            <link rel="stylesheet" href="{% static 'customerapp/styles/common.css' %}" />
+            <link rel="stylesheet" href="{% static 'src/output.css' %}">
+            {% for css in styling_files %}
+                <link rel="stylesheet" href="{% static 'customerapp/styles/' %}{{ css }}" />
+            {% endfor %}
+        {% endcompress %}
+    </head>
+    <body class="bg-green-50">
+        <div id="modal-background"></div>
+        {% block _base %}
+        {% endblock _base %}
+        {% for script in script_files %}
+            <script type="module" src="{% static 'customerapp/scripts/' %}{{ script }}"></script>
+        {% endfor %}
+    </body>
+</html>

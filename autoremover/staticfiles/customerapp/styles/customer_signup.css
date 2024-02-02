@@ -1,0 +1,29 @@
+#left_col {
+  flex-grow: 1;
+  background-image: url("../assets/background_image.jpg");
+  background-repeat: no-repeat;
+}
+
+#right_col {
+  flex-grow: 3;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+#logo {
+  margin: auto;
+  width: 300px;
+}
+
+#signup-form-container {
+  width: 400px;
+  padding: 20px;
+  height: 70%;
+}
+
+#signup-form {
+  height: 100%;
+}

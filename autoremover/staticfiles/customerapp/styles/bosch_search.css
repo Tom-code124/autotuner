@@ -1,0 +1,102 @@
+#container {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+#card-header {
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: rgb(236, 231, 231) 1px solid;
+}
+
+#card-body {
+  padding: 20px;
+}
+
+input {
+  border: none;
+  outline: none;
+  margin-left: 3px;
+}
+
+.search-box {
+  height: 35px;
+  border: grey 1px solid;
+  border-radius: 5px;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 1px;
+}
+
+.search-button {
+  border-radius: 5px;
+  background-color: #fff;
+  border: grey 1px solid;
+  margin-left: 5px;
+}
+
+.search-button:hover {
+  cursor: pointer;
+  background-color: grey;
+}
+
+#pagination-ul {
+  list-style-type: none;
+}
+
+.pagination-li {
+  margin: 5px;
+}
+
+#current-page-button {
+  background-color: #1bc5bd;
+}
+
+h3 {
+  margin: 0;
+}
+
+#bosch-search-form {
+  margin-left: 20px;
+}
+
+#info-box {
+  border: #3699ff 1px solid;
+  border-radius: 5px;
+  padding: 20px;
+  max-width: 400px;
+}
+
+#info-img {
+  max-width: 800px;
+  height: auto;
+}
+
+.table {
+  margin: auto;
+  width: 100%;
+}
+
+.table td {
+  border-top: rgb(236, 231, 231) 1px solid;
+  height: 50px;
+}
+
+.table th {
+  text-align: left;
+}
+
+.ecu-type-span {
+  background-color: #ebedf3;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#pagination-ul {
+  list-style-type: none;
+}
+
+.pagination-li {
+  margin: 5px;
+}
