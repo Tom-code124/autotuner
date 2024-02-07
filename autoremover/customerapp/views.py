@@ -24,17 +24,19 @@ def signup_page(request):
         customer_form = CustomerCreationForm(request.POST or None)
 
         if all((user_form.is_valid(), customer_form.is_valid())):
+            print("forms are valid")
             user = user_form.save()
             customer = customer_form.save(commit=False)
             customer.user = user
             customer.save()
 
-            username = user_form.cleaned_data['username']
+            email = user_form.cleaned_data['email']
             password = user_form.cleaned_data['password1']
 
-            user = authenticate(username=username, password=password)
+            user = authenticate(username=email, password=password)
 
             if user is not None:
+                print("user is not none")
                 login(request, user)
                 return redirect('/app/')
         
@@ -63,10 +65,10 @@ def login_page(request):
             return redirect('/app/login/')
 
     if request.method == "POST":
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             try:
                 if user.customer is not None:
@@ -81,7 +83,7 @@ def login_page(request):
 
     context = {
         'page_title': 'Log-in',
-        'styling_files': ["customer_login.css"],
+        'styling_files': [],
         'script_files': ["customer_login.js"],
         }
 

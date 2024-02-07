@@ -13,8 +13,8 @@ from django.contrib.auth.models import User
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    fields = ["company_name", "phone_zone", "phone_number", "pricing_class"]
-    readonly_fields = ["company_name", "phone_zone", "phone_number"]
+    fields = ["company_name", "phone_number", "pricing_class"]
+    readonly_fields = ["company_name", "phone_number"]
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
