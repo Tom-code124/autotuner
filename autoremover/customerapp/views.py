@@ -39,6 +39,9 @@ def signup_page(request):
                 print("user is not none")
                 login(request, user)
                 return redirect('/app/')
+            
+        else:
+            messages.error(request, "This email or phone number has already taken by another user!")
         
     else:
         user_form = ExtendedUserCreationForm()
