@@ -247,7 +247,8 @@
       </aside>
       <div id="outer_container">
         <div id="inner_container">
-          {% block layout %}{% endblock %}
+          {% block layout %}
+          {% endblock layout %}
         </div>
         <footer>
           <span>© AutoRemover</span>
@@ -353,4 +354,4 @@
     </div>
   </div>
   <script type="module" src="{% static 'customerapp/scripts/layout.js' %}"></script>
-{% endblock %}
+{% endblock base %}

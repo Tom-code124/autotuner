@@ -49,7 +49,7 @@ def signup_page(request):
 
     context = {
         'page_title': 'Sign-up',
-        'styling_files': ["customer_signup.css"],
+        'styling_files': [],
         'customer_form': customer_form,
         'user_form': user_form
     }
@@ -87,7 +87,7 @@ def login_page(request):
     context = {
         'page_title': 'Log-in',
         'styling_files': [],
-        'script_files': ["customer_login.js"],
+        'script_files': [],
         }
 
     return render(request, "pages/customer_login.html", context)
