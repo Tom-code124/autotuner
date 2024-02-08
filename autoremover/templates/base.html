@@ -16,6 +16,7 @@
     <div id="modal-background"></div>
     {% block base %}
     {% endblock base %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
     {% for script in script_files %}
       <script type="module" src="{% static 'customerapp/scripts/' %}{{ script }}"></script>
     {% endfor %}
