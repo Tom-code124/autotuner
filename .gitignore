@@ -11,3 +11,4 @@ autoremover/staticfiles/
 # autoremover/autoremover/.ssh/
 localenv/
 autoremover/node_modules/
+autoremover_db_initial_data/
