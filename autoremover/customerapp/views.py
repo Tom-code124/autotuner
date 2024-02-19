@@ -9,6 +9,8 @@ from django.db.models import Q
 from database.models import *
 from database.forms import *
 
+from django.utils import timezone
+
 from datetime import datetime
 from urllib.parse import unquote
 
@@ -171,7 +173,7 @@ def dashboard_page(request):
         'styling_files': ["dashboard.css"],
         'script_files': ["dashboard.js"],
         'file_service_status': 'ONLINE',
-        'file_service_until': datetime.now(),
+        'file_service_until': timezone.now(),
         'username': 'yunus',
         'user_credit_amount': 13.52,
         'files_submitted_data': {
