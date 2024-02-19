@@ -34,7 +34,7 @@
                     {{ file_service_status }}
                 </span>
                 until
-                <span class="rounded ml-1 text-xs p-1 mr-2 h-fit bg-gray-200 dark:bg-gray-600">{{ file_service_until }}</span>
+                <span class="rounded ml-1 text-xs p-1 mr-2 h-fit bg-gray-200 dark:bg-gray-600">{{ file_service_until|date:"l, H.i" }}</span>
             </div>
             <div class="flex items-center ms-3">
                 <button type="button"
