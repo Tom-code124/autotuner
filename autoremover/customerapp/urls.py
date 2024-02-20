@@ -29,5 +29,6 @@ urlpatterns = [
     path('bosch_search/bosch_modal', bosch_modal, name='Bosch Search Modal'),
     path('knowledgebase/', knowledgebase_page, name='Knowledgebase'),
     path('knowledgebase/knowledge_modal', knowledge_modal, name='Knowledge Modal'),
+    path('settings/', settings_page, name='Settings'),
     path('download', download_file, name='download')
 ]

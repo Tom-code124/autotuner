@@ -11,10 +11,7 @@ if (
 } else {
   themeToggleDarkIcon.classList.remove("hidden");
 }
-
-var themeToggleBtn = document.getElementById("theme-toggle");
-
-themeToggleBtn.addEventListener("click", function () {
+function toggleTheme(event) {
   // toggle icons inside button
   themeToggleDarkIcon.classList.toggle("hidden");
   themeToggleLightIcon.classList.toggle("hidden");
@@ -39,7 +36,13 @@ themeToggleBtn.addEventListener("click", function () {
       localStorage.setItem("color-theme", "dark");
     }
   }
-});
+}
+
+var themeToggleBtn = document.getElementById("theme-toggle");
+var themeToggleBtn2 = document.getElementById("theme-toggle-2");
+
+themeToggleBtn.addEventListener("click", toggleTheme);
+themeToggleBtn2.addEventListener("click", toggleTheme);
 
 const options = {
   colors: ["#3699FF"],

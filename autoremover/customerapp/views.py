@@ -710,6 +710,18 @@ def knowledge_modal(request):
     return render(request, "modals/knowledge_modal.html", context)
 
 @login_required
+def settings_page(request):
+    context = {
+        'page_title': 'Settings',
+        'styling_files': [],
+        'script_files': [],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+    }
+
+    return render(request, "pages/settings.html", context)
+
+@login_required
 def pricing_modal(request):
 
     context = {
