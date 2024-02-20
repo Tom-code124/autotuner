@@ -619,7 +619,7 @@ def dtc_search_modal(request):
 def bosch_search_page(request):
     context = {
         'page_title': 'Bosch Search',
-        'styling_files': ["bosch_search.css"],
+        'styling_files': [],
         'script_files': ["bosch_search.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),

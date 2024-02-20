@@ -1520,6 +1520,10 @@ input:checked + .toggle-bg {
   width: 1rem;
 }
 
+.w-40 {
+  width: 10rem;
+}
+
 .w-5 {
   width: 1.25rem;
 }
@@ -1534,10 +1538,6 @@ input:checked + .toggle-bg {
 
 .w-64 {
   width: 16rem;
-}
-
-.w-80 {
-  width: 20rem;
 }
 
 .w-full {
@@ -2697,6 +2697,10 @@ input:checked + .toggle-bg {
     display: none;
   }
 
+  .sm\:w-56 {
+    width: 14rem;
+  }
+
   .sm\:translate-x-0 {
     --tw-translate-x: 0px;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -2749,10 +2753,6 @@ input:checked + .toggle-bg {
 }
 
 @media (min-width: 1024px) {
-  .lg\:mt-0 {
-    margin-top: 0px;
-  }
-
   .lg\:mt-16 {
     margin-top: 4rem;
   }
@@ -2775,6 +2775,10 @@ input:checked + .toggle-bg {
 
   .lg\:w-6\/12 {
     width: 50%;
+  }
+
+  .lg\:w-80 {
+    width: 20rem;
   }
 
   .lg\:grid-cols-2 {
@@ -2805,6 +2809,16 @@ input:checked + .toggle-bg {
 
   .lg\:pl-3 {
     padding-left: 0.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:mt-0 {
+    margin-top: 0px;
+  }
+
+  .xl\:flex-row {
+    flex-direction: row;
   }
 }
 
