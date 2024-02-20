@@ -170,7 +170,7 @@ def dashboard_page(request):
 
     context = {
         'page_title': 'Dashboard',
-        'styling_files': ["dashboard.css"],
+        'styling_files': [],
         'script_files': ["dashboard.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': timezone.now(),
@@ -568,7 +568,7 @@ def expenses_modal(request):
 def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
-        'styling_files': ["dtc_search.css"],
+        'styling_files': [],
         'script_files': ["dtc_search.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),

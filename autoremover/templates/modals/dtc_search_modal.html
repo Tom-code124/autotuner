@@ -1,40 +1,45 @@
-<table class="table">
-  <thead>
-    <tr>
-      <th>CODE</th>
-      <th>DESCRIPTION</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for dtc in data %}
-      <tr class="table-data-row">
-        <td>
-          <span class="dtc-code-span">{{ dtc.code }}</span>
-        </td>
-        <td>{{ dtc.desc }}</td>
+<div class="relative overflow-x-auto shadow-md rounded-lg">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">Code</th>
+        <th scope="col" class="px-6 py-3">Description</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<div class="row apart-children">
-  <ul id="pagination-ul" class="row">
-    <li class="pagination-li">
-      <button id="previous-page-button"
-              class="pagination-button"
-              {% if previous_page_disabled %}disabled{% endif %}>Previous page</button>
-    </li>
-    {% for page in page_list %}
-      <li {% if page == current_page %}id="current-page-li"{% endif %}
-          class="pagination-li">
-        <button {% if page == current_page %}id="current-page-button"{% endif %}
-                class="pagination-button">{{ page }}</button>
+    </thead>
+    <tbody>
+      {% for dtc in data %}
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <th scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ dtc.code }}</span>
+          </th>
+          <td class="px-6 py-4">{{ dtc.desc }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between p-4"
+       aria-label="Table navigation">
+    <span class="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span class="font-semibold text-gray-900">{{ start_index }} - {{ end_index }}</span> of <span class="font-semibold text-gray-900">{{ data_amount }}</span></span>
+    <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+      <li>
+        <button id="previous-page-button"
+                class="pagination-button flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 border border-gray-300 rounded-s-lg dark:border-gray-700 dark:text-gray-400 {% if previous_page_disabled %} bg-gray-100 dark:bg-gray-700{% else %} bg-white dark:bg-gray-800 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white{% endif %}"
+                {% if previous_page_disabled %}disabled{% endif %}>Previous</button>
       </li>
-    {% endfor %}
-    <li class="pagination-li">
-      <button id="following-page-button"
-              class="pagination-button"
-              {% if following_page_disabled %}disabled{% endif %}>Next page</button>
-    </li>
-  </ul>
-  <span>Showing {{ start_index }} - {{ end_index }} of {{ data_amount }}</span>
+      {% for page in page_list %}
+        <li>
+          <button {% if page == current_page %}id="current-page-button"{% endif %}
+                  class="pagination-button flex items-center justify-center px-3 h-8 leading-tight text-gray-500 border border-gray-300 dark:border-gray-700 dark:text-gray-400 {% if page == current_page %} bg-gray-100 dark:bg-gray-700{% else %} bg-white dark:bg-gray-800 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white{% endif %}">
+            {{ page }}
+          </button>
+        </li>
+      {% endfor %}
+      <li>
+        <button id="following-page-button"
+                class="pagination-button flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 border border-gray-300 rounded-e-lg dark:border-gray-700 dark:text-gray-400 {% if following_page_disabled %} bg-gray-100 dark:bg-gray-700{% else %} bg-white dark:bg-gray-800 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white{% endif %}"
+                {% if following_page_disabled %}disabled{% endif %}>Next</button>
+      </li>
+    </ul>
+  </nav>
 </div>
