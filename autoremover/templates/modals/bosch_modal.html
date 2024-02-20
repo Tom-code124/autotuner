@@ -1,69 +1,70 @@
 {% if data %}
-  <table class="table">
-    <thead>
-      <tr>
-        <th>TYPE</th>
-        <th>MANUFACTURER NUMBER</th>
-        <th>CAR MANUFACTURER</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ecu in data %}
-        <tr class="table-data-row">
-          <td>
-            <span class="ecu-type-span">{{ ecu.model.name }}</span>
-          </td>
-          <td>{{ ecu.number }}</td>
-          <td>{{ ecu.carmanufacturers }}</td>
+  <div class="relative overflow-x-auto shadow-md rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">Type</th>
+          <th scope="col" class="px-6 py-3">Manufacturer Number</th>
+          <th scope="col" class="px-6 py-3">Car Manufacturers</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <div class="row apart-children">
-    <ul id="pagination-ul" class="row">
-      <li class="pagination-li">
-        <button id="previous-page-button"
-                class="pagination-button"
-                {% if previous_page_disabled %}disabled{% endif %}>Previous page</button>
-      </li>
-      {% for page in page_list %}
-        <li {% if page == current_page %}id="current-page-li"{% endif %}
-            class="pagination-li">
-          <button {% if page == current_page %}id="current-page-button"{% endif %}
-                  class="pagination-button">{{ page }}</button>
-        </li>
-      {% endfor %}
-      <li class="pagination-li">
-        <button id="following-page-button"
-                class="pagination-button"
-                {% if following_page_disabled %}disabled{% endif %}>Next page</button>
-      </li>
-    </ul>
-    <span>Showing {{ start_index }} - {{ end_index }} of {{ data_amount }}</span>
+      </thead>
+      <tbody>
+        {% for ecu in data %}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row"
+                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ ecu.model.name }}</span>
+            </th>
+            <td class="px-6 py-4">{{ ecu.number }}</td>
+            <td class="px-6 py-4">{{ ecu.carmanufacturers }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include "modals/pagination.html" %}
   </div>
 {% else %}
   {% load static %}
-  <div class="flex flex-col lg:flex-row justify-between">
+  <div class="flex flex-col xl:flex-row justify-around items-center">
     <img src="{% static 'customerapp/assets/ecu_search_manual.png' %}"
          id="info-img"
-         width="592.75"
-         height="394.77"
+         width="540"
+         height="360"
          alt="Bosch Ecu Number Guide" />
-    <div class="column center-children">
+    <div class="max-w-min p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col items-center justify-center">
       <img src="{% static 'customerapp/assets/bosch_logo.png' %}"
            width="300"
            height="66.89"
            alt="Bosch Logo" />
-      <div id="info-box" class="column">
-        <h3>How to find your ECU</h3>
-        <p>
+      <div class="mt-4">
+        <a href="#">
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">How to find your ECU</h5>
+        </a>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
           To find the right device please search using the Bosch number. A Bosch engine control unit always starts with 028 or 026.
         </p>
-        <form id="bosch-search-form-2" class="row">
-          <div id="bosch-search-box-2" class="row search-box">
-            <input id="bosch-search-input-2" type="text" placeholder="Search..." />
+        <form class="flex flex-row mt-2 xl:mt-0">
+          <div class="relative h-fit">
+            <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                   aria-hidden="true"
+                   fill="currentColor"
+                   viewBox="0 0 20 20"
+                   xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd">
+                </path>
+              </svg>
+            </div>
+            <input type="text"
+                   id="bosch-search-input-2"
+                   class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-40 sm:w-56 lg:w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Search by ECU number">
           </div>
-          <button type="submit" id="bosch-search-button-2" class="search-button">Search</button>
+          <button type="submit"
+                  id="bosch-search-button-2"
+                  class="h-fit ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Search
+          </button>
         </form>
       </div>
     </div>
