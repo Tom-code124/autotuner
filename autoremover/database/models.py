@@ -284,13 +284,6 @@ class KnowledgeAd(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     content = models.CharField(max_length=100)
 
-class DtcInfo(models.Model):
-    code = models.CharField(max_length=7)
-    desc = models.TextField(max_length=1000)
-
-    def __str__(self):
-        return self.code + " dtc"
-
 class FileService(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
     manual_status = models.BooleanField()

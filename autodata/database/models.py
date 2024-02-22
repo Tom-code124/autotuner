@@ -142,3 +142,10 @@ class Ecu(models.Model):
     
     def __str__(self):
         return self.number
+
+class DtcInfo(models.Model):
+    code = models.CharField(max_length=7)
+    desc = models.TextField(max_length=1000)
+
+    def __str__(self):
+        return self.code + " dtc"
