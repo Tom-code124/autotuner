@@ -1,0 +1,24 @@
+<nav class="flex items-center flex-column flex-wrap md:flex-row justify-between p-4"
+     aria-label="Table navigation">
+    <span class="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span class="font-semibold text-gray-900">{{ start_index }} - {{ end_index }}</span> of <span class="font-semibold text-gray-900">{{ data_amount }}</span></span>
+    <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+        <li>
+            <button id="previous-page-button"
+                    class="pagination-button flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 border border-gray-300 rounded-s-lg dark:border-gray-700 dark:text-gray-400 {% if previous_page_disabled %} bg-gray-100 dark:bg-gray-700{% else %} bg-white dark:bg-gray-800 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white{% endif %}"
+                    {% if previous_page_disabled %}disabled{% endif %}>Previous</button>
+        </li>
+        {% for page in page_list %}
+            <li>
+                <button {% if page == current_page %}id="current-page-button"{% endif %}
+                        class="pagination-button flex items-center justify-center px-3 h-8 leading-tight text-gray-500 border border-gray-300 dark:border-gray-700 dark:text-gray-400 {% if page == current_page %} bg-gray-100 dark:bg-gray-700{% else %} bg-white dark:bg-gray-800 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white{% endif %}">
+                    {{ page }}
+                </button>
+            </li>
+        {% endfor %}
+        <li>
+            <button id="following-page-button"
+                    class="pagination-button flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 border border-gray-300 rounded-e-lg dark:border-gray-700 dark:text-gray-400 {% if following_page_disabled %} bg-gray-100 dark:bg-gray-700{% else %} bg-white dark:bg-gray-800 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white{% endif %}"
+                    {% if following_page_disabled %}disabled{% endif %}>Next</button>
+        </li>
+    </ul>
+</nav>

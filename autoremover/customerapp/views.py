@@ -9,6 +9,8 @@ from django.db.models import Q
 from database.models import *
 from database.forms import *
 
+from django.utils import timezone
+
 from datetime import datetime
 from urllib.parse import unquote
 
@@ -24,19 +26,24 @@ def signup_page(request):
         customer_form = CustomerCreationForm(request.POST or None)
 
         if all((user_form.is_valid(), customer_form.is_valid())):
+            print("forms are valid")
             user = user_form.save()
             customer = customer_form.save(commit=False)
             customer.user = user
             customer.save()
 
-            username = user_form.cleaned_data['username']
+            email = user_form.cleaned_data['email']
             password = user_form.cleaned_data['password1']
 
-            user = authenticate(username=username, password=password)
+            user = authenticate(username=email, password=password)
 
             if user is not None:
+                print("user is not none")
                 login(request, user)
                 return redirect('/app/')
+            
+        else:
+            messages.error(request, "This email or phone number has already taken by another user!")
         
     else:
         user_form = ExtendedUserCreationForm()
@@ -44,7 +51,7 @@ def signup_page(request):
 
     context = {
         'page_title': 'Sign-up',
-        'styling_files': ["customer_signup.css"],
+        'styling_files': [],
         'customer_form': customer_form,
         'user_form': user_form
     }
@@ -63,10 +70,10 @@ def login_page(request):
             return redirect('/app/login/')
 
     if request.method == "POST":
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             try:
                 if user.customer is not None:
@@ -81,8 +88,8 @@ def login_page(request):
 
     context = {
         'page_title': 'Log-in',
-        'styling_files': ["customer_login.css"],
-        'script_files': ["customer_login.js"],
+        'styling_files': [],
+        'script_files': [],
         }
 
     return render(request, "pages/customer_login.html", context)
@@ -163,10 +170,10 @@ def dashboard_page(request):
 
     context = {
         'page_title': 'Dashboard',
-        'styling_files': ["dashboard.css"],
+        'styling_files': [],
         'script_files': ["dashboard.js"],
         'file_service_status': 'ONLINE',
-        'file_service_until': datetime.now(),
+        'file_service_until': timezone.now(),
         'username': 'yunus',
         'user_credit_amount': 13.52,
         'files_submitted_data': {
@@ -561,7 +568,7 @@ def expenses_modal(request):
 def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
-        'styling_files': ["dtc_search.css"],
+        'styling_files': [],
         'script_files': ["dtc_search.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
@@ -612,7 +619,7 @@ def dtc_search_modal(request):
 def bosch_search_page(request):
     context = {
         'page_title': 'Bosch Search',
-        'styling_files': ["bosch_search.css"],
+        'styling_files': [],
         'script_files': ["bosch_search.js"],
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
@@ -701,6 +708,18 @@ def knowledge_modal(request):
     }
 
     return render(request, "modals/knowledge_modal.html", context)
+
+@login_required
+def settings_page(request):
+    context = {
+        'page_title': 'Settings',
+        'styling_files': [],
+        'script_files': [],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+    }
+
+    return render(request, "pages/settings.html", context)
 
 @login_required
 def pricing_modal(request):

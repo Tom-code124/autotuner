@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block base %}
+  {% load static %}
+  {% include "header.html" %}
+  {% include "sidebar.html" %}
+  <div class="p-6 pb-20 sm:ml-56 h-auto flex flex-col min-h-screen items-center">
+    <div class="dark:text-white bg-white p-2 rounded-lg shadow dark:bg-gray-800 mt-16 text-center lg:hidden">
+      File service:
+      <span class="rounded ml-1 text-xs p-1 mr-2 h-fit {% if file_service_status == "ONLINE" %} bg-lime-600 {% else %} bg-red-600 {% endif %}">
+        {{ file_service_status }}
+      </span>
+      until
+      <span class="rounded ml-1 text-xs p-1 mr-2 h-fit bg-gray-200 dark:bg-gray-600">{{ file_service_until|date:"l, H.i" }}</span>
+    </div>
+    <main class="rounded-lg dark:border-gray-700 mt-4 flex-1 h-auto lg:mt-16 w-full">
+      {% block layout %}
+      {% endblock layout %}
+    </main>
+    {% include "footer.html" %}
+  </div>
+{% endblock base %}
