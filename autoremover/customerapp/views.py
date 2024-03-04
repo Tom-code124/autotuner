@@ -14,6 +14,9 @@ from django.utils import timezone
 from datetime import datetime
 from urllib.parse import unquote
 
+import requests
+import json
+
 # Create your views here.
 
 def signup_page(request):
@@ -281,7 +284,15 @@ def bought_files_modal(request):
 
 @login_required
 def upload_page(request):
-    vehicle_categories = VehicleCategory.objects.all()
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_select/"
+
+    payload = {'requested': 'vehicle_category'}
+    response = requests.get(url, params=payload)
+    data = json.loads(response.json().get("data"))
+    vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
     connection_tools = ConnectionTool.objects.all()
 
     tax_percentage = SystemSetting.objects.all()[0].tax_percentage
@@ -353,42 +364,67 @@ def upload_page(request):
 
 @login_required
 def vehicle_select_modal(request):
-    params = request.GET
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_select/"
 
+    params = request.GET
     requested = params.get('requested')
      
     if requested == 'vehicle_brand':
         category_id = int(params.get('vehicle_category'))
-        vehicle_model_ids = VehicleModel.objects.filter(category_id=category_id).values('brand_id')
-        vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
+
+        payload = {'requested': 'vehicle_brand', 'vehicle_category': category_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        vehicle_brands = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'vehicle brand'
         data = vehicle_brands
 
     elif requested == 'vehicle_model':
         category_id = int(params.get('vehicle_category'))
         brand_id = int(params.get('vehicle_brand'))
-        vehicle_models = VehicleModel.objects.filter(category_id=category_id, brand_id=brand_id)
+
+        payload = {'requested': 'vehicle_model', 'vehicle_category': category_id, 'vehicle_brand': brand_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        vehicle_models = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'vehicle model'
         data = vehicle_models
     
     elif requested == 'vehicle_year':
         model_id = int(params.get('vehicle_model'))
-        years = VehicleYear.objects.filter(model_id=model_id)
+
+        payload = {'requested': 'vehicle_year', 'vehicle_model': model_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        years = [{'id': d['pk'], 'year': d['fields']['year']} for d in data]
+
         data_type = 'vehicle year'
         data = years
 
     elif requested == 'vehicle_version':
         vehicle_year_id = int(params.get('vehicle_year'))
-        vehicle_version_ids = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id).values('version_id')
-        engines = VehicleVersion.objects.filter(id__in=vehicle_version_ids)
+
+        payload = {'requested': 'vehicle_version', 'vehicle_year': vehicle_year_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        engines = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'vehicle version'
         data = engines
 
     elif requested == 'ecu_type':
         vehicle_year_id = int(params.get('vehicle_year'))
         version_id = int(params.get('vehicle_version'))
-        ecu_model_ids = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id, version_id=version_id).values('ecu_model_id')
-        ecu_models = EcuModel.objects.filter(id__in=ecu_model_ids)
+
+        payload = {'requested': 'ecu_type', 'vehicle_year': vehicle_year_id, 'vehicle_version': version_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        ecu_models = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'ecu type'
         data = ecu_models
 

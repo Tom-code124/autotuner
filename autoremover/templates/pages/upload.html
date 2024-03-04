@@ -39,7 +39,7 @@
               <div>Select Vehicle</div>
               <select id="vehicle-category-select-1" name="vehicle_category">
                 <option value="null" disabled selected hidden>Choose a vehicle category</option>
-                {% for category in vehicle_category_list %}<option value="{{ category.id }}">{{ category }}</option>{% endfor %}
+                {% for category in vehicle_category_list %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
               </select>
               <select id="vehicle-brand-select-2" disabled name="vehicle_brand">
                 <option value="null" disabled selected hidden>Choose a vehicle brand</option>
