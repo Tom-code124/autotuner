@@ -80,7 +80,7 @@ function proceedToOptions(event) {
     }
   }
 
-  var fileInput = document.getElementById("file-input");
+  var fileInput = document.getElementById("dropzone-file");
 
   if (fileInput.value == "") {
     readyToProceed = false;
@@ -92,11 +92,23 @@ function proceedToOptions(event) {
     proceedingError.style.display = "none";
 
     var vehicleYearId = document.getElementById("vehicle-year-select-4").value;
-    var vehicleVersionId = document.getElementById("vehicle-version-select-5").value;
+    var vehicleVersionId = document.getElementById(
+      "vehicle-version-select-5"
+    ).value;
     var ecuModelId = document.getElementById("ecu-type-select-6").value;
 
-    if (vehicleYearId != oldVehicleYearId || vehicleVersionId != oldVehicleVersionId || ecuModelId != oldEcuModelId) {
-      var url = "get_process_options?vehicle_year_id=" + vehicleYearId + "&vehicle_version_id=" + vehicleVersionId + "&ecu_model_id=" + ecuModelId;
+    if (
+      vehicleYearId != oldVehicleYearId ||
+      vehicleVersionId != oldVehicleVersionId ||
+      ecuModelId != oldEcuModelId
+    ) {
+      var url =
+        "get_process_options?vehicle_year_id=" +
+        vehicleYearId +
+        "&vehicle_version_id=" +
+        vehicleVersionId +
+        "&ecu_model_id=" +
+        ecuModelId;
       getAndInject(url, "price-options-form", undefined, openOptionsCard);
 
       oldVehicleYearId = vehicleYearId;

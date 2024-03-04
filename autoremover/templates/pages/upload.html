@@ -11,7 +11,7 @@
         <span>Select processing options and drop a description below</span>
       </div>
     </div>
-    <div id="card-body">
+    <div class="p-4 rounded-b-xl bg-white">
       {% if messages %}
         {% for message in messages %}<p>{{ message }}</p>{% endfor %}
       {% endif %}
@@ -20,22 +20,41 @@
             enctype="multipart/form-data"
             action="{% url 'Upload' %}">
         {% csrf_token %}
-        <div id="select-vehicle-card" class="column">
-          <div class="row">
-            <div class="column">
+        <div id="select-vehicle-card" class="flex flex-col">
+          <div class="flex flex-row justify-around">
+            <div class="flex flex-col w-2/5">
               <div>Upload file</div>
-              <input type="file"
-                     id="file-input"
-                     name="original_file"
-                     data-max-file-size="20M"
-                     data-allowed-file-extensions="bin fpf dec unq cod mpc fls ori org mod zip rar tun pak slave dat dtf file fpf mmf bdc moc txt bak bdc sbdc" />
+              <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file"
+                       class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                  <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                         aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 20 16">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                    </svg>
+                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span class="font-semibold">Click to upload</span> or drag and drop
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">MAX. 20MB</p>
+                  </div>
+                  <input id="dropzone-file"
+                         type="file"
+                         class="hidden"
+                         name="original_file"
+                         data-max-file-size="20M"
+                         data-allowed-file-extensions="bin fpf dec unq cod mpc fls ori org mod zip rar tun pak slave dat dtf file fpf mmf bdc moc txt bak bdc sbdc" />
+                </label>
+              </div>
               <select id="file-type-select" name="file_type">
                 <option value="null" disabled selected hidden>Choose a file type</option>
                 <option value="E">ECU File</option>
                 <option value="T">Transmission File</option>
               </select>
             </div>
-            <div id="vehicle-select-section" class="column">
+            <div id="vehicle-select-section" class="flex flex-col w-2/4">
               <div>Select Vehicle</div>
               <select id="vehicle-category-select-1" name="vehicle_category">
                 <option value="null" disabled selected hidden>Choose a vehicle category</option>
