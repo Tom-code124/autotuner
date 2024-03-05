@@ -2,7 +2,13 @@ from django.core.serializers import serialize
 from django.shortcuts import render
 from database.models import *
 from django.http import JsonResponse
+from urllib.parse import unquote
+from django.core.paginator import Paginator
+from django.db.models import Q
+
 import json
+
+from database.models import *
 
 # Create your views here.
 
@@ -55,5 +61,83 @@ def vehicle_select_api(request):
         'data_type': data_type,
         'data': data
     }
+
+    return JsonResponse(context)
+
+def dtc_search_api(request):
+    params = request.GET
+    keyword = params.get('keyword')
+    page_param = params.get('page')
+
+    if keyword:
+        keyword = unquote(keyword).lower()
+        dtc_list = DtcInfo.objects.filter(Q(desc__icontains=keyword) | Q(code__icontains=keyword)).order_by("code")
+    else:
+        dtc_list = DtcInfo.objects.all().order_by("code")
+
+    if page_param:
+        pagenum = int(page_param)
+    else:
+        pagenum = 1
+
+    paginator = Paginator(dtc_list, 10)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = list(range(start_page, end_page + 1))
+        
+    context = {
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
+        'page_list': page_list,
+        'data': serialize("json", page.object_list, fields=['code', 'desc'])
+    }
+
+    return JsonResponse(context)
+
+def bosch_search_api(request):
+    params = request.GET
+    keyword = params.get('keyword')
+    page_param = params.get('page')
+
+    if keyword:
+        keyword = unquote(keyword).lower()
+        ecu_list = Ecu.objects.filter(Q(number__icontains=keyword)).order_by("id")
+
+        if page_param:
+            pagenum = int(page_param)
+        else:
+            pagenum = 1
+
+        paginator = Paginator(ecu_list, 10)
+        page = paginator.page(int(pagenum))
+        start_page = max(1, page.number - 5)
+        end_page = min(paginator.num_pages, max(page.number + 5, 10))
+        page_list = list(range(start_page, end_page + 1))
+        data = []
+        for ecu in page.object_list:
+            data.append({
+                'number': ecu.number,
+                'type': ecu.model.name,
+                'carmanufacturers': ecu.carmanufacturers
+            })
+   
+        context = {
+            'data_amount': paginator.count,
+            'start_index': page.start_index(),
+            'end_index': page.end_index(),
+            'current_page': page.number,
+            'previous_page_disabled': not page.has_previous(),
+            'following_page_disabled': not page.has_next(),
+            'page_list': page_list,
+            'data': data
+    }
+    
+    else:
+        context = {}
 
     return JsonResponse(context)

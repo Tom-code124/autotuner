@@ -616,37 +616,35 @@ def dtc_search_page(request):
 
 @login_required
 def dtc_search_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/dtc_search/"
 
     params = request.GET
     keyword = params.get('keyword')
     page_param = params.get('page')
 
+    payload = {}
+
     if keyword:
-        keyword = unquote(keyword).lower()
-        dtc_list = DtcInfo.objects.filter(Q(desc__icontains=keyword) | Q(code__icontains=keyword)).order_by("code")
-    else:
-        dtc_list = DtcInfo.objects.all().order_by("code")
+        payload["keyword"] = unquote(keyword).lower()
 
     if page_param:
-        pagenum = int(page_param)
-    else:
-        pagenum = 1
+        payload["page"] = int(page_param)
 
-    paginator = Paginator(dtc_list, 10)
-    page = paginator.page(int(pagenum))
-    start_page = max(1, page.number - 5)
-    end_page = min(paginator.num_pages, max(page.number + 5, 10))
-    page_list = range(start_page, end_page + 1)
-        
+    response = requests.get(url, params=payload).json()
+    data = json.loads(response.get("data"))
+    dtcs = [{'code': d['fields']['code'],'desc': d['fields']['desc']} for d in data]
+
     context = {
-        'data_amount': paginator.count,
-        'start_index': page.start_index(),
-        'end_index': page.end_index(),
-        'current_page': page.number,
-        'previous_page_disabled': not page.has_previous(),
-        'following_page_disabled': not page.has_next(),
-        'page_list': page_list,
-        'data': page.object_list
+        'data_amount': response.get("data_amount"),
+        'start_index': response.get("start_index"),
+        'end_index': response.get("end_index"),
+        'current_page': response.get("current_page"),
+        'previous_page_disabled': response.get("previous_page_disabled"),
+        'following_page_disabled': response.get("following_page_disabled"),
+        'page_list': response.get("page_list"),
+        'data': dtcs
     }
 
     return render(request, "modals/dtc_search_modal.html", context)
@@ -665,36 +663,36 @@ def bosch_search_page(request):
 
 @login_required
 def bosch_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/bosch_search/"
 
     params = request.GET
     keyword = params.get('keyword')
     page_param = params.get('page')
 
+    payload = {}
+
     if keyword:
-        keyword = unquote(keyword).lower()
-        ecu_list = Ecu.objects.filter(Q(number__icontains=keyword)).order_by("id")
+        payload["keyword"] = unquote(keyword).lower()
 
         if page_param:
-            pagenum = int(page_param)
-        else:
-            pagenum = 1
+            payload["page"] = int(page_param)
 
-        paginator = Paginator(ecu_list, 10)
-        page = paginator.page(int(pagenum))
-        start_page = max(1, page.number - 5)
-        end_page = min(paginator.num_pages, max(page.number + 5, 10))
-        page_list = range(start_page, end_page + 1)
-   
+        response = requests.get(url, params=payload).json()
+        data = response.get("data")
+        ecus = [{'type': d['type'],'number': d['number'],'carmanufacturers': d['carmanufacturers']} for d in data]
+
         context = {
-            'data_amount': paginator.count,
-            'start_index': page.start_index(),
-            'end_index': page.end_index(),
-            'current_page': page.number,
-            'previous_page_disabled': not page.has_previous(),
-            'following_page_disabled': not page.has_next(),
-            'page_list': page_list,
-            'data': page.object_list
-    }
+            'data_amount': response.get("data_amount"),
+            'start_index': response.get("start_index"),
+            'end_index': response.get("end_index"),
+            'current_page': response.get("current_page"),
+            'previous_page_disabled': response.get("previous_page_disabled"),
+            'following_page_disabled': response.get("following_page_disabled"),
+            'page_list': response.get("page_list"),
+            'data': ecus
+        }
     
     else:
         context = {}
