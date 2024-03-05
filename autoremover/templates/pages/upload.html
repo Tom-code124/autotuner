@@ -1,17 +1,63 @@
 {% extends "layout.html" %}
 {% block layout %}
   <div id="container" class="column">
-    <div id="card-header" class="row apart-children">
-      <div id="select-vehicle-tab" class="card-header-tab column active-tab">
-        <span>Step 1: Vehicle details & file</span>
-        <span>Select the vehicle and upload the file</span>
+    <div id="card-header" class="apart-children hidden lg:flex lg:flex-row">
+      <div id="select-vehicle-tab" class="card-header-tab active-tab">
+        <div class="flex flex-row items-center">
+          <svg width="36px"
+               height="36px"
+               {% comment %}
+               class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+               {% endcomment %}
+               aria-hidden="true"
+               viewBox="0 0 24 24"
+               version="1.1">
+            <g id="Stockholm-icons-/-Files-/-Upload" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+            <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z" id="Path-57" fill="#3699FF" fill-rule="nonzero" opacity="0.3">
+            </path>
+            <rect id="Rectangle" fill="#3699FF" opacity="0.3" x="11" y="2" width="2" height="14" rx="1"></rect>
+            <path d="M12.0362375,3.37797611 L7.70710678,7.70710678 C7.31658249,8.09763107 6.68341751,8.09763107 6.29289322,7.70710678 C5.90236893,7.31658249 5.90236893,6.68341751 6.29289322,6.29289322 L11.2928932,1.29289322 C11.6689749,0.916811528 12.2736364,0.900910387 12.6689647,1.25670585 L17.6689647,5.75670585 C18.0794748,6.12616487 18.1127532,6.75845471 17.7432941,7.16896473 C17.3738351,7.57947475 16.7415453,7.61275317 16.3310353,7.24329415 L12.0362375,3.37797611 Z" id="Path-102" fill="#3699FF" fill-rule="nonzero">
+            </path>
+            </g>
+          </svg>
+          <div class="flex flex-col ml-2">
+            <h5 class="leading-none text-xl font-bold text-gray-900 pb-1">Step 1: Vehicle details & file</h5>
+            <p class="text-sm font-normal text-gray-600">Select the vehicle and upload the file</p>
+          </div>
+        </div>
       </div>
-      <div id="select-options-tab" class="card-header-tab column">
-        <span>Step 2: Select the options</span>
-        <span>Select processing options and drop a description below</span>
+      <div id="select-options-tab" class="card-header-tab">
+        <div class="flex flex-row items-center">
+          <svg width="36px"
+               height="36px"
+               viewBox="0 0 24 24"
+               fill="none"
+               xmlns="http://www.w3.org/2000/svg"
+               stroke="#000000">
+            <g id="SVGRepo_bgCarrier" stroke-width="0">
+            </g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+            </g>
+            <g id="SVGRepo_iconCarrier">
+            <path d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" stroke="#3699FF" stroke-width="1.5">
+            </path>
+            <path d="M6 15.8L7.14286 17L10 14" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            </path>
+            <path d="M6 8.8L7.14286 10L10 7" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            </path>
+            <path d="M13 9L18 9" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round"></path>
+            <path d="M13 16L18 16" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round"></path>
+            </g>
+          </svg>
+          <div class="flex flex-col ml-2">
+            <h5 class="leading-none text-xl font-bold text-gray-900 pb-1">Step 2: Select the options</h5>
+            <p class="text-sm font-normal text-gray-600">Select processing options</p>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="p-4 rounded-b-xl bg-white">
+    <div class="p-6 rounded-b-xl rounded-t-xl lg:rounded-t-none bg-white">
       {% if messages %}
         {% for message in messages %}<p>{{ message }}</p>{% endfor %}
       {% endif %}
@@ -21,12 +67,51 @@
             action="{% url 'Upload' %}">
         {% csrf_token %}
         <div id="select-vehicle-card" class="flex flex-col">
-          <div class="flex flex-row justify-around">
-            <div class="flex flex-col w-2/5">
-              <div>Upload file</div>
-              <div class="flex items-center justify-center w-full">
+          <div class="flex flex-row self-center items-center lg:hidden">
+            <svg width="36px"
+                 height="36px"
+                 {% comment %}
+                 class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                 {% endcomment %}
+                 aria-hidden="true"
+                 viewBox="0 0 24 24"
+                 version="1.1">
+              <g id="Stockholm-icons-/-Files-/-Upload" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+              <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+              <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z" id="Path-57" fill="#3699FF" fill-rule="nonzero" opacity="0.3">
+              </path>
+              <rect id="Rectangle" fill="#3699FF" opacity="0.3" x="11" y="2" width="2" height="14" rx="1"></rect>
+              <path d="M12.0362375,3.37797611 L7.70710678,7.70710678 C7.31658249,8.09763107 6.68341751,8.09763107 6.29289322,7.70710678 C5.90236893,7.31658249 5.90236893,6.68341751 6.29289322,6.29289322 L11.2928932,1.29289322 C11.6689749,0.916811528 12.2736364,0.900910387 12.6689647,1.25670585 L17.6689647,5.75670585 C18.0794748,6.12616487 18.1127532,6.75845471 17.7432941,7.16896473 C17.3738351,7.57947475 16.7415453,7.61275317 16.3310353,7.24329415 L12.0362375,3.37797611 Z" id="Path-102" fill="#3699FF" fill-rule="nonzero">
+              </path>
+              </g>
+            </svg>
+            <div class="flex flex-col ml-2">
+              <h5 class="leading-none text-xl font-bold text-gray-900 pb-1">Step 1: Vehicle details & file</h5>
+              <p class="text-sm font-normal text-gray-600">Select the vehicle and upload the file</p>
+            </div>
+          </div>
+          <div class="flex flex-col lg:flex-row items-center lg:justify-evenly lg:items-start">
+            <div class="flex flex-col w-11/12 lg:w-5/12">
+              <div class="flex flex-row items-center mt-4">
+                <svg width="24px"
+                     height="24px"
+                     viewBox="0 0 24 24"
+                     version="1.1"
+                     xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <g id="Stockholm-icons-/-Files-/-File-done" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <polygon id="Shape" points="0 0 24 0 24 24 0 24"></polygon>
+                  <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z M10.875,15.75 C11.1145833,15.75 11.3541667,15.6541667 11.5458333,15.4625 L15.3791667,11.6291667 C15.7625,11.2458333 15.7625,10.6708333 15.3791667,10.2875 C14.9958333,9.90416667 14.4208333,9.90416667 14.0375,10.2875 L10.875,13.45 L9.62916667,12.2041667 C9.29375,11.8208333 8.67083333,11.8208333 8.2875,12.2041667 C7.90416667,12.5875 7.90416667,13.1625 8.2875,13.5458333 L10.2041667,15.4625 C10.3958333,15.6541667 10.6354167,15.75 10.875,15.75 Z" id="Combined-Shape" fill="#3699FF" fill-rule="nonzero" opacity="0.3">
+                  </path>
+                  <path d="M10.875,15.75 C10.6354167,15.75 10.3958333,15.6541667 10.2041667,15.4625 L8.2875,13.5458333 C7.90416667,13.1625 7.90416667,12.5875 8.2875,12.2041667 C8.67083333,11.8208333 9.29375,11.8208333 9.62916667,12.2041667 L10.875,13.45 L14.0375,10.2875 C14.4208333,9.90416667 14.9958333,9.90416667 15.3791667,10.2875 C15.7625,10.6708333 15.7625,11.2458333 15.3791667,11.6291667 L11.5458333,15.4625 C11.3541667,15.6541667 11.1145833,15.75 10.875,15.75 Z" id="check-path" fill="#3699FF">
+                  </path>
+                  </g>
+                </svg>
+                <h6 class="leading-none text-l font-bold text-gray-900 ml-1">Upload file</h6>
+              </div>
+              <div class="flex items-center justify-center w-full mt-4">
                 <label for="dropzone-file"
-                       class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                       class="flex flex-col items-center justify-center w-full h-64 rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                   <div class="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
                          aria-hidden="true"
@@ -48,48 +133,125 @@
                          data-allowed-file-extensions="bin fpf dec unq cod mpc fls ori org mod zip rar tun pak slave dat dtf file fpf mmf bdc moc txt bak bdc sbdc" />
                 </label>
               </div>
-              <select id="file-type-select" name="file_type">
+              <select id="file-type-select"
+                      name="file_type"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a file type</option>
                 <option value="E">ECU File</option>
                 <option value="T">Transmission File</option>
               </select>
             </div>
-            <div id="vehicle-select-section" class="flex flex-col w-2/4">
-              <div>Select Vehicle</div>
-              <select id="vehicle-category-select-1" name="vehicle_category">
+            <div id="vehicle-select-section" class="flex flex-col w-11/12 lg:w-5/12">
+              <div class="flex flex-row items-center mt-6 lg:mt-4">
+                <svg width="24px"
+                     height="24px"
+                     viewBox="0 0 24 24"
+                     version="1.1"
+                     xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <g id="Stockholm-icons-/-Devices-/-Server" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+                  <path d="M5,2 L19,2 C20.1045695,2 21,2.8954305 21,4 L21,6 C21,7.1045695 20.1045695,8 19,8 L5,8 C3.8954305,8 3,7.1045695 3,6 L3,4 C3,2.8954305 3.8954305,2 5,2 Z M11,4 C10.4477153,4 10,4.44771525 10,5 C10,5.55228475 10.4477153,6 11,6 L16,6 C16.5522847,6 17,5.55228475 17,5 C17,4.44771525 16.5522847,4 16,4 L11,4 Z M7,6 C7.55228475,6 8,5.55228475 8,5 C8,4.44771525 7.55228475,4 7,4 C6.44771525,4 6,4.44771525 6,5 C6,5.55228475 6.44771525,6 7,6 Z" id="Combined-Shape" fill="#3699FF" opacity="0.3">
+                  </path>
+                  <path d="M5,9 L19,9 C20.1045695,9 21,9.8954305 21,11 L21,13 C21,14.1045695 20.1045695,15 19,15 L5,15 C3.8954305,15 3,14.1045695 3,13 L3,11 C3,9.8954305 3.8954305,9 5,9 Z M11,11 C10.4477153,11 10,11.4477153 10,12 C10,12.5522847 10.4477153,13 11,13 L16,13 C16.5522847,13 17,12.5522847 17,12 C17,11.4477153 16.5522847,11 16,11 L11,11 Z M7,13 C7.55228475,13 8,12.5522847 8,12 C8,11.4477153 7.55228475,11 7,11 C6.44771525,11 6,11.4477153 6,12 C6,12.5522847 6.44771525,13 7,13 Z" id="Combined-Shape-Copy" fill="#3699FF">
+                  </path>
+                  <path d="M5,16 L19,16 C20.1045695,16 21,16.8954305 21,18 L21,20 C21,21.1045695 20.1045695,22 19,22 L5,22 C3.8954305,22 3,21.1045695 3,20 L3,18 C3,16.8954305 3.8954305,16 5,16 Z M11,18 C10.4477153,18 10,18.4477153 10,19 C10,19.5522847 10.4477153,20 11,20 L16,20 C16.5522847,20 17,19.5522847 17,19 C17,18.4477153 16.5522847,18 16,18 L11,18 Z M7,20 C7.55228475,20 8,19.5522847 8,19 C8,18.4477153 7.55228475,18 7,18 C6.44771525,18 6,18.4477153 6,19 C6,19.5522847 6.44771525,20 7,20 Z" id="Combined-Shape-Copy-2" fill="#3699FF">
+                  </path>
+                  </g>
+                </svg>
+                <h6 class="leading-none text-l font-bold text-gray-900 ml-1">Select Vehicle</h6>
+              </div>
+              <select id="vehicle-category-select-1"
+                      name="vehicle_category"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a vehicle category</option>
                 {% for category in vehicle_category_list %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
               </select>
-              <select id="vehicle-brand-select-2" disabled name="vehicle_brand">
+              <select id="vehicle-brand-select-2"
+                      disabled
+                      name="vehicle_brand"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a vehicle brand</option>
               </select>
-              <select id="vehicle-model-select-3" disabled name="vehicle_model">
+              <select id="vehicle-model-select-3"
+                      disabled
+                      name="vehicle_model"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a vehicle model</option>
               </select>
-              <select id="vehicle-year-select-4" disabled name="vehicle_year">
+              <select id="vehicle-year-select-4"
+                      disabled
+                      name="vehicle_year"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a vehicle year</option>
               </select>
-              <select id="vehicle-version-select-5" disabled name="vehicle_version">
+              <select id="vehicle-version-select-5"
+                      disabled
+                      name="vehicle_version"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a vehicle version</option>
               </select>
-              <select id="ecu-type-select-6" disabled name="ecu_type">
+              <select id="ecu-type-select-6"
+                      disabled
+                      name="ecu_type"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose an ecu type</option>
               </select>
-              <select id="transmission-type-select" name="transmission_type">
+              <select id="transmission-type-select"
+                      name="transmission_type"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a transmission type</option>
                 <option value="A">Auto</option>
                 <option value="M">Manual</option>
               </select>
-              <select id="tool-select" name="tool">
+              <select id="tool-select"
+                      name="tool"
+                      class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option value="null" disabled selected hidden>Choose a connection tool</option>
                 {% for tool in connection_tool_list %}<option value="{{ tool.id }}">{{ tool }}</option>{% endfor %}
               </select>
+              <button id="continue-button"
+                      class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Continue
+                <svg class="w-4 h-4 ml-2"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="#FFFFFF"
+                     viewBox="4 2 20 20">
+                  <path d="m17.5 5.999-.707.707 5.293 5.293H1v1h21.086l-5.294 5.295.707.707L24 12.499l-6.5-6.5z" data-name="Right" />
+                </svg>
+              </button>
+              <div id="proceeding-error">Please fill all areas of the form before proceeding!</div>
             </div>
           </div>
-          <input id="continue-button" type="button" value="Continue" />
-          <div id="proceeding-error">Please fill all areas of the form before proceeding!</div>
         </div>
         <div id="select-options-card" class="row pasive-card">
+          <div class="flex flex-row items-center lg:hidden">
+            <svg width="36px"
+                 height="36px"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 xmlns="http://www.w3.org/2000/svg"
+                 stroke="#000000">
+              <g id="SVGRepo_bgCarrier" stroke-width="0">
+              </g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+              </g>
+              <g id="SVGRepo_iconCarrier">
+              <path d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" stroke="#3699FF" stroke-width="1.5">
+              </path>
+              <path d="M6 15.8L7.14286 17L10 14" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              </path>
+              <path d="M6 8.8L7.14286 10L10 7" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              </path>
+              <path d="M13 9L18 9" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round"></path>
+              <path d="M13 16L18 16" stroke="#3699FF" stroke-width="1.5" stroke-linecap="round"></path>
+              </g>
+            </svg>
+            <div class="flex flex-col ml-2">
+              <h5 class="leading-none text-xl font-bold text-gray-900 pb-1">Step 2: Select the options</h5>
+              <p class="text-sm font-normal text-gray-600">Select processing options</p>
+            </div>
+          </div>
           <div id="price-options-form"></div>
           <div id="calculator-box" class="column">
             <div id="calculator-header">Price</div>
