@@ -57,6 +57,15 @@ def vehicle_select_api(request):
         data_type = 'ecu type'
         data = serialize("json", ecu_models, fields=['id', 'name'])
 
+    elif requested == 'vehicle':
+        vehicle_year_id = int(params.get("vehicle_year_id"))
+        version_id = int(params.get("vehicle_version_id"))
+        ecu_model_id = int(params.get("ecu_model_id"))
+
+        vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
+        data_type = 'vehicle'
+        data = {'id': vehicle.id}
+
     context = {
         'data_type': data_type,
         'data': data

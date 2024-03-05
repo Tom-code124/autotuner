@@ -49,7 +49,9 @@ function openVehicleCard(event) {
   optionsTab.classList.remove("active-tab");
 
   vehicleCard.classList.remove("pasive-card");
+  vehicleCard.classList.add("flex");
   optionsCard.classList.add("pasive-card");
+  optionsCard.classList.remove("flex");
 }
 
 function openOptionsCard() {
@@ -57,7 +59,9 @@ function openOptionsCard() {
   optionsTab.classList.add("active-tab");
 
   vehicleCard.classList.add("pasive-card");
+  vehicleCard.classList.remove("flex");
   optionsCard.classList.remove("pasive-card");
+  optionsCard.classList.add("flex");
 
   resetCalculator();
   openCalculator();

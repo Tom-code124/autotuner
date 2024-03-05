@@ -299,10 +299,7 @@ def upload_page(request):
 
     if request.method == "POST":
         process_selection = request.POST.getlist("process_selection")
-        vehicle_year_id = int(request.POST.get("vehicle_year"))
-        version_id = int(request.POST.get("vehicle_version"))
-        ecu_model_id = int(request.POST.get("ecu_type"))
-        vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
+        vehicle = int(request.POST.get("vehicle_id"))
 
         pricing_class = request.user.customer.pricing_class
 
@@ -443,12 +440,20 @@ def process_options_modal(request):
     version_id = int(params.get("vehicle_version_id"))
     ecu_model_id = int(params.get("ecu_model_id"))
 
-    vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_select/"
+    payload = {'requested': 'vehicle', 'vehicle_year_id': vehicle_year_id, 'vehicle_version_id': version_id, 'ecu_model_id': ecu_model_id}
+
+    response = requests.get(url, params=payload)
+    data = response.json().get("data")
+    vehicle_id = int(data.get("id"))
     
-    pricing_options = ProcessPricing.objects.filter(vehicle=vehicle)
+    pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).order_by("process__name")
 
     context = {
-        'options': pricing_options
+        'options': pricing_options,
+        'vehicle_id': vehicle_id
     }
 
     return render(request, "modals/price_options_modal.html", context)
