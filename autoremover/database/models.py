@@ -10,16 +10,17 @@ from dateutil import relativedelta
 class Customer(models.Model):
     phone_regex_validator = RegexValidator(regex=r'^[\+][0-9]{9,20}$', message="Starts with + (include country code) and no spaces etc. allowed!")
     pricing_class_choices = [
-        ("M", "Master"),
-        ("S", "Slave"),
-        ("E", "Euro"),
+        ("MT", "Master TRY"),
+        ("ST", "Slave TRY"),
+        ("ME", "Master EUR"),
+        ("SE", "Slave EUR")
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=200)
     phone_number = models.CharField(validators=[phone_regex_validator], max_length=20, unique=True)
     credit_amount = models.FloatField(default=0)
-    pricing_class = models.CharField(max_length=1, choices=pricing_class_choices, default="E")
+    pricing_class = models.CharField(max_length=2, choices=pricing_class_choices, default="ME")
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
@@ -32,8 +33,8 @@ class Employee(models.Model):
 
 @receiver(post_save, sender=Employee, dispatch_uid="add_permission_group")
 def create_transaction(sender, instance, **kwargs):
-    g = Group.objects.get(name="employee_permission_group")
-    instance.user.groups.add(g)
+    # g = Group.objects.get(name="employee_permission_group")
+    # instance.user.groups.add(g)
     instance.user.is_staff = True
     instance.user.save()
 

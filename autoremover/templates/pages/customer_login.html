@@ -23,11 +23,15 @@
                     <h1 class="mb-12 mt-1 pb-1 text-5xl font-semibold">Log in</h1>
                   </div>
                   <form id="login-form"
-                        method="POST"
+                        method="post"
                         enctype="multipart/form-data"
                         action="{% url 'Login' %}">
                     {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.GET.next }}" />
+                    {% if request.GET.next %}
+                      <input type="hidden" name="next" value="{{ request.GET.next }}" />
+                    {% elif request.POST.next %}
+                      <input type="hidden" name="next" value="{{ request.POST.next }}" />
+                    {% endif %}
                     <p class="mb-4">Please login to your account</p>
                     <!--Username input-->
                     <div class="relative mb-4" data-te-input-wrapper-init>

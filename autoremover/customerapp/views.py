@@ -2,9 +2,10 @@ from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from .decorators import login_required, customer_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.urls import reverse
 
 from database.models import *
 from database.forms import *
@@ -13,6 +14,9 @@ from django.utils import timezone
 
 from datetime import datetime
 from urllib.parse import unquote
+
+import requests
+import json
 
 # Create your views here.
 
@@ -61,45 +65,44 @@ def signup_page(request):
 def login_page(request):
     user = request.user
     if user.is_authenticated:
-        try:
-            if user.customer is not None:
-                return redirect('/app/')
-        except:
-            messages.error(request, "You are not authorazied to do this!")
-            logout(request)
-            return redirect('/app/login/')
+        return redirect('/app/')
 
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
 
+        if request.POST.get('next'):
+            redirect_url = request.POST.get('next')
+        else:
+            redirect_url = "/app/"
+
         user = authenticate(request, username=email, password=password)
         if user is not None:
-            try:
-                if user.customer is not None:
-                    login(request, user)
-                    redirect_url = request.POST.get('next') if request.POST.get('next') else "/app/"
-                    return redirect(redirect_url)
-            except:
-                messages.error(request, "You are not authorazied to do this!")
+            login(request, user)
+            return redirect(redirect_url)
 
         else:
-            messages.error(request, "Invalid username or password")
+            messages.error(request, "Invalid email or password!")
+            if redirect_url != "/app/":
+                return redirect(reverse('Login') + f'?next={redirect_url}')
+
 
     context = {
         'page_title': 'Log-in',
         'styling_files': [],
         'script_files': [],
         }
-
+    
     return render(request, "pages/customer_login.html", context)
 
 @login_required
+@customer_required
 def logout_view(request):
     logout(request)
-    return redirect('/app/login/')
+    return redirect('Login')
 
 @login_required
+@customer_required
 def deposit_modal(request):
     system_setting = SystemSetting.objects.all()[0]
 
@@ -116,6 +119,7 @@ def deposit_modal(request):
     return render(request, "modals/deposit_modal.html", context)
     
 @login_required
+@customer_required
 def dashboard_page(request):
     monthly_file_nums = [1, 0, 3, 7, 0, 9, 4, 2, 0, 11, 4, 7]
     months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
@@ -189,6 +193,7 @@ def dashboard_page(request):
     return render(request, "pages/dashboard.html", context)
 
 @login_required
+@customer_required
 def files_page(request):
     params = request.GET
     subpage = params.get("subpage")
@@ -211,6 +216,7 @@ def files_page(request):
 
 
 @login_required
+@customer_required
 def requested_files_modal(request):
     params = request.GET
     keyword = params.get('keyword')
@@ -243,6 +249,7 @@ def requested_files_modal(request):
     return render(request, "modals/requested_files_modal.html", context)
 
 @login_required
+@customer_required
 def bought_files_modal(request):
     params = request.GET
     keyword = params.get('keyword')
@@ -280,18 +287,24 @@ def bought_files_modal(request):
     return render(request, "modals/bought_files_modal.html", context)
 
 @login_required
+@customer_required
 def upload_page(request):
-    vehicle_categories = VehicleCategory.objects.all()
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_select/"
+
+    payload = {'requested': 'vehicle_category'}
+    response = requests.get(url, params=payload)
+    data = json.loads(response.json().get("data"))
+    vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
     connection_tools = ConnectionTool.objects.all()
 
     tax_percentage = SystemSetting.objects.all()[0].tax_percentage
 
     if request.method == "POST":
         process_selection = request.POST.getlist("process_selection")
-        vehicle_year_id = int(request.POST.get("vehicle_year"))
-        version_id = int(request.POST.get("vehicle_version"))
-        ecu_model_id = int(request.POST.get("ecu_type"))
-        vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
+        vehicle = int(request.POST.get("vehicle_id"))
 
         pricing_class = request.user.customer.pricing_class
 
@@ -352,43 +365,69 @@ def upload_page(request):
     return render(request, "pages/upload.html", context)
 
 @login_required
+@customer_required
 def vehicle_select_modal(request):
-    params = request.GET
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_select/"
 
+    params = request.GET
     requested = params.get('requested')
      
     if requested == 'vehicle_brand':
         category_id = int(params.get('vehicle_category'))
-        vehicle_model_ids = VehicleModel.objects.filter(category_id=category_id).values('brand_id')
-        vehicle_brands = VehicleBrand.objects.filter(id__in=vehicle_model_ids)
+
+        payload = {'requested': 'vehicle_brand', 'vehicle_category': category_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        vehicle_brands = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'vehicle brand'
         data = vehicle_brands
 
     elif requested == 'vehicle_model':
         category_id = int(params.get('vehicle_category'))
         brand_id = int(params.get('vehicle_brand'))
-        vehicle_models = VehicleModel.objects.filter(category_id=category_id, brand_id=brand_id)
+
+        payload = {'requested': 'vehicle_model', 'vehicle_category': category_id, 'vehicle_brand': brand_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        vehicle_models = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'vehicle model'
         data = vehicle_models
     
     elif requested == 'vehicle_year':
         model_id = int(params.get('vehicle_model'))
-        years = VehicleYear.objects.filter(model_id=model_id)
+
+        payload = {'requested': 'vehicle_year', 'vehicle_model': model_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        years = [{'id': d['pk'], 'year': d['fields']['year']} for d in data]
+
         data_type = 'vehicle year'
         data = years
 
     elif requested == 'vehicle_version':
         vehicle_year_id = int(params.get('vehicle_year'))
-        vehicle_version_ids = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id).values('version_id')
-        engines = VehicleVersion.objects.filter(id__in=vehicle_version_ids)
+
+        payload = {'requested': 'vehicle_version', 'vehicle_year': vehicle_year_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        engines = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'vehicle version'
         data = engines
 
     elif requested == 'ecu_type':
         vehicle_year_id = int(params.get('vehicle_year'))
         version_id = int(params.get('vehicle_version'))
-        ecu_model_ids = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id, version_id=version_id).values('ecu_model_id')
-        ecu_models = EcuModel.objects.filter(id__in=ecu_model_ids)
+
+        payload = {'requested': 'ecu_type', 'vehicle_year': vehicle_year_id, 'vehicle_version': version_id}
+        response = requests.get(url, params=payload)
+        data = json.loads(response.json().get("data"))
+        ecu_models = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
         data_type = 'ecu type'
         data = ecu_models
 
@@ -400,6 +439,7 @@ def vehicle_select_modal(request):
     return render(request, "modals/upload_selects_modal.html", context)
 
 @login_required
+@customer_required
 def process_options_modal(request):
     params = request.GET
 
@@ -407,17 +447,26 @@ def process_options_modal(request):
     version_id = int(params.get("vehicle_version_id"))
     ecu_model_id = int(params.get("ecu_model_id"))
 
-    vehicle = Vehicle.objects.get(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id)
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_select/"
+    payload = {'requested': 'vehicle', 'vehicle_year_id': vehicle_year_id, 'vehicle_version_id': version_id, 'ecu_model_id': ecu_model_id}
+
+    response = requests.get(url, params=payload)
+    data = response.json().get("data")
+    vehicle_id = int(data.get("id"))
     
-    pricing_options = ProcessPricing.objects.filter(vehicle=vehicle)
+    pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).order_by("process__name")
 
     context = {
-        'options': pricing_options
+        'options': pricing_options,
+        'vehicle_id': vehicle_id
     }
 
     return render(request, "modals/price_options_modal.html", context)
 
 @login_required
+@customer_required
 def shop_page(request):
 
     context = {
@@ -431,6 +480,7 @@ def shop_page(request):
     return render(request, "pages/shop.html", context)
 
 @login_required
+@customer_required
 def shop_modal(request):
 
     params = request.GET
@@ -478,6 +528,7 @@ def shop_modal(request):
     return render(request, "modals/shop_modal.html", context)
 
 @login_required
+@customer_required
 def product_modal(request):
     params = request.GET
     file_id = int(params.get("id"))
@@ -492,6 +543,7 @@ def product_modal(request):
     return render(request, "modals/product_modal.html", context)
 
 @login_required
+@customer_required
 def purchase_file(request):
 
     params = request.POST
@@ -513,6 +565,7 @@ def purchase_file(request):
 
 
 @login_required
+@customer_required
 def winols_modal(request):
     context = {
         'modal_title': 'Add Your EVC WinOLS Account'
@@ -521,6 +574,7 @@ def winols_modal(request):
     return render(request, "modals/winols_modal.html", context)
 
 @login_required
+@customer_required
 def expense_history_page(request):
     context = {
         'page_title': 'Expense History',
@@ -533,6 +587,7 @@ def expense_history_page(request):
     return render(request, "pages/expense_history.html", context)
 
 @login_required
+@customer_required
 def expenses_modal(request):
 
     params = request.GET
@@ -565,6 +620,7 @@ def expenses_modal(request):
     return render(request, "modals/expenses_modal.html", context)
 
 @login_required
+@customer_required
 def dtc_search_page(request):
     context = {
         'page_title': 'DTC Search',
@@ -579,43 +635,43 @@ def dtc_search_page(request):
     return render(request, "pages/dtc_search.html", context)
 
 @login_required
+@customer_required
 def dtc_search_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/dtc_search/"
 
     params = request.GET
     keyword = params.get('keyword')
     page_param = params.get('page')
 
+    payload = {}
+
     if keyword:
-        keyword = unquote(keyword).lower()
-        dtc_list = DtcInfo.objects.filter(Q(desc__icontains=keyword) | Q(code__icontains=keyword)).order_by("code")
-    else:
-        dtc_list = DtcInfo.objects.all().order_by("code")
+        payload["keyword"] = unquote(keyword).lower()
 
     if page_param:
-        pagenum = int(page_param)
-    else:
-        pagenum = 1
+        payload["page"] = int(page_param)
 
-    paginator = Paginator(dtc_list, 10)
-    page = paginator.page(int(pagenum))
-    start_page = max(1, page.number - 5)
-    end_page = min(paginator.num_pages, max(page.number + 5, 10))
-    page_list = range(start_page, end_page + 1)
-        
+    response = requests.get(url, params=payload).json()
+    data = json.loads(response.get("data"))
+    dtcs = [{'code': d['fields']['code'],'desc': d['fields']['desc']} for d in data]
+
     context = {
-        'data_amount': paginator.count,
-        'start_index': page.start_index(),
-        'end_index': page.end_index(),
-        'current_page': page.number,
-        'previous_page_disabled': not page.has_previous(),
-        'following_page_disabled': not page.has_next(),
-        'page_list': page_list,
-        'data': page.object_list
+        'data_amount': response.get("data_amount"),
+        'start_index': response.get("start_index"),
+        'end_index': response.get("end_index"),
+        'current_page': response.get("current_page"),
+        'previous_page_disabled': response.get("previous_page_disabled"),
+        'following_page_disabled': response.get("following_page_disabled"),
+        'page_list': response.get("page_list"),
+        'data': dtcs
     }
 
     return render(request, "modals/dtc_search_modal.html", context)
 
 @login_required
+@customer_required
 def bosch_search_page(request):
     context = {
         'page_title': 'Bosch Search',
@@ -628,37 +684,38 @@ def bosch_search_page(request):
     return render(request, "pages/bosch_search.html", context)
 
 @login_required
+@customer_required
 def bosch_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/bosch_search/"
 
     params = request.GET
     keyword = params.get('keyword')
     page_param = params.get('page')
 
+    payload = {}
+
     if keyword:
-        keyword = unquote(keyword).lower()
-        ecu_list = Ecu.objects.filter(Q(number__icontains=keyword)).order_by("id")
+        payload["keyword"] = unquote(keyword).lower()
 
         if page_param:
-            pagenum = int(page_param)
-        else:
-            pagenum = 1
+            payload["page"] = int(page_param)
 
-        paginator = Paginator(ecu_list, 10)
-        page = paginator.page(int(pagenum))
-        start_page = max(1, page.number - 5)
-        end_page = min(paginator.num_pages, max(page.number + 5, 10))
-        page_list = range(start_page, end_page + 1)
-   
+        response = requests.get(url, params=payload).json()
+        data = response.get("data")
+        ecus = [{'type': d['type'],'number': d['number'],'carmanufacturers': d['carmanufacturers']} for d in data]
+
         context = {
-            'data_amount': paginator.count,
-            'start_index': page.start_index(),
-            'end_index': page.end_index(),
-            'current_page': page.number,
-            'previous_page_disabled': not page.has_previous(),
-            'following_page_disabled': not page.has_next(),
-            'page_list': page_list,
-            'data': page.object_list
-    }
+            'data_amount': response.get("data_amount"),
+            'start_index': response.get("start_index"),
+            'end_index': response.get("end_index"),
+            'current_page': response.get("current_page"),
+            'previous_page_disabled': response.get("previous_page_disabled"),
+            'following_page_disabled': response.get("following_page_disabled"),
+            'page_list': response.get("page_list"),
+            'data': ecus
+        }
     
     else:
         context = {}
@@ -666,6 +723,7 @@ def bosch_modal(request):
     return render(request, "modals/bosch_modal.html", context)
 
 @login_required
+@customer_required
 def knowledgebase_page(request):
 
     context = {
@@ -682,6 +740,7 @@ def knowledgebase_page(request):
     return render(request, "pages/knowledgebase.html", context)
 
 @login_required
+@customer_required
 def knowledge_modal(request):
     params = request.GET
     knowledge = Knowledge.objects.get(id=params.get('id'))
@@ -710,6 +769,7 @@ def knowledge_modal(request):
     return render(request, "modals/knowledge_modal.html", context)
 
 @login_required
+@customer_required
 def settings_page(request):
     context = {
         'page_title': 'Settings',
@@ -722,6 +782,7 @@ def settings_page(request):
     return render(request, "pages/settings.html", context)
 
 @login_required
+@customer_required
 def pricing_modal(request):
 
     context = {
@@ -731,6 +792,7 @@ def pricing_modal(request):
     return render(request, "modals/pricing_modal.html", context)
 
 @login_required
+@customer_required
 def price_options_modal(request):
     data = {
         'cars': [
@@ -775,6 +837,7 @@ def price_options_modal(request):
     return render(request, "modals/price_options_modal.html", context)
 
 @login_required
+@customer_required
 def download_file(request):
     customer = request.user.customer
     params = request.GET

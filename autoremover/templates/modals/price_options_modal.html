@@ -1,22 +1,21 @@
+<input type="number" name="vehicle_id" value="{{ vehicle_id }}" hidden>
 {% for option in options %}
-<div class="price-option-box row">
-  <input
-    type="checkbox"
-    id="{{ option.id }}"
-    value="{{ option.process.id }}"
-    class="price-option-check"
-    name="process_selection"
-  />
-  <label for="{{ option.id }}" class="price-option-label row">
-    <span id="{{ option.id }}-name-span"> {{ option.process }}</span>
-    {% if request.user.customer.pricing_class == "M" %}
-      <span id="{{ option.id }}-price-span"> {{ option.master_price }} </span>
-    {% elif request.user.customer.pricing_class == "S" %}
-      <span id="{{ option.id }}-price-span"> {{ option.slave_price }} </span>
-    {% elif request.user.customer.pricing_class == "E" %}
-      <span id="{{ option.id }}-price-span"> {{ option.euro_price }} </span>
-    {% endif %}
-  </label>
-</div>
-<br />
+  <div class="price-option-box row">
+    <input type="checkbox"
+           id="{{ option.id }}"
+           value="{{ option.process.id }}"
+           class="price-option-check"
+           name="process_selection" />
+    <label for="{{ option.id }}" class="price-option-label row">
+      <span id="{{ option.id }}-name-span">{{ option.process }}</span>
+      {% if request.user.customer.pricing_class == "M" %}
+        <span id="{{ option.id }}-price-span">{{ option.master_price }}</span>
+      {% elif request.user.customer.pricing_class == "S" %}
+        <span id="{{ option.id }}-price-span">{{ option.slave_price }}</span>
+      {% elif request.user.customer.pricing_class == "E" %}
+        <span id="{{ option.id }}-price-span">{{ option.euro_price }}</span>
+      {% endif %}
+    </label>
+  </div>
+  <br />
 {% endfor %}
