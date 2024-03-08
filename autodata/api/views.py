@@ -73,6 +73,55 @@ def vehicle_select_api(request):
 
     return JsonResponse(context)
 
+def vehicle_filter_api(request):
+    params = request.GET
+    filters = json.loads(params.get('filters'))
+    print(filters)
+
+    q_list = []
+    for key, value in filters.items():
+        if key == 'vehicle_category_id':
+            # value = int(value)
+            print("category_ids:")
+            print(value)
+            q_list.append(Q(vehicle_year__model__category_id__in=value))
+
+        elif key == 'vehicle_brand_id':
+            # value = int(value)
+            print("brand_ids:")
+            print(value)
+            q_list.append(Q(vehicle_year__model__brand_id__in=value))
+
+        elif key == 'vehicle_model_id':
+            # value = int(value)
+            print("model_ids:")
+            print(value)
+            q_list.append(Q(vehicle_year__model_id__in=value))
+
+        elif key == 'vehicle_year_id':
+            # value = int(value)
+            print("year_ids:")
+            print(value)
+            q_list.append(Q(vehicle_year_id__in=value))
+        
+        elif key == 'vehicle_version_id':
+            # value = int(value)
+            print("version_ids:")
+            print(value)
+            q_list.append(Q(version_id__in=value))
+
+        elif key == 'ecu_model_id':
+            # value = int(value)
+            print("ecu_model_ids:")
+            print(value)
+            q_list.append(Q(ecu_model_id__in=value))
+
+    # vehicle_year = params.get("vehicle_year")
+    # version = params.get("vehicle_version")
+    # ecu_model = params.get("ecu_model")
+
+    # vehicles = Vehicle.objects.filter(vehicle_year_id=vehicle_year_id, version_id=version_id, ecu_model_id=ecu_model_id).order_by('id')
+
 def dtc_search_api(request):
     params = request.GET
     keyword = params.get('keyword')
