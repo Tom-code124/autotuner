@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'admin_auto_filters',
     'maintenancemode',
+    'panelapp',
     'customerapp',
-    'database'
+    'database',
 ]
 
 MIDDLEWARE = [

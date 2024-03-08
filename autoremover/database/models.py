@@ -33,8 +33,8 @@ class Employee(models.Model):
 
 @receiver(post_save, sender=Employee, dispatch_uid="add_permission_group")
 def create_transaction(sender, instance, **kwargs):
-    g = Group.objects.get(name="employee_permission_group")
-    instance.user.groups.add(g)
+    # g = Group.objects.get(name="employee_permission_group")
+    # instance.user.groups.add(g)
     instance.user.is_staff = True
     instance.user.save()
 
