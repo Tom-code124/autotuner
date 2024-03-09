@@ -2930,6 +2930,10 @@ input:checked + .toggle-bg {
 }
 
 @media (min-width: 1536px) {
+  .\32xl\:mt-0 {
+    margin-top: 0px;
+  }
+
   .\32xl\:w-5\/12 {
     width: 41.666667%;
   }
