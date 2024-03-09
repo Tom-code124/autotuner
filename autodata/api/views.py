@@ -18,22 +18,13 @@ def get_vehicle_queries(filters):
     vehicle_filters = json.loads(filters)
     q_list = []
     for key, value in vehicle_filters.items():
-        if key == 'vehicle_category_ids':
-            q_list.append(Q(vehicle_year__model__category_id__in=value))
-
-        elif key == 'vehicle_brand_ids':
-            q_list.append(Q(vehicle_year__model__brand_id__in=value))
-
-        elif key == 'vehicle_model_ids':
-            q_list.append(Q(vehicle_year__model_id__in=value))
-
-        elif key == 'vehicle_year_ids':
+        if key == 'vehicle_years':
             q_list.append(Q(vehicle_year_id__in=value))
         
-        elif key == 'vehicle_version_ids':
+        elif key == 'vehicle_versions':
             q_list.append(Q(version_id__in=value))
 
-        elif key == 'ecu_model_ids':
+        elif key == 'ecu_models':
             q_list.append(Q(ecu_model_id__in=value))
 
     return q_list
@@ -58,13 +49,35 @@ def vehicle_data_api(request):
         elif requested == 'vehicle_model':
             category_ids = json.loads(params.get('vehicle_categories'))
             brand_ids = json.loads(params.get('vehicle_brands'))
-            vehicle_models = VehicleModel.objects.filter(category_id__in=category_ids, brand_id__in=brand_ids).order_by('name')
-            data["vehicle_model"] = serialize("json", vehicle_models, fields=['id', 'name'])
+            vehicle_models = VehicleModel.objects.filter(category_id__in=category_ids, brand_id__in=brand_ids).order_by('brand__name','category__name','name')
+            
+            models_data = []
+            for model in vehicle_models:
+                models_data.append({
+                    'id': model.id,
+                    'name': model.name,
+                    'category_id': model.category.id,
+                    'brand_id': model.brand.id,
+                    'brand_name': model.brand.name,
+                    'category_name': model.category.name
+                })
+
+            data["vehicle_model"] = models_data
         
         elif requested == 'vehicle_year':
             model_ids = json.loads(params.get('vehicle_models'))
-            years = VehicleYear.objects.filter(model_id__in=model_ids).order_by('year')
-            data["vehicle_year"] = serialize("json", years, fields=['id', 'year'])
+            years = VehicleYear.objects.filter(model_id__in=model_ids).order_by('model__name', 'year')
+
+            years_data = []
+            for year in years:
+                years_data.append({
+                    'id': year.id,
+                    'year': year.year,
+                    'model_id': year.model.id,
+                    'brand_model_name': str(year.model),
+                })
+
+            data["vehicle_year"] = years_data
 
         elif requested == 'vehicle_version':
             vehicle_year_ids = json.loads(params.get('vehicle_years'))
@@ -77,15 +90,22 @@ def vehicle_data_api(request):
             version_ids = json.loads(params.get('vehicle_versions'))
             ecu_model_ids = Vehicle.objects.filter(vehicle_year_id__in=vehicle_year_ids, version_id__in=version_ids).values('ecu_model_id')
             ecu_models = EcuModel.objects.filter(id__in=ecu_model_ids).order_by('brand__name', 'name')
-            data["ecu_type"] = serialize("json", ecu_models, fields=['id', 'name'])
+
+            ecu_data = []
+            for ecu in ecu_models:
+                ecu_data.append({
+                    'id': ecu.id,
+                    'name': ecu.name,
+                    'brand_id': ecu.brand.id,
+                    'brand_name': ecu.brand.name
+                })
+
+            data["ecu_type"] = ecu_data
 
         elif requested == 'vehicle':
             vehicle_filters = params.get('vehicle_filters')
-            if vehicle_filters is None:
-                vehicles = Vehicle.objects.all()
-            else:
-                queries = get_vehicle_queries(vehicle_filters)
-                vehicles = Vehicle.objects.filter(reduce(operator.and_, queries))
+            queries = get_vehicle_queries(vehicle_filters)
+            vehicles = Vehicle.objects.filter(reduce(operator.and_, queries))
 
             page = params.get('vehicle_page')
             if page is not None:
