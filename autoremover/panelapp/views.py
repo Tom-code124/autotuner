@@ -53,3 +53,8 @@ def logout_view(request):
 @admin_required
 def pricing_page(request):
     return render(request, 'panelapp/pages/pricing.html')
+
+@login_required
+@admin_required
+def customer_options(request):
+    return render(request, 'panelapp/pages/customer_options.html')

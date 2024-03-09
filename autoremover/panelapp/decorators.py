@@ -28,7 +28,6 @@ def staff_required(function):
 def login_required(function):
     def _function(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.info(request, 'You have to be logged in to access this page.')
             next = request.path
             return HttpResponseRedirect(reverse('Panel Login') + f'?next={next}')
         return function(request, *args, **kwargs)
