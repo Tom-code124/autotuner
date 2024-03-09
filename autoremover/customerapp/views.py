@@ -6,6 +6,7 @@ from .decorators import login_required, customer_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
+from django.core.serializers import serialize
 
 from database.models import *
 from database.forms import *
@@ -291,11 +292,11 @@ def bought_files_modal(request):
 def upload_page(request):
     ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port
-    url = f"http://{ip}:{port}/api/vehicle_select/"
+    url = f"http://{ip}:{port}/api/vehicle_data/"
 
-    payload = {'requested': 'vehicle_category'}
+    payload = {'requests': json.dumps(['vehicle_category'])}
     response = requests.get(url, params=payload)
-    data = json.loads(response.json().get("data"))
+    data = json.loads(response.json().get("data").get("vehicle_category"))
     vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
 
     connection_tools = ConnectionTool.objects.all()
@@ -369,7 +370,7 @@ def upload_page(request):
 def vehicle_select_modal(request):
     ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port
-    url = f"http://{ip}:{port}/api/vehicle_select/"
+    url = f"http://{ip}:{port}/api/vehicle_data/"
 
     params = request.GET
     requested = params.get('requested')
@@ -377,9 +378,9 @@ def vehicle_select_modal(request):
     if requested == 'vehicle_brand':
         category_id = int(params.get('vehicle_category'))
 
-        payload = {'requested': 'vehicle_brand', 'vehicle_category': category_id}
+        payload = {'requests': json.dumps(['vehicle_brand']), 'vehicle_categories': json.dumps([category_id])}
         response = requests.get(url, params=payload)
-        data = json.loads(response.json().get("data"))
+        data = json.loads(response.json().get("data").get("vehicle_brand"))
         vehicle_brands = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
 
         data_type = 'vehicle brand'
@@ -389,10 +390,10 @@ def vehicle_select_modal(request):
         category_id = int(params.get('vehicle_category'))
         brand_id = int(params.get('vehicle_brand'))
 
-        payload = {'requested': 'vehicle_model', 'vehicle_category': category_id, 'vehicle_brand': brand_id}
+        payload = {'requests': json.dumps(['vehicle_model']), 'vehicle_categories': json.dumps([category_id]), 'vehicle_brands': json.dumps([brand_id])}
         response = requests.get(url, params=payload)
-        data = json.loads(response.json().get("data"))
-        vehicle_models = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+        data = response.json().get("data").get("vehicle_model")
+        vehicle_models = [{'id': d['id'], 'name': d['name']} for d in data]
 
         data_type = 'vehicle model'
         data = vehicle_models
@@ -400,21 +401,40 @@ def vehicle_select_modal(request):
     elif requested == 'vehicle_year':
         model_id = int(params.get('vehicle_model'))
 
-        payload = {'requested': 'vehicle_year', 'vehicle_model': model_id}
+        payload = {'requests': json.dumps(['vehicle_year']), 'vehicle_models': json.dumps([model_id])}
         response = requests.get(url, params=payload)
-        data = json.loads(response.json().get("data"))
-        years = [{'id': d['pk'], 'year': d['fields']['year']} for d in data]
+        data = response.json().get("data").get("vehicle_year")
+        years = [{'id': d['id'], 'year': d['year']} for d in data]
 
         data_type = 'vehicle year'
         data = years
 
     elif requested == 'vehicle_version':
+        def get_fuel_type(fuel_type):
+            fuel_type_choices = [
+                ("P", "Petrol"),
+                ("D", "Diesel"),
+                ("EL", "Electric"),
+                ("L", "LPG"),
+                ("E", "Ethanol"),
+                ("C", "CNG"),
+                ("PL", "Petrol/LPG"),
+                ("PE", "Petrol/Ethanol"),
+                ("PC", "Petrol/CNG"),
+                ("H", "Hybrid"),
+            ]
+
+            for ftc in fuel_type_choices:
+                if ftc[0] == fuel_type:
+                    return ftc[1]
+
         vehicle_year_id = int(params.get('vehicle_year'))
 
-        payload = {'requested': 'vehicle_version', 'vehicle_year': vehicle_year_id}
+        payload = {'requests': json.dumps(['vehicle_version']), 'vehicle_years': json.dumps([vehicle_year_id])}
         response = requests.get(url, params=payload)
-        data = json.loads(response.json().get("data"))
-        engines = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+        data = json.loads(response.json().get("data").get("vehicle_version"))
+
+        engines = [{'id': d['pk'], 'name': d['fields']['name'] + " (" + get_fuel_type(d["fields"]["fuel_type"]) + ")"} for d in data]
 
         data_type = 'vehicle version'
         data = engines
@@ -423,10 +443,10 @@ def vehicle_select_modal(request):
         vehicle_year_id = int(params.get('vehicle_year'))
         version_id = int(params.get('vehicle_version'))
 
-        payload = {'requested': 'ecu_type', 'vehicle_year': vehicle_year_id, 'vehicle_version': version_id}
+        payload = {'requests': json.dumps(['ecu_type']), 'vehicle_years': json.dumps([vehicle_year_id]), 'vehicle_versions': json.dumps([version_id])}
         response = requests.get(url, params=payload)
-        data = json.loads(response.json().get("data"))
-        ecu_models = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+        data = response.json().get("data").get("ecu_type")
+        ecu_models = [{'id': d['id'], 'name': d['name'] + " (" + d['brand_name'] + ")"} for d in data]
 
         data_type = 'ecu type'
         data = ecu_models
@@ -449,11 +469,11 @@ def process_options_modal(request):
 
     ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port
-    url = f"http://{ip}:{port}/api/vehicle_select/"
-    payload = {'requested': 'vehicle', 'vehicle_year_id': vehicle_year_id, 'vehicle_version_id': version_id, 'ecu_model_id': ecu_model_id}
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+    payload = {'requests': json.dumps(['vehicle']), "vehicle_filters": json.dumps({'vehicle_years': [vehicle_year_id], 'vehicle_versions': [version_id], 'ecu_models': [ecu_model_id]})}
 
     response = requests.get(url, params=payload)
-    data = response.json().get("data")
+    data = response.json().get("data").get("vehicle").get("data")[0]
     vehicle_id = int(data.get("id"))
     
     pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).order_by("process__name")
