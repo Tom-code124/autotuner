@@ -1536,6 +1536,10 @@ input:checked + .toggle-bg {
   width: 1rem;
 }
 
+.w-4\/6 {
+  width: 66.666667%;
+}
+
 .w-40 {
   width: 10rem;
 }
@@ -1571,6 +1575,14 @@ input:checked + .toggle-bg {
 
 .w-full {
   width: 100%;
+}
+
+.min-w-48 {
+  min-width: 12rem;
+}
+
+.max-w-64 {
+  max-width: 16rem;
 }
 
 .max-w-\[90\%\] {
@@ -2142,6 +2154,11 @@ input:checked + .toggle-bg {
   line-height: 2rem;
 }
 
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
 .text-5xl {
   font-size: 3rem;
   line-height: 1;
@@ -2554,6 +2571,10 @@ input:checked + .toggle-bg {
   border-color: rgb(75 85 99 / var(--tw-divide-opacity));
 }
 
+:is(.dark .dark\:border-0) {
+  border-width: 0px;
+}
+
 :is(.dark .dark\:border-blue-500) {
   --tw-border-opacity: 1;
   border-color: rgb(63 131 248 / var(--tw-border-opacity));
@@ -2909,8 +2930,24 @@ input:checked + .toggle-bg {
 }
 
 @media (min-width: 1536px) {
+  .\32xl\:w-5\/12 {
+    width: 41.666667%;
+  }
+
   .\32xl\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .\32xl\:flex-row {
+    flex-direction: row;
+  }
+
+  .\32xl\:items-start {
+    align-items: flex-start;
+  }
+
+  .\32xl\:justify-evenly {
+    justify-content: space-evenly;
   }
 }
 
