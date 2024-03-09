@@ -51,7 +51,12 @@ def logout_view(request):
 @login_required
 @admin_required
 def pricing_page(request):
-    return render(request, 'panelapp/pages/pricing.html')
+    context = {
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'page_title': 'Process Pricing',
+        }
+    return render(request, 'panelapp/pages/pricing.html', context)
 
 @login_required
 @admin_required
@@ -97,8 +102,12 @@ def customer_options(request):
             except:
                 messages.error(request, "Connection tool could not be updated!")
 
+        return redirect('Panel Customer Options')
+
     context = {
         'page_title': 'Customer Options',
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
         'processes': FileProcess.objects.all().order_by('name'),
         'tools': ConnectionTool.objects.all().order_by('name'),
     }
