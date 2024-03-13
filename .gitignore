@@ -12,4 +12,4 @@ autoremover/staticfiles/
 localenv/
 localdataenv/
 autoremover/node_modules/
-autoremover_db_initial_data/
+# autoremover_db_initial_data/
