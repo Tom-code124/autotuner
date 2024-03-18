@@ -1,5 +1,98 @@
 {% extends "panelapp/layout.html" %}
 {% block panel_layout %}
     {% load static %}
-    <h1>Process Pricing</h1>
+    <div class="bg-white rounded-lg p-6">
+        <div class="flex justify-between flex-col">
+            <div class="flex items-center">
+                <div>
+                    <h5 class="leading-none text-3xl font-bold text-gray-900 pb-1">Process Pricing</h5>
+                    <p class="text-sm font-normal text-gray-600">
+                        Price processes for vehicles by filtering them with their versions and ecu types.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col lg:flex-row items-center lg:justify-evenly lg:items-start">
+            <div class="flex flex-col w-11/12 lg:w-5/12">
+                <div class="flex flex-col mt-6 lg:mt-4">
+                    <h6 class="leading-none text-xl font-bold text-gray-900">Add vehicle versions to the filter</h6>
+                    <p class="text-sm font-normal text-gray-600 mt-1">
+                        Find vehicle versions to add them to the filtering process with this form.
+                        You can add one or more vehicle versions to the filter but you can do it only one by one.
+                        <b>
+                            BE CAREFUL, the vehicle versions you have chosen may include vehicles with different years and models.
+                            This form lists all vehicle versions that match with your category, brand, model, and year selections.
+                            However, there might be some vehicle versions that are common between different models and years.
+                        </b>
+                        If you don't want to filter vehicles by their versions, you can skip this step (check ecu type filtering).
+                    </p>
+                </div>
+                <select id="vehicle-category-select-1"
+                        name="vehicle_category"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle category</option>
+                    {% for category in vehicle_category_list %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
+                </select>
+                <select id="vehicle-brand-select-2"
+                        disabled
+                        name="vehicle_brand"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle brand</option>
+                </select>
+                <select id="vehicle-model-select-3"
+                        disabled
+                        name="vehicle_model"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle model</option>
+                </select>
+                <select id="vehicle-year-select-4"
+                        disabled
+                        name="vehicle_year"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle year</option>
+                </select>
+                <select id="vehicle-version-select-5"
+                        disabled
+                        name="vehicle_version"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle version</option>
+                </select>
+                <button id="continue-button"
+                        class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Add version to filter
+                </button>
+            </div>
+            <div class="flex flex-col w-11/12 lg:w-5/12">
+                <div class="flex flex-col mt-6 lg:mt-4">
+                    <h6 class="leading-none text-xl font-bold text-gray-900">Add ecu types to the filter</h6>
+                    <p class="text-sm font-normal text-gray-600 mt-1">
+                        Search ecu types to add them to the filtering. You can add one or more ecu types to the filter. Also, you can skip this step if you don't want to filter vehicles by their ecu types (check vehicle version filtering).
+                    </p>
+                </div>
+                <div class="flex flex-row mt-4 w-fit mr-0 ml-auto">
+                    <div class="relative h-fit">
+                        <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                 aria-hidden="true"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </div>
+                        <input type="text"
+                               id="search-input"
+                               class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-56 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                               placeholder="Search ecu type">
+                    </div>
+                    <button type="submit"
+                            id="search-button"
+                            class="h-fit ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock panel_layout %}

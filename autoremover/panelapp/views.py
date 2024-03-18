@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.urls import reverse
 from database.models import *
 
+import requests
+import json
+
 # Create your views here.
 
 def login_page(request):
@@ -51,10 +54,20 @@ def logout_view(request):
 @login_required
 @admin_required
 def pricing_page(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle_category'])}
+    response = requests.get(url, params=payload)
+    data = json.loads(response.json().get("data").get("vehicle_category"))
+    vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in data]
+
     context = {
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'page_title': 'Process Pricing',
+        'vehicle_category_list': vehicle_categories,
         }
     return render(request, 'panelapp/pages/pricing.html', context)
 
