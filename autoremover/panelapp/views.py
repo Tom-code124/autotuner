@@ -68,6 +68,8 @@ def pricing_page(request):
         'file_service_until': datetime.now(),
         'page_title': 'Process Pricing',
         'vehicle_category_list': vehicle_categories,
+        'script_files': ["pricing_page.js"],
+        'is_panel_app': True,
         }
     return render(request, 'panelapp/pages/pricing.html', context)
 

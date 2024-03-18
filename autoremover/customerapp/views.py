@@ -366,7 +366,6 @@ def upload_page(request):
     return render(request, "pages/upload.html", context)
 
 @login_required
-@customer_required
 def vehicle_select_modal(request):
     ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port

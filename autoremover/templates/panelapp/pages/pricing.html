@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="flex flex-col lg:flex-row items-center lg:justify-evenly lg:items-start">
-            <div class="flex flex-col w-11/12 lg:w-5/12">
+            <div id="vehicle-select-section" class="flex flex-col w-11/12 lg:w-5/12">
                 <div class="flex flex-col mt-6 lg:mt-4">
                     <h6 class="leading-none text-xl font-bold text-gray-900">Add vehicle versions to the filter</h6>
                     <p class="text-sm font-normal text-gray-600 mt-1">
@@ -57,6 +57,13 @@
                         class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="null" disabled selected hidden>Choose a vehicle version</option>
                 </select>
+                <div id="selected-vehicle-version-div"
+                     class="hidden flex flex-col text-gray-900 mt-2">
+                    <p>
+                        Selected vehicle version <b id="selected-vehicle-version"></b>.
+                    </p>
+                    <p>Click the button below to add it to filter.</p>
+                </div>
                 <button id="continue-button"
                         class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Add version to filter
@@ -91,6 +98,10 @@
                             class="h-fit ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Search
                     </button>
+                </div>
+                <div id="ecu-list-table"
+                     class="relative overflow-x-auto shadow-md rounded-lg">
+                    {% include "panelapp/modals/ecu_type_modal.html" %}
                 </div>
             </div>
         </div>
