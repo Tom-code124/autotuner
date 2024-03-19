@@ -64,8 +64,9 @@
                     </p>
                     <p>Click the button below to add it to filter.</p>
                 </div>
-                <button id="continue-button"
-                        class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <button disabled
+                        id="filter-version-button"
+                        class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:hover:bg-blue-600 disabled:bg-blue-600 disabled:dark:bg-blue-600 disabled:dark:hover:bg-blue-600">
                     Add version to filter
                 </button>
             </div>
@@ -73,7 +74,7 @@
                 <div class="flex flex-col mt-6 lg:mt-4">
                     <h6 class="leading-none text-xl font-bold text-gray-900">Add ecu types to the filter</h6>
                     <p class="text-sm font-normal text-gray-600 mt-1">
-                        Search ecu types to add them to the filtering. You can add one or more ecu types to the filter. Also, you can skip this step if you don't want to filter vehicles by their ecu types (check vehicle version filtering).
+                        Search ecu types to add them to the filtering. You can add one or more ecu types to the filter by selecting them below table. Also, you can skip this step if you don't want to filter vehicles by their ecu types (check vehicle version filtering).
                     </p>
                 </div>
                 <div class="flex flex-row mt-4 w-fit mr-0 ml-auto">
@@ -89,20 +90,34 @@
                             </svg>
                         </div>
                         <input type="text"
-                               id="search-input"
+                               id="ecu-type-search-input"
                                class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-56 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                placeholder="Search ecu type">
                     </div>
                     <button type="submit"
-                            id="search-button"
+                            id="ecu-type-search-button"
                             class="h-fit ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Search
                     </button>
                 </div>
                 <div id="ecu-list-table"
-                     class="relative overflow-x-auto shadow-md rounded-lg">
+                     class="relative overflow-x-auto shadow-md rounded-lg mt-2">
                     {% include "panelapp/modals/ecu_type_modal.html" %}
                 </div>
+                <div id="selected-vehicle-version-div"
+                     class="hidden flex flex-col text-gray-900 mt-2">
+                    <p>
+                        Selected ecu types:
+                        <ul id="selected-ecu-types">
+                        </ul>
+                    </p>
+                    <p>Click the button below to add them to filter.</p>
+                </div>
+                <button id="filter-ecu-button"
+                        disabled
+                        class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:hover:bg-blue-600 disabled:bg-blue-600 disabled:dark:bg-blue-600 disabled:dark:hover:bg-blue-600">
+                    Add ecu types to filter
+                </button>
             </div>
         </div>
     </div>

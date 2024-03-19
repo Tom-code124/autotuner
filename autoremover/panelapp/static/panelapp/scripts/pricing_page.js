@@ -1,4 +1,5 @@
 import { getAndInject } from "./modals.js";
+import { afterFuncEcu } from "./ecu_search_modal.js";
 
 var fields = document
   .getElementById("vehicle-select-section")
@@ -59,3 +60,29 @@ function showSelectedVersion(event) {
 }
 
 fields[4].addEventListener("change", showSelectedVersion);
+
+var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
+var ecuTypeSearchButton = document.getElementById("ecu-type-search-button");
+
+function search(event) {
+  var keyword = ecuTypeSearchInput.value;
+  var url = "ecu_type_search";
+
+  keyword = keyword.trim();
+  if (keyword.length != 0) {
+    url += "?ecu_type_keyword=" + encodeURIComponent(keyword);
+  } else {
+    url += "?ecu_type_keyword= ";
+  }
+
+  getAndInject(url, "ecu-list-table", undefined, afterFuncEcu);
+}
+
+ecuTypeSearchButton.addEventListener("click", search);
+ecuTypeSearchInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    search(e);
+  }
+});
+
+afterFuncEcu();

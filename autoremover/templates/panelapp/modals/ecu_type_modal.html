@@ -1,22 +1,25 @@
 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
-            <th scope="col" class="px-6 py-3">Add</th>
+            <th scope="col" class="px-6 py-3">Select</th>
             <th scope="col" class="px-6 py-3">Ecu Type</th>
             <th scope="col" class="px-6 py-3">Brand</th>
         </tr>
     </thead>
     <tbody>
-        {% for ecu in data %}
+        {% for ecu in ecu_types %}
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <th scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ ecu.type }}</span>
-                </th>
-                <td class="px-6 py-4">{{ ecu.number }}</td>
-                <td class="px-6 py-4">{{ ecu.carmanufacturers }}</td>
+                <td class="px-6 py-4">
+                    <input type="checkbox"
+                           id="ecu-type-{{ ecu.id }}"
+                           value="{{ ecu.id }}"
+                           class="ecu-type-checkbox"
+                           name="ecu_type_selection" />
+                </td>
+                <td class="px-6 py-4">{{ ecu.name }}</td>
+                <td class="px-6 py-4">{{ ecu.brand_name }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
-{% include "modals/pagination.html" %}
+<div id="ecu-pagination-div">{% include "modals/pagination.html" %}</div>
