@@ -111,7 +111,7 @@
                         <ul id="selected-ecu-types" class="list-disc ml-6">
                         </ul>
                     </p>
-                    <p>Click the button below to add them to filter.</p>
+                    <p>Ensure you add them to filter by clicking the button.</p>
                 </div>
                 <button id="filter-ecu-button"
                         disabled
@@ -119,6 +119,42 @@
                     Add ecu types to filter
                 </button>
             </div>
+        </div>
+        <div class="flex flex-col w-11/12">
+            <div class="flex flex-col mt-6 lg:mt-4">
+                <h6 class="leading-none text-xl font-bold text-gray-900">Filtered Vehicles</h6>
+                <p class="text-sm font-normal text-gray-600 mt-1">
+                    Check the filters you have applied below. You can remove them by clicking the remove button besides them.
+                </p>
+            </div>
+            <div>
+                <p>In the below table, the vehicles with one of the versions:</p>
+                <ul id="selected-versions-list-ul" class="list-disc ml-6">
+                    <li>
+                        <b>Diesel</b>
+                        <button>Click me!</button>
+                    </li>
+                </ul>
+                <span>AND</span>
+                <p>with one of the ecu types:</p>
+                <ul id="selected-ecu-types-list-ul" class="list-disc ml-6">
+                    <li>
+                        <b>Diesel</b>
+                        <button>Click me!</button>
+                    </li>
+                </ul>
+                <p>are listed.</p>
+            </div>
+        </div>
+        <div>
+            <form id="make-pricing-form"
+                  method="post"
+                  enctype="multipart/form-data"
+                  action="{% url "Panel Make Pricing" %}">
+                {% csrf_token %}
+                <div id="vehicle-versions-form-div" class="hidden"></div>
+                <div id="ecu-types-form-div" class="hidden"></div>
+            </form>
         </div>
     </div>
 {% endblock panel_layout %}

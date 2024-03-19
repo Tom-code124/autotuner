@@ -112,6 +112,27 @@ def ecu_type_search_modal(request):
     }
     return render(request, 'panelapp/modals/ecu_type_modal.html', context)
 
+@login_required
+@admin_required
+def filter_vehicles_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle_category'])}
+    response = requests.get(url, params=payload)
+    category_data = json.loads(response.json().get("data").get("vehicle_category"))
+    vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in category_data]
+
+    context = {
+        'vehicle_category_list': vehicle_categories
+    }
+    return render(request, 'panelapp/modals/filter_vehicles_modal.html', context)
+
+@login_required
+@admin_required
+def make_pricing_modal(request):
+    pass
 
 @login_required
 @admin_required

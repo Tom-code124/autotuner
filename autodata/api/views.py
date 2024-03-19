@@ -136,8 +136,11 @@ def vehicle_data_api(request):
 
         elif requested == 'vehicle':
             vehicle_filters = params.get('vehicle_filters')
-            queries = get_vehicle_queries(vehicle_filters)
-            vehicles = Vehicle.objects.filter(reduce(operator.and_, queries))
+            if len(json.loads(vehicle_filters).items()) == 0:
+                vehicles = Vehicle.objects.all()
+            else:
+                queries = get_vehicle_queries(vehicle_filters)
+                vehicles = Vehicle.objects.filter(reduce(operator.and_, queries))
 
             page = params.get('vehicle_page')
             if page is not None:

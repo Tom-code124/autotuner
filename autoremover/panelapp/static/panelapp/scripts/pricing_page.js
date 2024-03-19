@@ -11,6 +11,11 @@ function loadNext(event) {
     )
   );
 
+  for (let i = nextIndex; i < 5; i++) {
+    fields[i].value = null;
+    fields[i].disabled = true;
+  }
+
   var nextId = fields[nextIndex].id;
   var modelFields = {};
 
@@ -26,11 +31,6 @@ function loadNext(event) {
 
   getAndInject(url, nextId, undefined, undefined);
   document.getElementById(nextId).disabled = false;
-
-  for (let i = nextIndex + 1; i < 5; i++) {
-    fields[i].value = null;
-    fields[i].disabled = true;
-  }
 }
 
 for (let i = 0; i < 4; i++) {
@@ -94,9 +94,11 @@ function listSelectedEcu(event) {
 
   var ecuNameId = "ecu-name-td-" + ecuTypeId;
   var ecuName = document.getElementById(ecuNameId).innerText;
+  var ecuBrandId = "ecu-brand-td-" + ecuTypeId;
+  var ecuBrand = document.getElementById(ecuBrandId).innerText;
   var ecuObject = {
     id: ecuTypeId,
-    name: ecuName,
+    name: ecuName + " (" + ecuBrand + ")",
   };
   if (event.currentTarget.checked) {
     selectedEcu.push(ecuObject);
@@ -157,7 +159,6 @@ function loadPaginationEcu(event) {
 }
 
 function afterFuncEcu() {
-  var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
   var ecuPaginationDiv = document.getElementById("ecu-pagination-div");
   var paginationButtons = [
     ...ecuPaginationDiv.querySelectorAll(".pagination-button"),
@@ -167,14 +168,6 @@ function afterFuncEcu() {
   });
 
   document.querySelectorAll(".ecu-type-checkbox").forEach((checkbox) => {
-    var ecuTypeId = checkbox.id.substring(checkbox.id.lastIndexOf("-") + 1);
-
-    var ecuNameId = "ecu-name-td-" + ecuTypeId;
-    var ecuName = document.getElementById(ecuNameId).innerText;
-    var ecuObject = {
-      id: ecuTypeId,
-      name: ecuName,
-    };
     if (selectedEcu != undefined) {
       selectedEcu.forEach((ecu) => {
         if (ecu.id == checkbox.value) {
