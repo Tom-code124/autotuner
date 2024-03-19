@@ -1,5 +1,4 @@
 import { getAndInject } from "./modals.js";
-import { afterFuncEcu } from "./ecu_search_modal.js";
 
 var fields = document
   .getElementById("vehicle-select-section")
@@ -86,3 +85,103 @@ ecuTypeSearchInput.addEventListener("keypress", function (e) {
 });
 
 afterFuncEcu();
+
+var selectedEcu = [];
+function listSelectedEcu(event) {
+  var ecuTypeId = event.currentTarget.id.substring(
+    event.currentTarget.id.lastIndexOf("-") + 1
+  );
+
+  var ecuNameId = "ecu-name-td-" + ecuTypeId;
+  var ecuName = document.getElementById(ecuNameId).innerText;
+  var ecuObject = {
+    id: ecuTypeId,
+    name: ecuName,
+  };
+  if (event.currentTarget.checked) {
+    selectedEcu.push(ecuObject);
+  } else {
+    var index = 0;
+    for (let i = 0; i < selectedEcu.length; i++) {
+      if (selectedEcu[i].id == ecuObject.id) {
+        index = i;
+        break;
+      }
+    }
+    selectedEcu.splice(index, 1);
+  }
+
+  var ecuLis = "";
+  selectedEcu.forEach((ecu) => {
+    ecuLis += "<li><b>" + ecu.name + "</b></li>\n";
+  });
+
+  if (ecuLis.length != 0) {
+    document.getElementById("selected-ecu-types").innerHTML = ecuLis;
+    document.getElementById("selected-ecu-type-div").classList.remove("hidden");
+  } else {
+    document.getElementById("selected-ecu-type-div").classList.add("hidden");
+  }
+}
+
+var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
+var ecuPaginationDiv = document.getElementById("ecu-pagination-div");
+
+function loadPaginationEcu(event) {
+  var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
+  var ecuPaginationDiv = document.getElementById("ecu-pagination-div");
+  var currentPage = Number(
+    ecuPaginationDiv.querySelector("#current-page-button").innerText
+  );
+  var page = Number(event.currentTarget.innerText);
+
+  if (event.currentTarget.id == "previous-page-button") {
+    page = currentPage - 1;
+  } else if (event.currentTarget.id == "following-page-button") {
+    page = currentPage + 1;
+  }
+
+  if (page != currentPage) {
+    var keyword = ecuTypeSearchInput.value;
+    var url = "ecu_type_search?ecu_type_page=" + page;
+
+    keyword = keyword.trim();
+    if (keyword.length != 0) {
+      url += "&ecu_type_keyword=" + encodeURIComponent(keyword);
+    } else {
+      url += "&ecu_type_keyword= ";
+    }
+
+    getAndInject(url, "ecu-list-table", undefined, afterFuncEcu);
+  }
+}
+
+function afterFuncEcu() {
+  var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
+  var ecuPaginationDiv = document.getElementById("ecu-pagination-div");
+  var paginationButtons = [
+    ...ecuPaginationDiv.querySelectorAll(".pagination-button"),
+  ];
+  paginationButtons.map((item) => {
+    item.addEventListener("click", loadPaginationEcu);
+  });
+
+  document.querySelectorAll(".ecu-type-checkbox").forEach((checkbox) => {
+    var ecuTypeId = checkbox.id.substring(checkbox.id.lastIndexOf("-") + 1);
+
+    var ecuNameId = "ecu-name-td-" + ecuTypeId;
+    var ecuName = document.getElementById(ecuNameId).innerText;
+    var ecuObject = {
+      id: ecuTypeId,
+      name: ecuName,
+    };
+    if (selectedEcu != undefined) {
+      selectedEcu.forEach((ecu) => {
+        if (ecu.id == checkbox.value) {
+          checkbox.checked = true;
+        }
+      });
+    }
+    checkbox.addEventListener("change", listSelectedEcu);
+  });
+}
