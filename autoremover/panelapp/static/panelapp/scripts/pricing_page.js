@@ -31,6 +31,11 @@ function loadNext(event) {
 
   getAndInject(url, nextId, undefined, undefined);
   document.getElementById(nextId).disabled = false;
+  if (nextIndex != 4) {
+    document.getElementById("filter-version-button").disabled = true;
+    var versionDiv = document.getElementById("selected-vehicle-version-div");
+    versionDiv.classList.add("hidden");
+  }
 }
 
 for (let i = 0; i < 4; i++) {
@@ -39,7 +44,7 @@ for (let i = 0; i < 4; i++) {
 
 function showSelectedVersion(event) {
   var versionDiv = document.getElementById("selected-vehicle-version-div");
-  if (event.currentTarget.value != null) {
+  if (event.currentTarget.value != "null") {
     var selectedVersionId = document.getElementById(
       "vehicle-version-select-5"
     ).value;
@@ -53,8 +58,10 @@ function showSelectedVersion(event) {
     versionB.innerHTML = selectedVersion;
 
     versionDiv.classList.remove("hidden");
+    document.getElementById("filter-version-button").disabled = false;
   } else {
     versionDiv.classList.add("hidden");
+    document.getElementById("filter-version-button").disabled = true;
   }
 }
 
@@ -126,9 +133,6 @@ function listSelectedEcu(event) {
   }
 }
 
-var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
-var ecuPaginationDiv = document.getElementById("ecu-pagination-div");
-
 function loadPaginationEcu(event) {
   var ecuTypeSearchInput = document.getElementById("ecu-type-search-input");
   var ecuPaginationDiv = document.getElementById("ecu-pagination-div");
@@ -178,3 +182,111 @@ function afterFuncEcu() {
     checkbox.addEventListener("change", listSelectedEcu);
   });
 }
+
+var versionFilters = [];
+var ecuFilters = [];
+function checkFiltersVisibility() {
+  var hasAnyVersion = versionFilters != undefined && versionFilters.length > 0;
+  var hasAnyEcu = ecuFilters != undefined && ecuFilters.length > 0;
+
+  var noFiltersP = document.getElementById("no-filters-warning-p");
+  var appliedFiltersDiv = document.getElementById("applied-filters-div");
+  var versionsDiv = document.getElementById("selected-versions-list-div");
+  var andSpan = document.getElementById("selected-filters-and-span");
+  var ecuDiv = document.getElementById("selected-ecus-list-div");
+  if (!hasAnyVersion && !hasAnyEcu) {
+    noFiltersP.classList.remove("hidden");
+    appliedFiltersDiv.classList.add("hidden");
+  } else {
+    noFiltersP.classList.add("hidden");
+    appliedFiltersDiv.classList.remove("hidden");
+
+    if (hasAnyVersion) {
+      versionsDiv.classList.remove("hidden");
+    } else {
+      versionsDiv.classList.add("hidden");
+    }
+
+    if (hasAnyEcu) {
+      ecuDiv.classList.remove("hidden");
+    } else {
+      ecuDiv.classList.add("hidden");
+    }
+
+    if (hasAnyVersion && hasAnyEcu) {
+      andSpan.classList.remove("hidden");
+    } else {
+      andSpan.classList.add("hidden");
+    }
+  }
+}
+
+function applyVersionFilter(event) {
+  var version_select = document.getElementById("vehicle-version-select-5");
+  var version_id = version_select.value;
+
+  var alreadySelected = false;
+  if (versionFilters != undefined) {
+    versionFilters.forEach((filter) => {
+      if (filter.id == version_id) {
+        alreadySelected = true;
+      }
+    });
+  }
+
+  if (!alreadySelected) {
+    var version_name = version_select
+      .querySelector("option[value='" + version_id + "']")
+      .innerText.trim();
+    versionFilters.push({
+      id: version_id,
+      name: version_name,
+    });
+    document.getElementById("selected-versions-list-ul").insertAdjacentHTML(
+      "beforeend",
+      `<li class="flex flex-row items-center"> <button
+        id="version-remove-${version_id}"
+        type="button"
+        class="version-filter-remove-button w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-800">
+        <svg
+          fill="#ffffff"
+          version="1.1"
+          id="Capa_1"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 800 800"
+          xml:space="preserve"
+          stroke="#ffffff"
+          class="w-3 h-3">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+            <g>
+              <g>
+                <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z"></path>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </button><b class="ml-1">${version_name}</b></li>`
+    );
+  }
+
+  var versionFormDiv = document.getElementById("vehicle-versions-form-div");
+  versionFormDiv.insertAdjacentHTML(
+    "beforeend",
+    '<input type="checkbox" id="version-filter-input-' +
+      version_id +
+      '" value="' +
+      version_id +
+      '" class="hidden" name="version_filter" />'
+  );
+
+  checkFiltersVisibility();
+}
+document
+  .getElementById("filter-version-button")
+  .addEventListener("click", applyVersionFilter);

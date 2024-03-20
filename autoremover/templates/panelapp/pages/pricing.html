@@ -120,29 +120,56 @@
                 </button>
             </div>
         </div>
-        <div class="flex flex-col w-11/12">
-            <div class="flex flex-col mt-6 lg:mt-4">
+        <div class="flex flex-col items-center">
+            <div class="flex flex-col mt-6 lg:mt-4 w-11/12">
                 <h6 class="leading-none text-xl font-bold text-gray-900">Filtered Vehicles</h6>
                 <p class="text-sm font-normal text-gray-600 mt-1">
                     Check the filters you have applied below. You can remove them by clicking the remove button besides them.
                 </p>
+                <button type="button"
+                        class="w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center me-2 dark:bg-red-600 dark:hover:bg-red-800 hidden">
+                    <svg fill="#ffffff"
+                         version="1.1"
+                         id="Capa_1"
+                         xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                         viewBox="0 0 800 800"
+                         xml:space="preserve"
+                         stroke="#ffffff"
+                         class="w-3 h-3">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0">
+                        </g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                        </g>
+                        <g id="SVGRepo_iconCarrier">
+                        <g>
+                        <g>
+                        <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z">
+                        </path>
+                        </g>
+                        </g>
+                        </g>
+                    </svg>
+                </button>
             </div>
-            <div>
-                <p>In the below table, the vehicles with one of the versions:</p>
-                <ul id="selected-versions-list-ul" class="list-disc ml-6">
-                    <li>
-                        <b>Diesel</b>
-                        <button>Click me!</button>
-                    </li>
-                </ul>
-                <span>AND</span>
-                <p>with one of the ecu types:</p>
-                <ul id="selected-ecu-types-list-ul" class="list-disc ml-6">
-                    <li>
-                        <b>Diesel</b>
-                        <button>Click me!</button>
-                    </li>
-                </ul>
+            <p id="no-filters-warning-p" class="text-red-600 mt-4 w-11/12">No filters applied yet!</p>
+            <div id="applied-filters-div" class="flex flex-col hidden mt-4 w-11/12">
+                <p>In the below table, the vehicles</p>
+                <div id="selected-versions-list-div" class="hidden">
+                    <p>with one of the versions:</p>
+                    <ul id="selected-versions-list-ul" class="list-disc ml-6">
+                    </ul>
+                </div>
+                <span id="selected-filters-and-span" class="hidden">AND</span>
+                <div id="selected-ecus-list-div" class="hidden">
+                    <p>with one of the ecu types:</p>
+                    <ul id="selected-ecu-types-list-ul" class="list-disc ml-6">
+                        <li>
+                            <b>MED cart curt</b>
+                            <button>Click me!</button>
+                        </li>
+                    </ul>
+                </div>
                 <p>are listed.</p>
             </div>
         </div>
