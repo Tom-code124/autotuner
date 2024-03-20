@@ -131,6 +131,12 @@ function listSelectedEcu(event) {
   } else {
     document.getElementById("selected-ecu-type-div").classList.add("hidden");
   }
+
+  if (selectedEcu != undefined && selectedEcu.length > 0) {
+    document.getElementById("filter-ecu-button").disabled = false;
+  } else {
+    document.getElementById("filter-ecu-button").disabled = true;
+  }
 }
 
 function loadPaginationEcu(event) {
@@ -181,6 +187,8 @@ function afterFuncEcu() {
     }
     checkbox.addEventListener("change", listSelectedEcu);
   });
+
+  checkAppliedEcuCheckbox();
 }
 
 var versionFilters = [];
@@ -189,35 +197,34 @@ function checkFiltersVisibility() {
   var hasAnyVersion = versionFilters != undefined && versionFilters.length > 0;
   var hasAnyEcu = ecuFilters != undefined && ecuFilters.length > 0;
 
-  var noFiltersP = document.getElementById("no-filters-warning-p");
-  var appliedFiltersDiv = document.getElementById("applied-filters-div");
-  var versionsDiv = document.getElementById("selected-versions-list-div");
-  var andSpan = document.getElementById("selected-filters-and-span");
-  var ecuDiv = document.getElementById("selected-ecus-list-div");
-  if (!hasAnyVersion && !hasAnyEcu) {
-    noFiltersP.classList.remove("hidden");
-    appliedFiltersDiv.classList.add("hidden");
+  if (hasAnyVersion) {
+    document
+      .getElementById("no-version-filters-warning-p")
+      .classList.add("hidden");
+    document
+      .getElementById("selected-versions-list-ul")
+      .classList.remove("hidden");
   } else {
-    noFiltersP.classList.add("hidden");
-    appliedFiltersDiv.classList.remove("hidden");
+    document
+      .getElementById("no-version-filters-warning-p")
+      .classList.remove("hidden");
+    document
+      .getElementById("selected-versions-list-ul")
+      .classList.add("hidden");
+  }
 
-    if (hasAnyVersion) {
-      versionsDiv.classList.remove("hidden");
-    } else {
-      versionsDiv.classList.add("hidden");
-    }
-
-    if (hasAnyEcu) {
-      ecuDiv.classList.remove("hidden");
-    } else {
-      ecuDiv.classList.add("hidden");
-    }
-
-    if (hasAnyVersion && hasAnyEcu) {
-      andSpan.classList.remove("hidden");
-    } else {
-      andSpan.classList.add("hidden");
-    }
+  if (hasAnyEcu) {
+    document.getElementById("no-ecu-filters-warning-p").classList.add("hidden");
+    document
+      .getElementById("selected-ecu-types-list-ul")
+      .classList.remove("hidden");
+  } else {
+    document
+      .getElementById("no-ecu-filters-warning-p")
+      .classList.remove("hidden");
+    document
+      .getElementById("selected-ecu-types-list-ul")
+      .classList.add("hidden");
   }
 }
 
@@ -244,7 +251,7 @@ function applyVersionFilter(event) {
     });
     document.getElementById("selected-versions-list-ul").insertAdjacentHTML(
       "beforeend",
-      `<li class="flex flex-row items-center"> <button
+      `<li id="version-remove-li-${version_id}"  class="flex flex-row items-center mt-1"> <button
         id="version-remove-${version_id}"
         type="button"
         class="version-filter-remove-button w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-800">
@@ -271,22 +278,210 @@ function applyVersionFilter(event) {
             </g>
           </g>
         </svg>
-      </button><b class="ml-1">${version_name}</b></li>`
+      </button><span class="ml-1 text-sm">${version_name}</span></li>`
+    );
+
+    var versionFormDiv = document.getElementById("vehicle-versions-form-div");
+    versionFormDiv.insertAdjacentHTML(
+      "beforeend",
+      '<input type="checkbox" id="version-filter-input-' +
+        version_id +
+        '" value="' +
+        version_id +
+        '" class="hidden" name="version_filter" />'
     );
   }
 
-  var versionFormDiv = document.getElementById("vehicle-versions-form-div");
-  versionFormDiv.insertAdjacentHTML(
-    "beforeend",
-    '<input type="checkbox" id="version-filter-input-' +
-      version_id +
-      '" value="' +
-      version_id +
-      '" class="hidden" name="version_filter" />'
-  );
-
   checkFiltersVisibility();
+
+  addRemoveListener();
+
+  // update vehicle table here
 }
 document
   .getElementById("filter-version-button")
   .addEventListener("click", applyVersionFilter);
+
+function applyEcuFilter(event) {
+  if (selectedEcu != undefined) {
+    selectedEcu.forEach((ecu) => {
+      var alreadySelected = false;
+      if (ecuFilters != undefined) {
+        ecuFilters.forEach((filter) => {
+          if (filter.id == ecu.id) {
+            alreadySelected = true;
+          }
+        });
+      }
+
+      if (!alreadySelected) {
+        ecuFilters.push(ecu);
+        document
+          .getElementById("selected-ecu-types-list-ul")
+          .insertAdjacentHTML(
+            "beforeend",
+            `<li id="ecu-remove-li-${ecu.id}" class="flex flex-row items-center mt-1"> <button
+            id="ecu-remove-${ecu.id}"
+            type="button"
+            class="ecu-filter-remove-button w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-800">
+            <svg
+              fill="#ffffff"
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              viewBox="0 0 800 800"
+              xml:space="preserve"
+              stroke="#ffffff"
+              class="w-3 h-3">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <g>
+                  <g>
+                    <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z"></path>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </button><span class="ml-1 text-sm">${ecu.name}</span></li>`
+          );
+
+        var ecuFormDiv = document.getElementById("ecu-types-form-div");
+        ecuFormDiv.insertAdjacentHTML(
+          "beforeend",
+          '<input type="checkbox" id="ecu-filter-input-' +
+            ecu.id +
+            '" value="' +
+            ecu.id +
+            '" class="hidden" name="ecu_filter" />'
+        );
+      }
+    });
+  }
+
+  selectedEcu = [];
+  document.getElementById("selected-ecu-type-div").classList.add("hidden");
+  event.currentTarget.disabled = true;
+  checkAppliedEcuCheckbox();
+
+  checkFiltersVisibility();
+
+  // update vehicle table here
+}
+
+document
+  .getElementById("filter-ecu-button")
+  .addEventListener("click", applyEcuFilter);
+
+function checkAppliedEcuCheckbox() {
+  document.querySelectorAll(".ecu-type-checkbox").forEach((checkbox) => {
+    if (ecuFilters != undefined) {
+      ecuFilters.forEach((filter) => {
+        if (filter.id == checkbox.value) {
+          if (!checkbox.classList.contains("hidden")) {
+            checkbox.checked = false;
+            checkbox.classList.add("hidden");
+            checkbox.insertAdjacentHTML(
+              "afterend",
+              `<button
+                id="ecu-remove-${checkbox.value}"
+                type="button"
+                class="ecu-filter-remove-button w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-800">
+                <svg
+                fill="#ffffff"
+                version="1.1"
+                id="Capa_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 800 800"
+                xml:space="preserve"
+                stroke="#ffffff"
+                class="w-3 h-3">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <g>
+                    <g>
+                      <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z"></path>
+                    </g>
+                  </g>
+                </g>
+                </svg>
+                </button>`
+            );
+          }
+        }
+      });
+    }
+  });
+
+  addRemoveListener();
+}
+
+function removeFilter(event) {
+  var filterType = event.currentTarget.id.substring(
+    0,
+    event.currentTarget.id.lastIndexOf("-")
+  );
+  var filterId = event.currentTarget.id.substring(
+    event.currentTarget.id.lastIndexOf("-") + 1
+  );
+
+  if (filterType == "version-remove") {
+    var index = -1;
+    for (let i = 0; i < versionFilters.length; i++) {
+      if (versionFilters[i].id == filterId) {
+        index = i;
+        break;
+      }
+    }
+    versionFilters.splice(index, 1);
+
+    document.getElementById("version-remove-li-" + filterId).remove();
+    document.getElementById("version-filter-input-" + filterId).remove();
+  } else if (filterType == "ecu-remove") {
+    var index = -1;
+    for (let i = 0; i < ecuFilters.length; i++) {
+      if (ecuFilters[i].id == filterId) {
+        index = i;
+        break;
+      }
+    }
+    ecuFilters.splice(index, 1);
+
+    document.getElementById("ecu-remove-li-" + filterId).remove();
+    document.getElementById("ecu-filter-input-" + filterId).remove();
+    document.querySelectorAll(".ecu-filter-remove-button").forEach((button) => {
+      if (button.id == "ecu-remove-" + filterId) {
+        button.remove();
+        document
+          .querySelectorAll("#ecu-type-" + filterId)
+          .forEach((checkbox) => {
+            checkbox.classList.remove("hidden");
+          });
+      }
+    });
+  }
+
+  checkFiltersVisibility();
+
+  // update vehicle table here
+}
+
+function addRemoveListener() {
+  document
+    .querySelectorAll(".version-filter-remove-button")
+    .forEach((button) => {
+      button.addEventListener("click", removeFilter);
+    });
+  document.querySelectorAll(".ecu-filter-remove-button").forEach((button) => {
+    button.addEventListener("click", removeFilter);
+  });
+}

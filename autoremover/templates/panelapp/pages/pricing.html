@@ -120,12 +120,32 @@
                 </button>
             </div>
         </div>
-        <div class="flex flex-col items-center">
-            <div class="flex flex-col mt-6 lg:mt-4 w-11/12">
-                <h6 class="leading-none text-xl font-bold text-gray-900">Filtered Vehicles</h6>
+        <div class="flex flex-col items-center mt-6">
+            <div id="applied-filters-div" class="flex flex-col w-11/12">
+                <h6 class="leading-none text-xl font-bold text-gray-900">Applied Filters</h6>
                 <p class="text-sm font-normal text-gray-600 mt-1">
                     Check the filters you have applied below. You can remove them by clicking the remove button besides them.
                 </p>
+                <div class="flex flex-col lg:flex-row mt-4">
+                    <div id="selected-versions-list-div" class="w-fit">
+                        <h6 class="leading-none text-m font-bold text-gray-900">Vehicle versions</h6>
+                        <p id="no-version-filters-warning-p" class="text-red-600 text-sm mt-1">No version filters applied yet!</p>
+                        <ul id="selected-versions-list-ul" class="list-disc hidden mt-2">
+                        </ul>
+                    </div>
+                    <div id="selected-ecus-list-div" class="w-fit mt-4 lg:mt-0 lg:ml-8">
+                        <h6 class="leading-none text-m font-bold text-gray-900">Ecu types</h6>
+                        <p id="no-ecu-filters-warning-p" class="text-red-600 text-sm mt-1">No ecu type filters applied yet!</p>
+                        <ul id="selected-ecu-types-list-ul" class="list-disc hidden mt-2">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col items-center mt-6">
+            <div class="w-11/12">
+                <h6 class="leading-none text-xl font-bold text-gray-900">Filtered Vehicles</h6>
+                <p class="text-sm font-normal text-gray-600 mt-1">Check the vehicles filtered below.</p>
                 <button type="button"
                         class="w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center me-2 dark:bg-red-600 dark:hover:bg-red-800 hidden">
                     <svg fill="#ffffff"
@@ -152,28 +172,6 @@
                     </svg>
                 </button>
             </div>
-            <p id="no-filters-warning-p" class="text-red-600 mt-4 w-11/12">No filters applied yet!</p>
-            <div id="applied-filters-div" class="flex flex-col hidden mt-4 w-11/12">
-                <p>In the below table, the vehicles</p>
-                <div id="selected-versions-list-div" class="hidden">
-                    <p>with one of the versions:</p>
-                    <ul id="selected-versions-list-ul" class="list-disc ml-6">
-                    </ul>
-                </div>
-                <span id="selected-filters-and-span" class="hidden">AND</span>
-                <div id="selected-ecus-list-div" class="hidden">
-                    <p>with one of the ecu types:</p>
-                    <ul id="selected-ecu-types-list-ul" class="list-disc ml-6">
-                        <li>
-                            <b>MED cart curt</b>
-                            <button>Click me!</button>
-                        </li>
-                    </ul>
-                </div>
-                <p>are listed.</p>
-            </div>
-        </div>
-        <div>
             <form id="make-pricing-form"
                   method="post"
                   enctype="multipart/form-data"
