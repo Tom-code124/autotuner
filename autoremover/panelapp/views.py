@@ -58,12 +58,14 @@ def pricing_page(request):
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port
     url = f"http://{ip}:{port}/api/vehicle_data/"
 
-    payload = {'requests': json.dumps(['vehicle_category', 'ecu_type']), 'ecu_type_keyword': ' '}
+    payload = {'requests': json.dumps(['vehicle_category', 'ecu_type', 'vehicle']), 'ecu_type_keyword': ' ', 'vehicle_filters': json.dumps({}), 'vehicle_page': 1}
     response = requests.get(url, params=payload)
+    
     category_data = json.loads(response.json().get("data").get("vehicle_category"))
     vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in category_data]
     ecu_pagination = response.json().get("data").get("ecu_pagination")
     ecu_types = response.json().get("data").get("ecu_type")
+    vehicle_data = response.json().get("data").get("vehicle")
 
     context = {
         'file_service_status': 'ONLINE',
@@ -79,7 +81,8 @@ def pricing_page(request):
         'previous_page_disabled': ecu_pagination.get("previous_page_disabled"),
         'following_page_disabled': ecu_pagination.get("following_page_disabled"),
         'page_list': ecu_pagination.get("page_list"),
-        'ecu_types': ecu_types
+        'ecu_types': ecu_types,
+        'vehicle_data': vehicle_data,
         }
     return render(request, 'panelapp/pages/pricing.html', context)
 

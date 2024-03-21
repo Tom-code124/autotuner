@@ -485,3 +485,18 @@ function addRemoveListener() {
     button.addEventListener("click", removeFilter);
   });
 }
+
+// function getFilteredVehicles() {
+//   var url = "filter_vehicles";
+//   url += `?vehicle_filters={`;
+//   if (versionFilters != undefined && versionFilters.length > 0) {
+//     url += `"vehicle_versions":[`;
+//     versionFilters.forEach((filter) => {
+//       url += filter.id + ",";
+//     });
+//   }
+// }
+
+// var a = [1, 2, 3, 4, 5];
+// console.log(a.toString());
+// console.log(a);

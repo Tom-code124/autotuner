@@ -147,7 +147,7 @@
                 <h6 class="leading-none text-xl font-bold text-gray-900">Filtered Vehicles</h6>
                 <p class="text-sm font-normal text-gray-600 mt-1">Check the vehicles filtered below.</p>
                 <button type="button"
-                        class="w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center me-2 dark:bg-red-600 dark:hover:bg-red-800 hidden">
+                        class="hidden w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center me-2 dark:bg-red-600 dark:hover:bg-red-800">
                     <svg fill="#ffffff"
                          version="1.1"
                          id="Capa_1"
@@ -171,6 +171,10 @@
                         </g>
                     </svg>
                 </button>
+                <div id="filtered-vehicle-table"
+                     class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                    {% include "panelapp/modals/vehicle_filter_modal.html" %}
+                </div>
             </div>
             <form id="make-pricing-form"
                   method="post"
