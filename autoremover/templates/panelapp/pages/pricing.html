@@ -176,14 +176,84 @@
                     {% include "panelapp/modals/vehicle_filter_modal.html" %}
                 </div>
             </div>
-            <form id="make-pricing-form"
-                  method="post"
-                  enctype="multipart/form-data"
-                  action="{% url "Panel Make Pricing" %}">
-                {% csrf_token %}
-                <div id="vehicle-versions-form-div" class="hidden"></div>
-                <div id="ecu-types-form-div" class="hidden"></div>
-            </form>
+            <div class="w-11/12 mt-8">
+                <form id="make-pricing-form"
+                      method="post"
+                      enctype="multipart/form-data"
+                      action="{% url "Panel Make Pricing" %}">
+                    {% csrf_token %}
+                    <div id="vehicle-versions-form-div" class="hidden"></div>
+                    <div id="ecu-types-form-div" class="hidden"></div>
+                    <h6 class="leading-none text-xl font-bold text-gray-900">Make Pricing</h6>
+                    <p class="text-sm font-normal text-gray-600 mt-1">
+                        You can make pricing below for the filtered vehicles (listed above).
+                        Enter your desired prices for the listed processes below and click make pricing button below to apply pricings.
+                        Please double check your filters applied above and the listed vehicles in the table.
+                    </p>
+                    <div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Process name</th>
+                                    <th scope="col" class="px-6 py-3">Slave TRY Price</th>
+                                    <th scope="col" class="px-6 py-3">Master TRY Price</th>
+                                    <th scope="col" class="px-6 py-3">Slave EUR Price</th>
+                                    <th scope="col" class="px-6 py-3">Master EUR Price</th>
+                                    <th scope="col" class="px-6 py-3">Remove Existing Pricings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for process in processes %}
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th scope="row"
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ process.name }}</span>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="slave-try-{{ process.id }}"
+                                                   name="slave_try_{{ process.id }}"
+                                                   placeholder="Slave TRY Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="master-try-{{ process.id }}"
+                                                   name="master_try_{{ process.id }}"
+                                                   placeholder="Master TRY Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="slave-eur-{{ process.id }}"
+                                                   name="slave_eur_{{ process.id }}"
+                                                   placeholder="Slave EUR Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="master-eur-{{ process.id }}"
+                                                   name="master_eur_{{ process.id }}"
+                                                   placeholder="Master EUR Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-row items-center">
+                                                <input type="checkbox"
+                                                       id="cancel-pricings-{{ process.id }}"
+                                                       name="cancel_pricings"
+                                                       class="pricing-cancel-checkbox"
+                                                       value="{{ process.id }}" />
+                                                <p class="ml-2">Remove existing pricings?</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock panel_layout %}

@@ -83,6 +83,7 @@ def pricing_page(request):
         'page_list': ecu_pagination.get("page_list"),
         'ecu_types': ecu_types,
         'vehicle_data': vehicle_data,
+        'processes': FileProcess.objects.all().order_by('name'),
         }
     return render(request, 'panelapp/pages/pricing.html', context)
 
