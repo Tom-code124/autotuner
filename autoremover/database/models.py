@@ -74,12 +74,6 @@ class FileRequest(models.Model):
         ("T", "Transmission File")
     ]
 
-    tool_type_choices = [
-        ("S", "Slave"),
-        ("M", "Master"),
-        ("E", "Euro"),
-    ]
-
     status_choices = [
         ("D", "Done"),
         ("C", "Cancelled"),
@@ -95,7 +89,6 @@ class FileRequest(models.Model):
 
     file_type = models.CharField(max_length=1, choices=file_type_choices)
     transmission = models.CharField(max_length=1, choices=transmission_choices)
-    tool_type = models.CharField(max_length=1, choices=tool_type_choices)
 
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     customer_description = models.TextField(max_length=400)

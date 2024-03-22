@@ -31,8 +31,8 @@ admin.site.register(FileProcess)
 
 @admin.register(FileRequest)
 class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue
-    fields = ["status", "employee", "processes", "processed_file", "employee_description", "vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type", "customer"]
-    readonly_fields = ["vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "tool_type", "customer"]
+    fields = ["status", "employee", "processes", "processed_file", "employee_description", "vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "customer"]
+    readonly_fields = ["vehicle", "original_file", "customer_description", "tool", "file_type", "transmission", "customer"]
     list_display = ("status", "employee", "vehicle", "processes_string", "file_type", "customer")
     list_filter = ("status",)
 
