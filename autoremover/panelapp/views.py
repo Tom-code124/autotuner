@@ -122,15 +122,18 @@ def filter_vehicles_modal(request):
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port
     url = f"http://{ip}:{port}/api/vehicle_data/"
 
-    payload = {'requests': json.dumps(['vehicle_category'])}
+    params = request.GET
+    filters = params.get('vehicle_filters')
+    page = params.get('vehicle_page')
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': filters, 'vehicle_page': page}
     response = requests.get(url, params=payload)
-    category_data = json.loads(response.json().get("data").get("vehicle_category"))
-    vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in category_data]
+    data = response.json().get("data").get("vehicle")
 
     context = {
-        'vehicle_category_list': vehicle_categories
+        'vehicle_data': data
     }
-    return render(request, 'panelapp/modals/filter_vehicles_modal.html', context)
+    return render(request, 'panelapp/modals/vehicle_filter_modal.html', context)
 
 @login_required
 @admin_required

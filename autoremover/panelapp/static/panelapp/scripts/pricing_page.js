@@ -297,6 +297,8 @@ function applyVersionFilter(event) {
   addRemoveListener();
 
   // update vehicle table here
+  var url = getFilterVehicleUrl(1);
+  getAndInject(url, "filtered-vehicle-table", undefined, afterFuncVehicle);
 }
 document
   .getElementById("filter-version-button")
@@ -371,6 +373,8 @@ function applyEcuFilter(event) {
   checkFiltersVisibility();
 
   // update vehicle table here
+  var url = getFilterVehicleUrl(1);
+  getAndInject(url, "filtered-vehicle-table", undefined, afterFuncVehicle);
 }
 
 document
@@ -473,6 +477,8 @@ function removeFilter(event) {
   checkFiltersVisibility();
 
   // update vehicle table here
+  var url = getFilterVehicleUrl(1);
+  getAndInject(url, "filtered-vehicle-table", undefined, afterFuncVehicle);
 }
 
 function addRemoveListener() {
@@ -486,17 +492,60 @@ function addRemoveListener() {
   });
 }
 
-// function getFilteredVehicles() {
-//   var url = "filter_vehicles";
-//   url += `?vehicle_filters={`;
-//   if (versionFilters != undefined && versionFilters.length > 0) {
-//     url += `"vehicle_versions":[`;
-//     versionFilters.forEach((filter) => {
-//       url += filter.id + ",";
-//     });
-//   }
-// }
+function loadPaginationVehicle(event) {
+  var vehiclePaginationDiv = document.getElementById("vehicle-pagination-div");
+  var currentPage = Number(
+    vehiclePaginationDiv.querySelector("#current-page-button").innerText
+  );
+  var page = Number(event.currentTarget.innerText);
 
-// var a = [1, 2, 3, 4, 5];
-// console.log(a.toString());
-// console.log(a);
+  if (event.currentTarget.id == "previous-page-button") {
+    page = currentPage - 1;
+  } else if (event.currentTarget.id == "following-page-button") {
+    page = currentPage + 1;
+  }
+
+  if (page != currentPage) {
+    var url = getFilterVehicleUrl(page);
+    getAndInject(url, "filtered-vehicle-table", undefined, afterFuncVehicle);
+  }
+}
+
+function afterFuncVehicle() {
+  var vehiclePaginationDiv = document.getElementById("vehicle-pagination-div");
+  var paginationButtons = [
+    ...vehiclePaginationDiv.querySelectorAll(".pagination-button"),
+  ];
+  paginationButtons.map((item) => {
+    item.addEventListener("click", loadPaginationVehicle);
+  });
+}
+
+function getFilterVehicleUrl(page) {
+  var url = "filter_vehicles";
+  url += `?vehicle_filters={`;
+  if (versionFilters != undefined && versionFilters.length > 0) {
+    var versionIds = [];
+    versionFilters.forEach((filter) => {
+      versionIds.push(filter.id);
+    });
+    url += `"vehicle_versions":[` + versionIds.toString() + `]`;
+    if (ecuFilters != undefined && ecuFilters.length > 0) {
+      url += `, `;
+    }
+  }
+  if (ecuFilters != undefined && ecuFilters.length > 0) {
+    var ecuIds = [];
+    ecuFilters.forEach((filter) => {
+      ecuIds.push(filter.id);
+    });
+    url += `"ecu_models":[` + ecuIds.toString() + `]`;
+  }
+  url += `}`;
+
+  url += `&vehicle_page=${page}`;
+
+  return url;
+}
+
+afterFuncVehicle();
