@@ -86,10 +86,42 @@ def vehicle_data_api(request):
             data["vehicle_version"] = serialize("json", engines, fields=['id', 'name', 'fuel_type'])
 
         elif requested == 'ecu_type':
-            vehicle_year_ids = json.loads(params.get('vehicle_years'))
-            version_ids = json.loads(params.get('vehicle_versions'))
-            ecu_model_ids = Vehicle.objects.filter(vehicle_year_id__in=vehicle_year_ids, version_id__in=version_ids).values('ecu_model_id')
-            ecu_models = EcuModel.objects.filter(id__in=ecu_model_ids).order_by('brand__name', 'name')
+            ecu_type_keyword = params.get('ecu_type_keyword')
+            if ecu_type_keyword is not None:
+                ecu_type_keyword = unquote(ecu_type_keyword).lower()
+                if ecu_type_keyword != " ":
+                    ecu_models = EcuModel.objects.filter(Q(name__icontains=ecu_type_keyword) | Q(brand__name__icontains=ecu_type_keyword)).order_by('brand__name', 'name')
+                else:
+                    ecu_models = EcuModel.objects.all().order_by('brand__name', 'name')
+
+                page = params.get('ecu_type_page')
+                if page is not None:
+                    pagenum = int(page)
+                else:
+                    pagenum = 1
+
+                paginator = Paginator(ecu_models, 5)
+                page = paginator.page(int(pagenum))
+                start_page = max(1, page.number - 2)
+                end_page = min(paginator.num_pages, max(page.number + 2, 5))
+                page_list = list(range(start_page, end_page + 1))
+
+                data["ecu_pagination"] = {
+                    'data_amount': paginator.count,
+                    'start_index': page.start_index(),
+                    'end_index': page.end_index(),
+                    'current_page': page.number,
+                    'previous_page_disabled': not page.has_previous(),
+                    'following_page_disabled': not page.has_next(),
+                    'page_list': page_list
+                }
+
+                ecu_models = page.object_list
+            else:
+                vehicle_year_ids = json.loads(params.get('vehicle_years'))
+                version_ids = json.loads(params.get('vehicle_versions'))
+                ecu_model_ids = Vehicle.objects.filter(vehicle_year_id__in=vehicle_year_ids, version_id__in=version_ids).values('ecu_model_id')
+                ecu_models = EcuModel.objects.filter(id__in=ecu_model_ids).order_by('brand__name', 'name')
 
             ecu_data = []
             for ecu in ecu_models:
@@ -104,8 +136,11 @@ def vehicle_data_api(request):
 
         elif requested == 'vehicle':
             vehicle_filters = params.get('vehicle_filters')
-            queries = get_vehicle_queries(vehicle_filters)
-            vehicles = Vehicle.objects.filter(reduce(operator.and_, queries))
+            if len(json.loads(vehicle_filters).items()) == 0:
+                vehicles = Vehicle.objects.all()
+            else:
+                queries = get_vehicle_queries(vehicle_filters)
+                vehicles = Vehicle.objects.filter(reduce(operator.and_, queries))
 
             page = params.get('vehicle_page')
             if page is not None:

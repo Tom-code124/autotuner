@@ -1,5 +1,272 @@
 {% extends "panelapp/layout.html" %}
 {% block panel_layout %}
     {% load static %}
-    <h1>Process Pricing</h1>
+    <div class="bg-white rounded-lg p-6">
+        <div class="flex justify-between flex-col">
+            <div class="flex items-center">
+                <div>
+                    <h5 class="leading-none text-3xl font-bold text-gray-900 pb-1">Process Pricing</h5>
+                    <p class="text-sm font-normal text-gray-600">
+                        Price processes for vehicles by filtering them with their versions and ecu types.
+                    </p>
+                </div>
+            </div>
+            {% if messages %}
+                <br>
+                <span class="text-green-500">Info:</span>
+                {% for message in messages %}<span class="text-green-500">{{ message }}</span>{% endfor %}
+                <br>
+            {% endif %}
+        </div>
+        <div class="flex flex-col lg:flex-row items-center lg:justify-evenly lg:items-start">
+            <div id="vehicle-select-section" class="flex flex-col w-11/12 lg:w-5/12">
+                <div class="flex flex-col mt-6 lg:mt-4">
+                    <h6 class="leading-none text-xl font-bold text-gray-900">Add vehicle versions to the filter</h6>
+                    <p class="text-sm font-normal text-gray-600 mt-1">
+                        Find vehicle versions to add them to the filtering process with this form.
+                        You can add one or more vehicle versions to the filter but you can do it only one by one.
+                        <b>
+                            BE CAREFUL, the vehicle versions you have chosen may include vehicles with different years and models.
+                            This form lists all vehicle versions that match with your category, brand, model, and year selections.
+                            However, there might be some vehicle versions that are common between different models and years.
+                        </b>
+                        If you don't want to filter vehicles by their versions, you can skip this step (check ecu type filtering).
+                    </p>
+                </div>
+                <select id="vehicle-category-select-1"
+                        name="vehicle_category"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle category</option>
+                    {% for category in vehicle_category_list %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
+                </select>
+                <select id="vehicle-brand-select-2"
+                        disabled
+                        name="vehicle_brand"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle brand</option>
+                </select>
+                <select id="vehicle-model-select-3"
+                        disabled
+                        name="vehicle_model"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle model</option>
+                </select>
+                <select id="vehicle-year-select-4"
+                        disabled
+                        name="vehicle_year"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle year</option>
+                </select>
+                <select id="vehicle-version-select-5"
+                        disabled
+                        name="vehicle_version"
+                        class="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="null" disabled selected hidden>Choose a vehicle version</option>
+                </select>
+                <div id="selected-vehicle-version-div"
+                     class="hidden flex flex-col text-gray-900 mt-2">
+                    <p>
+                        Selected vehicle version <b id="selected-vehicle-version"></b>.
+                    </p>
+                    <p>Click the button below to add it to filter.</p>
+                </div>
+                <button disabled
+                        id="filter-version-button"
+                        class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:hover:bg-blue-600 disabled:bg-blue-600 disabled:dark:bg-blue-600 disabled:dark:hover:bg-blue-600">
+                    Add version to filter
+                </button>
+            </div>
+            <div class="flex flex-col w-11/12 lg:w-5/12">
+                <div class="flex flex-col mt-6 lg:mt-4">
+                    <h6 class="leading-none text-xl font-bold text-gray-900">Add ecu types to the filter</h6>
+                    <p class="text-sm font-normal text-gray-600 mt-1">
+                        Search ecu types to add them to the filtering. You can add one or more ecu types to the filter by selecting them below table. Also, you can skip this step if you don't want to filter vehicles by their ecu types (check vehicle version filtering).
+                    </p>
+                </div>
+                <div class="flex flex-row mt-4 w-fit mr-0 ml-auto">
+                    <div class="relative h-fit">
+                        <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                 aria-hidden="true"
+                                 fill="currentColor"
+                                 viewBox="0 0 20 20"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </div>
+                        <input type="text"
+                               id="ecu-type-search-input"
+                               class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-56 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                               placeholder="Search ecu type">
+                    </div>
+                    <button type="submit"
+                            id="ecu-type-search-button"
+                            class="h-fit ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Search
+                    </button>
+                </div>
+                <div id="ecu-list-table"
+                     class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                    {% include "panelapp/modals/ecu_type_modal.html" %}
+                </div>
+                <div id="selected-ecu-type-div"
+                     class="hidden flex flex-col text-gray-900 mt-2">
+                    <p>
+                        Selected ecu types:
+                        <ul id="selected-ecu-types" class="list-disc ml-6">
+                        </ul>
+                    </p>
+                    <p>Ensure you add them to filter by clicking the button.</p>
+                </div>
+                <button id="filter-ecu-button"
+                        disabled
+                        class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:hover:bg-blue-600 disabled:bg-blue-600 disabled:dark:bg-blue-600 disabled:dark:hover:bg-blue-600">
+                    Add ecu types to filter
+                </button>
+            </div>
+        </div>
+        <div class="flex flex-col items-center mt-6">
+            <div id="applied-filters-div" class="flex flex-col w-11/12">
+                <h6 class="leading-none text-xl font-bold text-gray-900">Applied Filters</h6>
+                <p class="text-sm font-normal text-gray-600 mt-1">
+                    Check the filters you have applied below. You can remove them by clicking the remove button besides them.
+                </p>
+                <div class="flex flex-col lg:flex-row mt-4">
+                    <div id="selected-versions-list-div" class="w-fit">
+                        <h6 class="leading-none text-m font-bold text-gray-900">Vehicle versions</h6>
+                        <p id="no-version-filters-warning-p" class="text-red-600 text-sm mt-1">No version filters applied yet!</p>
+                        <ul id="selected-versions-list-ul" class="list-disc hidden mt-2">
+                        </ul>
+                    </div>
+                    <div id="selected-ecus-list-div" class="w-fit mt-4 lg:mt-0 lg:ml-8">
+                        <h6 class="leading-none text-m font-bold text-gray-900">Ecu types</h6>
+                        <p id="no-ecu-filters-warning-p" class="text-red-600 text-sm mt-1">No ecu type filters applied yet!</p>
+                        <ul id="selected-ecu-types-list-ul" class="list-disc hidden mt-2">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col items-center mt-6">
+            <div class="w-11/12">
+                <h6 class="leading-none text-xl font-bold text-gray-900">Filtered Vehicles</h6>
+                <p class="text-sm font-normal text-gray-600 mt-1">Check the vehicles filtered below.</p>
+                <button type="button"
+                        class="hidden w-5 h-5 pt-1 pl-1.5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm text-center inline-flex items-center me-2 dark:bg-red-600 dark:hover:bg-red-800">
+                    <svg fill="#ffffff"
+                         version="1.1"
+                         id="Capa_1"
+                         xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                         viewBox="0 0 800 800"
+                         xml:space="preserve"
+                         stroke="#ffffff"
+                         class="w-3 h-3">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0">
+                        </g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                        </g>
+                        <g id="SVGRepo_iconCarrier">
+                        <g>
+                        <g>
+                        <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z">
+                        </path>
+                        </g>
+                        </g>
+                        </g>
+                    </svg>
+                </button>
+                <div id="filtered-vehicle-table"
+                     class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                    {% include "panelapp/modals/vehicle_filter_modal.html" %}
+                </div>
+            </div>
+            <div class="w-11/12 mt-8">
+                <form id="make-pricing-form"
+                      method="post"
+                      enctype="multipart/form-data"
+                      action="{% url "Panel Make Pricing" %}">
+                    {% csrf_token %}
+                    <div id="vehicle-versions-form-div" class="hidden"></div>
+                    <div id="ecu-types-form-div" class="hidden"></div>
+                    <h6 class="leading-none text-xl font-bold text-gray-900">Make Pricing</h6>
+                    <p class="text-sm font-normal text-gray-600 mt-1">
+                        You can make pricing below for the filtered vehicles (listed above).
+                        Enter your desired prices for the listed processes below and click make pricing button below to apply pricings.
+                        Please double check your filters applied above and the listed vehicles in the table.
+                    </p>
+                    <div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Process name</th>
+                                    <th scope="col" class="px-6 py-3">Slave TRY Price</th>
+                                    <th scope="col" class="px-6 py-3">Master TRY Price</th>
+                                    <th scope="col" class="px-6 py-3">Slave EUR Price</th>
+                                    <th scope="col" class="px-6 py-3">Master EUR Price</th>
+                                    <th scope="col" class="px-6 py-3">Remove Existing Pricings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for process in processes %}
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th scope="row"
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ process.name }}</span>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="slave-try-{{ process.id }}"
+                                                   name="slave_try_{{ process.id }}"
+                                                   placeholder="Slave TRY Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="master-try-{{ process.id }}"
+                                                   name="master_try_{{ process.id }}"
+                                                   placeholder="Master TRY Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="slave-eur-{{ process.id }}"
+                                                   name="slave_eur_{{ process.id }}"
+                                                   placeholder="Slave EUR Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <input type="number"
+                                                   id="master-eur-{{ process.id }}"
+                                                   name="master_eur_{{ process.id }}"
+                                                   placeholder="Master EUR Price"
+                                                   class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-row items-center">
+                                                <input type="checkbox"
+                                                       id="cancel-pricings-{{ process.id }}"
+                                                       name="cancel_pricings"
+                                                       class="pricing-cancel-checkbox"
+                                                       value="{{ process.id }}" />
+                                                <p class="ml-2">Remove existing pricings?</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex">
+                        <button id="pricing-submit"
+                                type="submit"
+                                class="ml-auto mr-0 w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:hover:bg-blue-600 disabled:bg-blue-600 disabled:dark:bg-blue-600 disabled:dark:hover:bg-blue-600">
+                            Apply Pricings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock panel_layout %}

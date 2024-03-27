@@ -23,8 +23,6 @@ function calculator(event) {
   var ul = document.getElementById("selected-services");
 
   for (var i = 0; i < ul.children.length - 1; i++) {
-    console.log("removing:");
-    console.log(ul.firstChild);
     ul.removeChild(ul.firstChild);
   }
 
@@ -45,8 +43,6 @@ function calculator(event) {
       var inner = `<div class="row apart-children"><span>${hash.product}</span><span>${hash.price}$</span></div>`;
       li.innerHTML = inner;
       if (!ul.contains(li)) {
-        console.log("inserting:");
-        console.log(li);
         ul.insertBefore(li, ul.firstChild);
       }
       document.getElementById("choice-content").style.display = "block";

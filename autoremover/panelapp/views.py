@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.urls import reverse
 from database.models import *
 
+import requests
+import json
+
 # Create your views here.
 
 def login_page(request):
@@ -51,12 +54,131 @@ def logout_view(request):
 @login_required
 @admin_required
 def pricing_page(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle_category', 'ecu_type', 'vehicle']), 'ecu_type_keyword': ' ', 'vehicle_filters': json.dumps({}), 'vehicle_page': 1}
+    response = requests.get(url, params=payload)
+    
+    category_data = json.loads(response.json().get("data").get("vehicle_category"))
+    vehicle_categories = [{'id': d['pk'], 'name': d['fields']['name']} for d in category_data]
+    ecu_pagination = response.json().get("data").get("ecu_pagination")
+    ecu_types = response.json().get("data").get("ecu_type")
+    vehicle_data = response.json().get("data").get("vehicle")
+
     context = {
         'file_service_status': 'ONLINE',
         'file_service_until': datetime.now(),
         'page_title': 'Process Pricing',
+        'vehicle_category_list': vehicle_categories,
+        'script_files': ["pricing_page.js"],
+        'is_panel_app': True,
+        'data_amount': ecu_pagination.get("data_amount"),
+        'start_index': ecu_pagination.get("start_index"),
+        'end_index': ecu_pagination.get("end_index"),
+        'current_page': ecu_pagination.get("current_page"),
+        'previous_page_disabled': ecu_pagination.get("previous_page_disabled"),
+        'following_page_disabled': ecu_pagination.get("following_page_disabled"),
+        'page_list': ecu_pagination.get("page_list"),
+        'ecu_types': ecu_types,
+        'vehicle_data': vehicle_data,
+        'processes': FileProcess.objects.all().order_by('name'),
         }
     return render(request, 'panelapp/pages/pricing.html', context)
+
+@login_required
+@admin_required
+def ecu_type_search_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    keyword = request.GET.get('ecu_type_keyword')
+    page = request.GET.get('ecu_type_page')
+    if page is None:
+        page = 1
+
+    payload = {'requests': json.dumps(['ecu_type']), 'ecu_type_keyword': keyword, 'ecu_type_page': page}
+    response = requests.get(url, params=payload)
+    ecu_pagination = response.json().get("data").get("ecu_pagination")
+    ecu_types = response.json().get("data").get("ecu_type")
+
+    context = {
+        'data_amount': ecu_pagination.get("data_amount"),
+        'start_index': ecu_pagination.get("start_index"),
+        'end_index': ecu_pagination.get("end_index"),
+        'current_page': ecu_pagination.get("current_page"),
+        'previous_page_disabled': ecu_pagination.get("previous_page_disabled"),
+        'following_page_disabled': ecu_pagination.get("following_page_disabled"),
+        'page_list': ecu_pagination.get("page_list"),
+        'ecu_types': ecu_types
+    }
+    return render(request, 'panelapp/modals/ecu_type_modal.html', context)
+
+@login_required
+@admin_required
+def filter_vehicles_modal(request):
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    params = request.GET
+    filters = params.get('vehicle_filters')
+    page = params.get('vehicle_page')
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': filters, 'vehicle_page': page}
+    response = requests.get(url, params=payload)
+    data = response.json().get("data").get("vehicle")
+
+    context = {
+        'vehicle_data': data
+    }
+    return render(request, 'panelapp/modals/vehicle_filter_modal.html', context)
+
+@login_required
+@admin_required
+def make_pricing_modal(request):
+    params = request.POST
+    
+    version_ids = params.getlist('version_filter')
+    ecu_type_ids = params.getlist('ecu_filter')
+    filters = {"vehicle_versions": version_ids, "ecu_models": ecu_type_ids}
+    
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps(filters)}
+    response = requests.get(url, params=payload)
+    vehicles = response.json().get("data").get("vehicle").get("data")
+
+    pricings = {}
+    
+    for key, value in params.items():
+        if key.startswith('slave') or key.startswith('master'):
+            if len(value) > 0:
+                first_underscore = key.find('_')
+                last_underscore = key.rfind('_')
+                tool_type = key[:first_underscore]
+                process_id = int(key[last_underscore+1:])
+                currency = key[first_underscore+1:last_underscore]
+                price = int(value)
+                if pricings.get(process_id) is None:
+                    pricings[process_id] = {}
+                
+                pricings[process_id][f"{tool_type}_{currency}_price"] = price
+
+    cleared_pricings = [int(id) for id in params.getlist("cancel_pricings")]
+    ProcessPricing.objects.filter(id__in=cleared_pricings).update(master_try_price=None, master_eur_price=None, slave_try_price=None, slave_eur_price=None)
+    
+    for vehicle in vehicles:
+        vehicle_id = int(vehicle["id"])
+        for process_id, pricing in pricings.items():
+            obj, created = ProcessPricing.objects.update_or_create(vehicle=vehicle_id, process_id=process_id, defaults=pricing)
+
+    messages.success(request, "Pricing has been performed successfully!")
+    return redirect('Panel Pricing')
 
 @login_required
 @admin_required

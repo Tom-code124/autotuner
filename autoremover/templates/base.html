@@ -26,9 +26,15 @@
     {% endblock base %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    {% for script in script_files %}
-      <script type="module" src="{% static 'customerapp/scripts/' %}{{ script }}"></script>
-    {% endfor %}
+    {% if not is_panel_app %}
+      {% for script in script_files %}
+        <script type="module" src="{% static 'customerapp/scripts/' %}{{ script }}"></script>
+      {% endfor %}
+    {% else %}
+      {% for script in script_files %}
+        <script type="module" src="{% static 'panelapp/scripts/' %}{{ script }}"></script>
+      {% endfor %}
+    {% endif %}
     <script src="{% static 'scripts/main.js' %}"></script>
   </body>
 </html>

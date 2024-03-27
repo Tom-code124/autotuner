@@ -12,6 +12,11 @@ function loadNext(event) {
     )
   );
 
+  for (let i = nextIndex; i < 6; i++) {
+    fields[i].value = null;
+    fields[i].disabled = true;
+  }
+
   var nextId = fields[nextIndex].id;
   var modelFields = {};
 
@@ -27,11 +32,6 @@ function loadNext(event) {
 
   getAndInject(url, nextId, undefined, undefined);
   document.getElementById(nextId).disabled = false;
-
-  for (let i = nextIndex + 1; i < 6; i++) {
-    fields[i].value = null;
-    fields[i].disabled = true;
-  }
 }
 
 for (let i = 0; i < 5; i++) {
