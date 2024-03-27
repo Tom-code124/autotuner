@@ -139,7 +139,46 @@ def filter_vehicles_modal(request):
 @login_required
 @admin_required
 def make_pricing_modal(request):
-    pass
+    params = request.POST
+    
+    version_ids = params.getlist('version_filter')
+    ecu_type_ids = params.getlist('ecu_filter')
+    filters = {"vehicle_versions": version_ids, "ecu_models": ecu_type_ids}
+    
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps(filters)}
+    response = requests.get(url, params=payload)
+    vehicles = response.json().get("data").get("vehicle").get("data")
+
+    pricings = {}
+    
+    for key, value in params.items():
+        if key.startswith('slave') or key.startswith('master'):
+            if len(value) > 0:
+                first_underscore = key.find('_')
+                last_underscore = key.rfind('_')
+                tool_type = key[:first_underscore]
+                process_id = int(key[last_underscore+1:])
+                currency = key[first_underscore+1:last_underscore]
+                price = int(value)
+                if pricings.get(process_id) is None:
+                    pricings[process_id] = {}
+                
+                pricings[process_id][f"{tool_type}_{currency}_price"] = price
+
+    cleared_pricings = [int(id) for id in params.getlist("cancel_pricings")]
+    ProcessPricing.objects.filter(id__in=cleared_pricings).update(master_try_price=None, master_eur_price=None, slave_try_price=None, slave_eur_price=None)
+    
+    for vehicle in vehicles:
+        vehicle_id = int(vehicle["id"])
+        for process_id, pricing in pricings.items():
+            obj, created = ProcessPricing.objects.update_or_create(vehicle=vehicle_id, process_id=process_id, defaults=pricing)
+
+    messages.success(request, "Pricing has been performed successfully!")
+    return redirect('Panel Pricing')
 
 @login_required
 @admin_required

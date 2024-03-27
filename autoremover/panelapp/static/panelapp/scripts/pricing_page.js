@@ -288,7 +288,7 @@ function applyVersionFilter(event) {
         version_id +
         '" value="' +
         version_id +
-        '" class="hidden" name="version_filter" />'
+        '" class="hidden" name="version_filter" checked />'
     );
   }
 
@@ -359,7 +359,7 @@ function applyEcuFilter(event) {
             ecu.id +
             '" value="' +
             ecu.id +
-            '" class="hidden" name="ecu_filter" />'
+            '" class="hidden" name="ecu_filter" checked />'
         );
       }
     });

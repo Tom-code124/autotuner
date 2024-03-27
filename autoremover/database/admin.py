@@ -28,6 +28,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 admin.site.register(ConnectionTool)
     
 admin.site.register(FileProcess)
+admin.site.register(ProcessPricing)
 
 @admin.register(FileRequest)
 class FileRequestAdmin(admin.ModelAdmin): # custom page needed for employee side , or readonly fields can solve the issue

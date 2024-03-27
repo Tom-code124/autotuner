@@ -11,6 +11,12 @@
                     </p>
                 </div>
             </div>
+            {% if messages %}
+                <br>
+                <span class="text-green-500">Info:</span>
+                {% for message in messages %}<span class="text-green-500">{{ message }}</span>{% endfor %}
+                <br>
+            {% endif %}
         </div>
         <div class="flex flex-col lg:flex-row items-center lg:justify-evenly lg:items-start">
             <div id="vehicle-select-section" class="flex flex-col w-11/12 lg:w-5/12">
@@ -251,6 +257,13 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                    <div class="flex">
+                        <button id="pricing-submit"
+                                type="submit"
+                                class="ml-auto mr-0 w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:hover:bg-blue-600 disabled:bg-blue-600 disabled:dark:bg-blue-600 disabled:dark:hover:bg-blue-600">
+                            Apply Pricings
+                        </button>
                     </div>
                 </form>
             </div>

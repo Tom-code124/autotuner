@@ -53,10 +53,10 @@ class FileProcess(models.Model):
 class ProcessPricing(models.Model):
     vehicle = models.PositiveBigIntegerField()
     process = models.ForeignKey(FileProcess, on_delete=models.CASCADE)
-    master_try_price = models.FloatField()
-    slave_try_price = models.FloatField()
-    master_eur_price = models.FloatField()
-    slave_eur_price = models.FloatField()
+    master_try_price = models.FloatField(null=True, blank=True)
+    slave_try_price = models.FloatField(null=True, blank=True)
+    master_eur_price = models.FloatField(null=True, blank=True)
+    slave_eur_price = models.FloatField(null=True, blank=True)
 
     class Meta:
         constraints = [
