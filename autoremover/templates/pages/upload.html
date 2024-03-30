@@ -59,7 +59,7 @@
     </div>
     <div class="p-6 rounded-b-xl rounded-t-xl lg:rounded-t-none bg-white">
       {% if messages %}
-        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+        {% for message in messages %}<p class="text-red-600">{{ message }}</p>{% endfor %}
       {% endif %}
       <form id="file-request-form"
             method="post"
@@ -272,7 +272,7 @@
                           <span id="tax-percentage-span">{{ tax_percentage }}</span>%
                         </div>
                         <div>
-                          <span id="tax-amount-span">5</span>$
+                          <span id="tax-amount-span">5</span> Credits
                         </div>
                       </div>
                     </li>
@@ -280,7 +280,7 @@
                   <div id="price-total" class="row apart-children">
                     <span>Total:</span>
                     <div>
-                      <span id="total-amount-span">0</span>$
+                      <span id="total-amount-span">0</span> Credits
                     </div>
                   </div>
                 </div>

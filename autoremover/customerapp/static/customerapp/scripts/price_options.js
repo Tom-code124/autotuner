@@ -22,7 +22,7 @@ function calculate(event) {
     li.classList.add("price-li");
     li.id = event.currentTarget.id + "-li";
 
-    li.innerHTML = `<div class="row apart-children"><span>${newName}</span><div><span class="price-span">${newAmount}</span>$</div></div>`;
+    li.innerHTML = `<div class="row apart-children"><span>${newName}</span><div><span class="price-span">${newAmount}</span> Credits</div></div>`;
 
     choiceUl.insertBefore(li, taxLi);
 

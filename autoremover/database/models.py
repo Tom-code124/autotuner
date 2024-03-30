@@ -106,12 +106,14 @@ class FileRequest(models.Model):
         
         pricing_class = self.customer.pricing_class
         for process in self.processes.all():
-            if pricing_class == "M":
-                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).master_price
-            elif pricing_class == "S":
-                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).slave_price
-            elif pricing_class == "E":
-                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).euro_price
+            if pricing_class == "MT":
+                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).master_try_price
+            elif pricing_class == "ST":
+                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).slave_try_price
+            elif pricing_class == "ME":
+                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).master_eur_price
+            elif pricing_class == "SE":
+                total += ProcessPricing.objects.get(vehicle=self.vehicle, process=process).slave_eur_price
 
         tax_percentage = SystemSetting.objects.all()[0].tax_percentage
         total *= 1 + (tax_percentage / 100)

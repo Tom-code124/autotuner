@@ -302,6 +302,8 @@ def upload_page(request):
     connection_tools = ConnectionTool.objects.all()
 
     tax_percentage = SystemSetting.objects.all()[0].tax_percentage
+    
+    customer_broke = False
 
     if request.method == "POST":
         process_selection = request.POST.getlist("process_selection")
@@ -313,12 +315,14 @@ def upload_page(request):
         for p in process_selection:
             pricing = ProcessPricing.objects.get(vehicle=vehicle, process_id=int(p))
             
-            if pricing_class == "M":
-                total_price += pricing.master_price
-            elif pricing_class == "S":
-                total_price += pricing.slave_price
-            elif pricing_class == "E":
-                total_price += pricing.euro_price
+            if pricing_class == "MT":
+                total_price += pricing.master_try_price
+            elif pricing_class == "ST":
+                total_price += pricing.slave_try_price
+            elif pricing_class == "ME":
+                total_price += pricing.master_eur_price
+            elif pricing_class == "SE":
+                total_price += pricing.slave_eur_price
         
         total_price *= 1 + (tax_percentage / 100)
         
@@ -327,7 +331,6 @@ def upload_page(request):
             file_type = request.POST.get("file_type")
             transmission_type = request.POST.get("transmission_type")
             tool_id = int(request.POST.get("tool"))
-            tool_type = request.user.customer.pricing_class
             customer_description = request.POST.get("customer_description")
 
             file_request = FileRequest.objects.create(
@@ -336,7 +339,6 @@ def upload_page(request):
                 file_type=file_type,
                 transmission=transmission_type,
                 tool_id=tool_id,
-                tool_type=tool_type,
                 customer_description=customer_description,
                 original_file=original_file
                 )
@@ -350,7 +352,8 @@ def upload_page(request):
             return redirect("/app/files")
         
         else:
-            messages.error(request, "You don't have enough credits to request these processes. You can see the depositing details by clicking the wallet sign at the top right corner of the page.")
+            customer_broke = True
+            messages.error(request, "You don't have enough credits to request these processes. You have to deposit credits before requesting again.")
 
     context = {
         'page_title': 'Upload',
@@ -362,7 +365,9 @@ def upload_page(request):
         'connection_tool_list': connection_tools,
         'tax_percentage': tax_percentage
     }
-
+    if customer_broke:
+        return redirect("Upload")
+    
     return render(request, "pages/upload.html", context)
 
 @login_required
