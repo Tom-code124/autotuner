@@ -3,6 +3,7 @@ from .decorators import login_required, staff_required, admin_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.urls import reverse
+from django.http import JsonResponse
 from database.models import *
 
 import requests
@@ -234,3 +235,42 @@ def customer_options(request):
         'tools': ConnectionTool.objects.all().order_by('name'),
     }
     return render(request, 'panelapp/pages/customer_options.html', context)
+
+@login_required
+@admin_required
+def customers_page(request):
+    context = {
+        'page_title': 'Manage Customers',
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'customers': Customer.objects.all().order_by('user__first_name'),
+    }
+    return render(request, 'panelapp/pages/customers.html', context)
+
+@login_required
+@admin_required
+def update_customer(request):
+    params = request.POST
+
+    customer_id = params.get("customer_id")
+    credit_addition_amount = params.get("credit_addition_amount")
+    pricing_class = params.get("pricing_class")
+    is_banned = params.get("is_banned")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if pricing_class != customer.pricing_class:
+        customer.pricing_class = pricing_class
+
+    customer.user.is_active = not is_banned
+    customer.user.save()
+    customer.save()
+
+    if credit_addition_amount is not None:
+        credit_amount = int(credit_addition_amount)
+        transaction = Transaction.objects.create(customer=customer, amount=credit_amount)
+
+    messages.success(request,f"Customer {str(customer)} updated successfully!")
+
+    return redirect("Panel Manage Customers")
+

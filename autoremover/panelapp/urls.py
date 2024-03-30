@@ -5,6 +5,8 @@ from .views import *
 urlpatterns = [
     path('login/', login_page, name="Panel Login"),
     path('logout/', logout_view, name="Panel Logout"),
+    path('manage_customers/', customers_page, name="Panel Manage Customers"),
+    path('manage_customers/update_customer/', update_customer, name="Panel Update Customer"),
     path('customer_options/', customer_options, name="Panel Customer Options"),
     path('pricing/', pricing_page, name="Panel Pricing"),
     path('pricing/ecu_type_search/', ecu_type_search_modal, name="Panel Ecu Type Search"),
