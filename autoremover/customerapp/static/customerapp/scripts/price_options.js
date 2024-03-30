@@ -1,59 +1,3 @@
-function calculator(event) {
-  // re-write this method
-
-  var sum = 0;
-  var selecteds = [];
-
-  [...document.querySelectorAll(".price-option-check")].map((item) => {
-    if (item.checked) {
-      var name = document.getElementById(item.id + "-name-span").innerText;
-      var price = Number(
-        document.getElementById(item.id + "-price-span").innerText
-      );
-      var hash = {
-        product: name,
-        price: price,
-      };
-
-      selecteds.push(hash);
-      sum += price;
-    }
-  });
-
-  var ul = document.getElementById("selected-services");
-
-  for (var i = 0; i < ul.children.length - 1; i++) {
-    ul.removeChild(ul.firstChild);
-  }
-
-  if (sum !== 0) {
-    var taxRate =
-      Number(document.getElementById("tax-percentage-span").innerText) / 100;
-
-    var tax = sum * taxRate;
-    var total = sum + tax;
-
-    document.getElementById("total-amount-span").innerText = total;
-    document.getElementById("tax-amount-span").innerText = tax;
-
-    for (const hash of selecteds) {
-      var li = document.createElement("li");
-      li.classList.add("price-li");
-
-      var inner = `<div class="row apart-children"><span>${hash.product}</span><span>${hash.price}$</span></div>`;
-      li.innerHTML = inner;
-      if (!ul.contains(li)) {
-        ul.insertBefore(li, ul.firstChild);
-      }
-      document.getElementById("choice-content").style.display = "block";
-      document.getElementById("no-choice-content").style.display = "none";
-    }
-  } else {
-    document.getElementById("choice-content").style.display = "none";
-    document.getElementById("no-choice-content").style.display = "block";
-  }
-}
-
 function calculate(event) {
   var choiceContent = document.getElementById("choice-content");
   var noChoiceContent = document.getElementById("no-choice-content");
@@ -62,16 +6,18 @@ function calculate(event) {
   var taxLi = document.getElementById("tax-li");
 
   if (event.currentTarget.checked) {
-    choiceContent.style.display = "block";
-    noChoiceContent.style.display = "none";
+    choiceContent.classList.remove("hidden");
+    noChoiceContent.classList.add("hidden");
 
     var newName = document.getElementById(
       event.currentTarget.id + "-name-span"
     ).innerText;
+    var newAmountText = document
+      .getElementById(event.currentTarget.id + "-price-span")
+      .innerText.trim();
     var newAmount = Number(
-      document.getElementById(event.currentTarget.id + "-price-span").innerText
+      newAmountText.substring(0, newAmountText.lastIndexOf(" "))
     );
-
     var li = document.createElement("li");
     li.classList.add("price-li");
     li.id = event.currentTarget.id + "-li";
@@ -109,14 +55,14 @@ function calculate(event) {
         sum + newTax
       ).toFixed(2);
     } else {
-      choiceContent.style.display = "none";
-      noChoiceContent.style.display = "block";
+      choiceContent.classList.add("hidden");
+      noChoiceContent.classList.remove("hidden");
     }
   }
 }
 
 function openCalculator() {
-  document.getElementById("calculator-box").style.display = "flex";
+  document.getElementById("calculator-box").classList.remove("hidden");
   [...document.querySelectorAll(".price-option-check")].map((item) => {
     item.addEventListener("change", calculate);
   });
@@ -126,8 +72,8 @@ function resetCalculator() {
   var choiceContent = document.getElementById("choice-content");
   var noChoiceContent = document.getElementById("no-choice-content");
 
-  choiceContent.style.display = "none";
-  noChoiceContent.style.display = "block";
+  choiceContent.classList.add("hidden");
+  noChoiceContent.classList.remove("hidden");
 
   var selectedServices = document.getElementById("selected-services");
   var selecteds = selectedServices.querySelectorAll(".price-li");

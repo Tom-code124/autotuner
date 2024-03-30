@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block layout %}
-  <div id="container" class="column">
+  <div id="container" class="flex flex-col">
     <div id="card-header" class="apart-children hidden lg:flex lg:flex-row">
       <div id="select-vehicle-tab" class="card-header-tab active-tab">
         <div class="flex flex-row items-center">
@@ -121,9 +121,11 @@
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                     </svg>
                     <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span class="font-semibold">Click to select file</span>
+                      <span id="select-file-span" class="font-semibold">Click to select file</span>
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">MAX. 20MB</p>
+                    <p id="change-file-p"
+                       class="hidden text-xs text-gray-500 dark:text-gray-400">Click again to select another file</p>
+                    <p id="file-size-p" class="text-xs text-gray-500 dark:text-gray-400">MAX. 20MB</p>
                   </div>
                   <input id="dropzone-file"
                          type="file"
@@ -211,6 +213,7 @@
                 {% for tool in connection_tool_list %}<option value="{{ tool.id }}">{{ tool }}</option>{% endfor %}
               </select>
               <button id="continue-button"
+                      type="button"
                       class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Continue
                 <svg class="w-4 h-4 ml-2"
@@ -224,8 +227,8 @@
             </div>
           </div>
         </div>
-        <div id="select-options-card" class="row pasive-card">
-          <div class="flex flex-row items-center lg:hidden">
+        <div id="select-options-card" class="flex flex-col hidden">
+          <div class="flex flex-row self-center items-center lg:hidden mb-4">
             <svg width="36px"
                  height="36px"
                  viewBox="0 0 24 24"
@@ -252,39 +255,53 @@
               <p class="text-sm font-normal text-gray-600">Select processing options</p>
             </div>
           </div>
-          <div id="price-options-form"></div>
-          <div id="calculator-box" class="column">
-            <div id="calculator-header">Price</div>
-            <div id="calculator-body">
-              <div id="choice-content">
-                <ul id="selected-services">
-                  <li id="tax-li" class="price-li">
-                    <div class="row apart-children">
-                      <div>
-                        Taxes
-                        <span id="tax-percentage-span">{{ tax_percentage }}</span>%
+          <div class"flex flex-col">
+            <div class="flex flex-col xl:flex-row">
+              <div id="price-options-form" class="max-w-md"></div>
+              <div id="calculator-box"
+                   class="flex flex-col hidden w-80 rounded-lg border xl:ml-6 mt-4 xl:mt-2">
+                <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-t-lg">
+                  <p class="text-bold text-xl text-gray-700 dark:text-gray-400">Summary</p>
+                </div>
+                <div id="choice-content" class="p-4">
+                  <ul id="selected-services">
+                    <li id="tax-li" class="price-li">
+                      <div class="row apart-children">
+                        <div>
+                          Taxes
+                          <span id="tax-percentage-span">{{ tax_percentage }}</span>%
+                        </div>
+                        <div>
+                          <span id="tax-amount-span">5</span>$
+                        </div>
                       </div>
-                      <div>
-                        <span id="tax-amount-span">5</span>$
-                      </div>
+                    </li>
+                  </ul>
+                  <div id="price-total" class="row apart-children">
+                    <span>Total:</span>
+                    <div>
+                      <span id="total-amount-span">0</span>$
                     </div>
-                  </li>
-                </ul>
-                <div id="price-total" class="row apart-children">
-                  <span>Total:</span>
-                  <div>
-                    <span id="total-amount-span">0</span>$
                   </div>
                 </div>
+                <div id="no-choice-content" class="p-4">
+                  <p>Please select some options</p>
+                </div>
               </div>
-              <div id="no-choice-content">Please select some options</div>
             </div>
+            <label for="message"
+                   class="block mb-2 text-sm font-medium text-gray-900 mt-4">Additional information</label>
+            <textarea id="message"
+                      name="customer_description"
+                      maxlength="400"
+                      rows="4"
+                      class="block p-2.5 w-11/12 xl:w-5/12 max-w-lg text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Please provide more information about your request and explain further..."></textarea>
+            <button type="submit"
+                    class="ml-auto w-fit inline-flex items-center py-2.5 px-3 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              Submit
+            </button>
           </div>
-          <textarea name="customer_description"
-                    maxlength="400"
-                    placeholder="Please provide more information about your request and explain further..."
-                    required></textarea>
-          <input type="submit" />
         </div>
       </form>
     </div>

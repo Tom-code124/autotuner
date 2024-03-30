@@ -475,7 +475,15 @@ def process_options_modal(request):
     data = response.json().get("data").get("vehicle").get("data")[0]
     vehicle_id = int(data.get("id"))
     
-    pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).order_by("process__name")
+    pricing_class = request.user.customer.pricing_class
+    if pricing_class == "MT":
+        pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).exclude(master_try_price__isnull=True).order_by("process__name")
+    elif pricing_class == "ST":
+        pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).exclude(slave_try_price__isnull=True).order_by("process__name")
+    elif pricing_class == "ME":
+        pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).exclude(master_eur_price__isnull=True).order_by("process__name")
+    elif pricing_class == "SE":
+        pricing_options = ProcessPricing.objects.filter(vehicle=vehicle_id).exclude(slave_eur_price__isnull=True).order_by("process__name")
 
     context = {
         'options': pricing_options,
