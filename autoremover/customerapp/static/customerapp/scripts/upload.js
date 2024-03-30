@@ -48,20 +48,16 @@ function openVehicleCard(event) {
   vehicleTab.classList.add("active-tab");
   optionsTab.classList.remove("active-tab");
 
-  vehicleCard.classList.remove("pasive-card");
-  vehicleCard.classList.add("flex");
-  optionsCard.classList.add("pasive-card");
-  optionsCard.classList.remove("flex");
+  vehicleCard.classList.remove("hidden");
+  optionsCard.classList.add("hidden");
 }
 
 function openOptionsCard() {
   vehicleTab.classList.remove("active-tab");
   optionsTab.classList.add("active-tab");
 
-  vehicleCard.classList.add("pasive-card");
-  vehicleCard.classList.remove("flex");
-  optionsCard.classList.remove("pasive-card");
-  optionsCard.classList.add("flex");
+  vehicleCard.classList.add("hidden");
+  optionsCard.classList.remove("hidden");
 
   resetCalculator();
   openCalculator();
@@ -131,3 +127,19 @@ optionsTab.addEventListener("click", proceedToOptions);
 
 var proceedButton = document.getElementById("continue-button");
 proceedButton.addEventListener("click", proceedToOptions);
+
+var fileInput = document.getElementById("dropzone-file");
+
+function fileUpload(event) {
+  var selectSpan = document.getElementById("select-file-span");
+  var fileSizeP = document.getElementById("file-size-p");
+  var changeFileP = document.getElementById("change-file-p");
+
+  if (fileInput.files.length > 0) {
+    selectSpan.innerText = "Selected file: " + fileInput.files[0].name;
+    fileSizeP.classList.add("hidden");
+    changeFileP.classList.remove("hidden");
+  }
+}
+
+fileInput.addEventListener("change", fileUpload);

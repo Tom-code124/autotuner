@@ -1,21 +1,44 @@
 <input type="number" name="vehicle_id" value="{{ vehicle_id }}" hidden>
-{% for option in options %}
-  <div class="price-option-box row">
-    <input type="checkbox"
-           id="{{ option.id }}"
-           value="{{ option.process.id }}"
-           class="price-option-check"
-           name="process_selection" />
-    <label for="{{ option.id }}" class="price-option-label row">
-      <span id="{{ option.id }}-name-span">{{ option.process }}</span>
-      {% if request.user.customer.pricing_class == "M" %}
-        <span id="{{ option.id }}-price-span">{{ option.master_price }}</span>
-      {% elif request.user.customer.pricing_class == "S" %}
-        <span id="{{ option.id }}-price-span">{{ option.slave_price }}</span>
-      {% elif request.user.customer.pricing_class == "E" %}
-        <span id="{{ option.id }}-price-span">{{ option.euro_price }}</span>
-      {% endif %}
-    </label>
-  </div>
-  <br />
-{% endfor %}
+<div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">Select</th>
+        <th scope="col" class="px-6 py-3">Process</th>
+        <th scope="col" class="px-6 py-3">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for option in options %}
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <td class="px-6 py-4">
+            <input type="checkbox"
+                   id="{{ option.id }}"
+                   value="{{ option.process.id }}"
+                   class="price-option-check"
+                   name="process_selection" />
+          </td>
+          <td class="px-6 py-4">
+            <span id="{{ option.id }}-name-span">{{ option.process }}</span>
+          </td>
+          <th scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <span id="{{ option.id }}-price-span"
+                  class="p-2 rounded bg-gray-200 dark:bg-gray-700">
+              {% if request.user.customer.pricing_class == "MT" %}
+                {{ option.master_try_price }}
+              {% elif request.user.customer.pricing_class == "ST" %}
+                {{ option.slave_try_price }}
+              {% elif request.user.customer.pricing_class == "ME" %}
+                {{ option.master_eur_price }}
+              {% elif request.user.customer.pricing_class == "SE" %}
+                {{ option.slave_eur_price }}
+              {% endif %}
+              Credits
+            </span>
+          </th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
