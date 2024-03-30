@@ -266,7 +266,7 @@ def update_customer(request):
     customer.user.save()
     customer.save()
 
-    if credit_addition_amount is not None:
+    if credit_addition_amount:
         credit_amount = int(credit_addition_amount)
         transaction = Transaction.objects.create(customer=customer, amount=credit_amount)
 
