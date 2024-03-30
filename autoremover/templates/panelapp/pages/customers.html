@@ -1,0 +1,99 @@
+{% extends "panelapp/layout.html" %}
+{% block panel_layout %}
+    {% load static %}
+    <div class="bg-white rounded-lg p-6">
+        <div class="flex justify-between flex-col">
+            <div class="flex items-center">
+                <div>
+                    <h5 class="leading-none text-3xl font-bold text-gray-900 pb-1">Manage Customers</h5>
+                    <p class="text-sm font-normal text-gray-600">See and manage customer details</p>
+                </div>
+            </div>
+        </div>
+        {% if messages %}
+            <div class="mt-2">
+                {% for message in messages %}<span>{{ message }}</span>{% endfor %}
+            </div>
+        {% endif %}
+        <div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Name</th>
+                        <th scope="col" class="px-6 py-3">Company name</th>
+                        <th scope="col" class="px-6 py-3">Phone number</th>
+                        <th scope="col" class="px-6 py-3">Email</th>
+                        <th scope="col" class="px-6 py-3">Total credits</th>
+                        <th scope="col" class="px-6 py-3">Add credits?</th>
+                        <th scope="col" class="px-6 py-3">Pricing class?</th>
+                        <th scope="col" class="px-6 py-3">Ban status?</th>
+                        <th scope="col" class="px-6 py-3">Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <form id="update-customer-form-{{ customer.id }}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  action="{% url 'Panel Update Customer' %}">
+                                {% csrf_token %}
+                                <input type="number" hidden name="customer_id" value="{{ customer.id }}">
+                            </form>
+                            <th scope="row"
+                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ customer }}</span>
+                            </th>
+                            <td class="px-6 py-4">{{ customer.company_name }}</td>
+                            <td class="px-6 py-4">{{ customer.phone_number }}</td>
+                            <td class="px-6 py-4">{{ customer.user.email }}</td>
+                            <td class="px-6 py-4">{{ customer.credit_amount }}</td>
+                            <td class="px-6 py-4">
+                                <input type="number"
+                                       form="update-customer-form-{{ customer.id }}"
+                                       id="customer-add-credit-input-{{ customer.id }}"
+                                       name="credit_addition_amount"
+                                       placeholder="Add credits"
+                                       class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                            </td>
+                            <td class="px-6 py-4">
+                                <select type="number"
+                                        form="update-customer-form-{{ customer.id }}"
+                                        name="pricing_class"
+                                        id="customer-pricing-class-select-{{ customer.id }}"
+                                        class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                    <option value="MT" class="text-gray-800">
+                                        <span {% if customer.pricing_class == "MT" %}class="text-slate-500"{% endif %}>Master TRY</span>
+                                    </option>
+                                    <option value="ST" class="text-gray-800">
+                                        <span {% if customer.pricing_class == "ST" %}class="text-slate-500"{% endif %}>Slave TRY</span>
+                                    </option>
+                                    <option value="ME" class="text-gray-800">
+                                        <span {% if customer.pricing_class == "ME" %}class="text-slate-500"{% endif %}>Master EUR</span>
+                                    </option>
+                                    <option value="SE" class="text-gray-800">
+                                        <span {% if customer.pricing_class == "SE" %}class="text-slate-500"{% endif %}>Slave EUR</span>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4">
+                                <input type="checkbox"
+                                       form="update-customer-form-{{ customer.id }}"
+                                       name="is_banned"
+                                       id="customer-ban-checkbox-{{ customer.id }}"
+                                       {% if not customer.user.is_active %}checked{% endif %}>
+                                <span>Ban?</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button id="customer-update-button-{{ customer.id }}"
+                                        form="update-customer-form-{{ customer.id }}"
+                                        class="update-customer-button w-fit ml-2 inline-flex items-center py-2.5 px-3 text-sm font-small text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                        type="submit">Update</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock panel_layout %}

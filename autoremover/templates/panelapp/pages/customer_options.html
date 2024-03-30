@@ -14,47 +14,49 @@
             <div class="p-4 flex flex-col w-11/12 2xl:w-5/12 rounded-lg border-2 dark:border-0 bg-white dark:bg-gray-800">
                 <h5 class="leading-none text-2xl font-bold pb-1 text-gray-900 dark:text-white">File processes</h5>
                 <p class="text-sm font-normal text-gray-600 dark:text-gray-200">Add, edit, and disable file process options</p>
-                <div class="mt-2">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Process name</th>
-                                <th scope="col" class="px-6 py-3">Update</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for process in processes %}
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ process.name }}</span>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <form id="process-update-form"
-                                              method="post"
-                                              enctype="multipart/form-data"
-                                              action="{% url 'Panel Customer Options' %}">
-                                            {% csrf_token %}
-                                            <input type="text" class="hidden" name="form_name" value="update_process">
-                                            <input type="number"
-                                                   class="hidden"
-                                                   name="process_id"
-                                                   value="{{ process.id }}">
-                                            <div class="flex flex-row mt-2">
-                                                <input type="text"
-                                                       id="process-change-name-input-{{ process.id }}"
-                                                       name="process_name"
-                                                       placeholder="Change process name"
-                                                       class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
-                                                <button class="w-fit ml-2 inline-flex items-center py-2.5 px-3 text-sm font-small text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                                        type="submit">Update</button>
-                                            </div>
-                                        </form>
-                                    </td>
+                <div>
+                    <div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Process name</th>
+                                    <th scope="col" class="px-6 py-3">Update</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for process in processes %}
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th scope="row"
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ process.name }}</span>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            <form id="process-update-form"
+                                                  method="post"
+                                                  enctype="multipart/form-data"
+                                                  action="{% url 'Panel Customer Options' %}">
+                                                {% csrf_token %}
+                                                <input type="text" class="hidden" name="form_name" value="update_process">
+                                                <input type="number"
+                                                       class="hidden"
+                                                       name="process_id"
+                                                       value="{{ process.id }}">
+                                                <div class="flex flex-row mt-2">
+                                                    <input type="text"
+                                                           id="process-change-name-input-{{ process.id }}"
+                                                           name="process_name"
+                                                           placeholder="Change process name"
+                                                           class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                                    <button class="w-fit ml-2 inline-flex items-center py-2.5 px-3 text-sm font-small text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                                            type="submit">Update</button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     <form id="process-add-form"
                           method="post"
                           enctype="multipart/form-data"
@@ -81,44 +83,46 @@
             <div class="p-4 flex flex-col w-11/12 2xl:w-5/12 mt-4 2xl:mt-0 rounded-lg border-2 dark:border-0 bg-white dark:bg-gray-800">
                 <h5 class="leading-none text-2xl font-bold pb-1 text-gray-900 dark:text-white">Connection tools</h5>
                 <p class="text-sm font-normal text-gray-600 dark:text-gray-200">Add, edit, and disable connection tools</p>
-                <div class="mt-2">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Connection tool name</th>
-                                <th scope="col" class="px-6 py-3">Update</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for tool in tools %}
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ tool.name }}</span>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <form id="tool-update-form"
-                                              method="post"
-                                              enctype="multipart/form-data"
-                                              action="{% url 'Panel Customer Options' %}">
-                                            {% csrf_token %}
-                                            <input type="text" class="hidden" name="form_name" value="update_tool">
-                                            <input type="number" class="hidden" name="tool_id" value="{{ tool.id }}">
-                                            <div class="flex flex-row mt-2">
-                                                <input type="text"
-                                                       id="tool-change-name-input-{{ tool.id }}"
-                                                       name="tool_name"
-                                                       placeholder="Change tool name"
-                                                       class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
-                                                <button class="w-fit ml-2 inline-flex items-center py-2.5 px-3 text-sm font-small text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                                        type="submit">Update</button>
-                                            </div>
-                                        </form>
-                                    </td>
+                <div>
+                    <div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Connection tool name</th>
+                                    <th scope="col" class="px-6 py-3">Update</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for tool in tools %}
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th scope="row"
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ tool.name }}</span>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            <form id="tool-update-form"
+                                                  method="post"
+                                                  enctype="multipart/form-data"
+                                                  action="{% url 'Panel Customer Options' %}">
+                                                {% csrf_token %}
+                                                <input type="text" class="hidden" name="form_name" value="update_tool">
+                                                <input type="number" class="hidden" name="tool_id" value="{{ tool.id }}">
+                                                <div class="flex flex-row mt-2">
+                                                    <input type="text"
+                                                           id="tool-change-name-input-{{ tool.id }}"
+                                                           name="tool_name"
+                                                           placeholder="Change tool name"
+                                                           class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
+                                                    <button class="w-fit ml-2 inline-flex items-center py-2.5 px-3 text-sm font-small text-white bg-blue-600 rounded-lg border border-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                                            type="submit">Update</button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     <form id="tool-add-form"
                           method="post"
                           enctype="multipart/form-data"
@@ -127,7 +131,7 @@
                         <input type="text" class="hidden" name="form_name" value="add_tool">
                         <div class="mt-4">
                             <label for="tool-name-input">
-                                <h6 class="text-xl text-gray-900 dark:text-white">Add file process</h6>
+                                <h6 class="text-xl text-gray-900 dark:text-white">Add connection tool</h6>
                             </label>
                             <div class="flex flex-row mt-2">
                                 <input type="text"
