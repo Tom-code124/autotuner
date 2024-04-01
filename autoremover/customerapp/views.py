@@ -236,6 +236,27 @@ def requested_files_modal(request):
     end_page = min(paginator.num_pages, max(page.number + 5, 10))
     page_list = range(start_page, end_page + 1)
 
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps({"ids": [d.vehicle for d in page.object_list]})}
+    response = requests.get(url, params=payload)
+    vehicle_data = response.json().get("data").get("vehicle").get("data")
+
+    files_data = []
+    for f in page.object_list:
+        vehicle = [d for d in vehicle_data if d.get("id") == f.vehicle][0]
+        file = {
+            'id': f.id,
+            'status_long': f.status_long,
+            'vehicle': {'vehicle_long': vehicle["vehicle_brand"] + " " + vehicle["vehicle_model"] + " " + str(vehicle["vehicle_year"]), 'vehicle_version': vehicle["vehicle_version"], 'ecu_model': vehicle["ecu_model"]},
+            'processes_string': f.processes_string,
+            'updated_at': f.updated_at,
+            'processed_file': f.processed_file,
+        }
+        files_data.append(file)
+
     context = {
         'data_amount': paginator.count,
         'start_index': page.start_index(),
@@ -244,7 +265,7 @@ def requested_files_modal(request):
         'previous_page_disabled': not page.has_previous(),
         'following_page_disabled': not page.has_next(),
         'page_list': page_list,
-        'requested_file_data': page.object_list
+        'requested_file_data': files_data
     }
     
     return render(request, "modals/requested_files_modal.html", context)

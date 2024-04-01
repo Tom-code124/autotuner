@@ -148,10 +148,10 @@ SITE_ID = 1
 MAINTENANCE_503_TEMPLATE = "errors/503.html"
 
 # storage
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, 'autoremover-edd1f50d0eac.json')
-)
+# GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+#     os.path.join(BASE_DIR, 'autoremover-edd1f50d0eac.json')
+# )
 
-GS_EXPIRATION = timedelta(minutes=5)
-DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_BUCKET_NAME = 'autoremover'
+# GS_EXPIRATION = timedelta(minutes=5)
+# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+# GS_BUCKET_NAME = 'autoremover'

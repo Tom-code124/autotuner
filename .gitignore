@@ -13,3 +13,4 @@ localenv/
 localdataenv/
 autoremover/node_modules/
 # autoremover_db_initial_data/
+**/processing/
