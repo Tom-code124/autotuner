@@ -25,8 +25,6 @@ def login_page(request):
             redirect_url = request.POST.get('next')
         else:
             redirect_url = "/panel/"
-        
-        print(redirect_url)
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -74,7 +72,6 @@ def file_requests_modal(request):
     page_param = params.get('page')
 
     req_list = FileRequest.objects.order_by("-created_at", "-status")
-    print(req_list)
 
     if page_param:
         pagenum = int(page_param)
