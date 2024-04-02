@@ -240,7 +240,7 @@ def requested_files_modal(request):
     port = SystemSetting.objects.all()[0].vehicle_data_backend_port
     url = f"http://{ip}:{port}/api/vehicle_data/"
 
-    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps({"ids": [d.vehicle for d in page.object_list]})}
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps({"ids": list(set([d.vehicle for d in page.object_list]))})}
     response = requests.get(url, params=payload)
     vehicle_data = response.json().get("data").get("vehicle").get("data")
 
@@ -646,7 +646,7 @@ def expenses_modal(request):
     params = request.GET
     page_param = params.get('page')
 
-    expenses_data = Transaction.objects.filter(customer=request.user.customer).order_by("-updated_at")
+    expenses_data = Transaction.objects.filter(customer=request.user.customer).order_by("-created_at")
 
     if page_param:
         pagenum = int(page_param)
@@ -658,6 +658,32 @@ def expenses_modal(request):
     start_page = max(1, page.number - 5)
     end_page = min(paginator.num_pages, max(page.number + 5, 10))
     page_list = range(start_page, end_page + 1)
+
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps({"ids": list(set([d.file_request.vehicle for d in page.object_list if d.file_request is not None]))})}
+    response = requests.get(url, params=payload)
+    vehicle_data = response.json().get("data").get("vehicle").get("data")
+
+    transactions_data = []
+    for t in page.object_list:
+        transaction = {
+            "amount": t.amount,
+            "type_long": t.type_long,
+            "category": t.category,
+            "file_request": t.file_request,
+            "created_at": t.created_at,
+        }
+        if t.file_request is not None:
+            vehicle = [d for d in vehicle_data if d.get("id") == t.file_request.vehicle][0]
+            transaction["desc"] = 'You have requested: "' + t.file_request.processes_string + '" for ' + vehicle["vehicle_brand"] + " " + vehicle["vehicle_model"] + " " + str(vehicle["vehicle_year"]) + " " + vehicle["vehicle_version"] + " (" + vehicle["ecu_model"] + ")."
+
+        else:
+            transaction["desc"] = t.desc
+
+        transactions_data.append(transaction)
         
     context = {
         'data_amount': paginator.count,
@@ -667,7 +693,7 @@ def expenses_modal(request):
         'previous_page_disabled': not page.has_previous(),
         'following_page_disabled': not page.has_next(),
         'page_list': page_list,
-        'data': page.object_list
+        'data': transactions_data
     }
 
     return render(request, "modals/expenses_modal.html", context)

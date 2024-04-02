@@ -10,36 +10,6 @@
   border-bottom: rgb(236, 231, 231) 1px solid;
 }
 
-h3 {
-  margin: 0;
-}
-
 #card-body {
   padding: 20px;
-}
-
-.table {
-  margin: auto;
-  width: 100%;
-}
-
-.table td {
-  border-top: rgb(236, 231, 231) 1px solid;
-  height: 50px;
-}
-
-.table th {
-  text-align: left;
-}
-
-#current-page-button {
-  background-color: #1bc5bd;
-}
-
-#pagination-ul {
-  list-style-type: none;
-}
-
-.pagination-li {
-  margin: 5px;
 }

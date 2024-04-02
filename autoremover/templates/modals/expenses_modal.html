@@ -1,66 +1,35 @@
-<table class="table">
+<div class="relative overflow-x-auto shadow-md rounded-lg">
   {% if data %}
-    <thead>
-      <tr>
-        <th>Amount</th>
-        <th>Type</th>
-        <th>Category</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for transaction in data %}
-      <tr class="table-data-row">
-        <td>{{ transaction.amount }}</td>
-        <td>{{ transaction.type_long }}</td>
-        <td>{{ transaction.category }}</td>
-        <td>
-          {% if transaction.file_request.status == "C" %}
-            (Cancelled) 
-          {% endif %} 
-          {{ transaction.desc }}
-        </td>
-      </tr>
-      {% endfor %}
-    {% else %}
-        <div>No expenses or deposits yet</div>
-    {% endif %}
-    </tbody>
-  </table>
-  <div class="row apart-children">
-    <ul id="pagination-ul" class="row">
-      <li class="pagination-li">
-        <button
-          id="previous-page-button"
-          class="pagination-button"
-          {% if previous_page_disabled %}
-          disabled
-          {% endif %}
-        >
-          Previous page
-        </button>
-      </li>
-      {% for page in page_list %} 
-      <li {% if page == current_page %} id="current-page-li" {% endif %} class="pagination-li">
-          <button 
-          {% if page == current_page %} id="current-page-button" {% endif %}
-          class="pagination-button">
-            {{ page }}
-          </button>
-      </li>
-       {% endfor %}
-      <li class="pagination-li">
-        <button
-          id="following-page-button"
-          class="pagination-button"
-          {% if following_page_disabled %}
-          disabled
-          {% endif %}
-        >
-          Next page
-        </button>
-      </li>
-    </ul>
-    <span>Showing {{ start_index }} - {{ end_index }} of {{ data_amount }}</span>
-  </div>
-  
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">Amount</th>
+          <th scope="col" class="px-6 py-3">Type</th>
+          <th scope="col" class="px-6 py-3">Category</th>
+          <th scope="col" class="px-6 py-3">Description</th>
+          <th scope="col" class="px-6 py-3">Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in data %}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row"
+                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ transaction.amount }} Credits</span>
+            </th>
+            <td class="px-6 py-4">{{ transaction.type_long }}</td>
+            <td class="px-6 py-4">{{ transaction.category }}</td>
+            <td class="px-6 py-4">
+              {% if transaction.file_request.status == "C" %}(Cancelled){% endif %}
+              {{ transaction.desc }}
+            </td>
+            <td class="px-6 py-4">{{ transaction.created_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include "modals/pagination.html" %}
+  {% else %}
+    <div>No expenses or deposits yet</div>
+  {% endif %}
+</div>
