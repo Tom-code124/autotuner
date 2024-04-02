@@ -1,210 +1,104 @@
 {% comment %} <p>Click on the items to see the details...</p>
 <br> {% endcomment %}
-<table class="table">
-  <thead>
-    <tr>
-      <th>Status</th>
-      <th>Vehicle</th>
-      <th>Engine</th>
-      <th>ECU</th>
-      <th>Process</th>
-      <th>Last updated</th>
-      <th>Files</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% if requested_file_data %}
-    {% for file in requested_file_data %}
-    <tr class="table-data-row">
-      <td>{{ file.status_long }}</td>
-      <td>{{ file.vehicle.vehicle_year }}</td>
-      <td>{{ file.vehicle.version }}</td>
-      <td>{{ file.vehicle.ecu_model }}</td>
-      <td>{{ file.processes_string }}</td>
-      <td>{{ file.updated_at }}</td>
-      <td>
-        <div class="row files-div">
-          <a href="/app/download?file_type=request&which=original&id={{ file.id }}" download>
-            <div class="download-div column">
-              <svg
-              width="24px"
-              height="24px"
-              viewBox="0 0 24 24"
-              version="1.1"
-            >
-              <g
-                id="Stockholm-icons-/-Files-/-Download"
-                stroke="none"
-                stroke-width="1"
-                fill="none"
-                fill-rule="evenodd"
-              >
-                <rect id="bound" x="0" y="0" width="24" height="24"></rect>
-                <path
-                  d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z"
-                  id="Path-57"
-                  fill="#3699FF"
-                  fill-rule="nonzero"
-                  opacity="0.3"
-                ></path>
-                <rect
-                  id="Rectangle"
-                  fill="#3699FF"
-                  opacity="0.3"
-                  transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                  x="11"
-                  y="1"
-                  width="2"
-                  height="14"
-                  rx="1"
-                ></rect>
-                <path
-                  d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z"
-                  id="Path-102"
-                  fill="#3699FF"
-                  fill-rule="nonzero"
-                  transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) "
-                ></path>
-              </g>
-            </svg>
-            <span>Original</span>
-            </div>
-          </a>
-          {% if file.processed_file %}
-            <a href="/app/download?file_type=request&which=processed&id={{ file.id }}" download>
-              <div class="download-div column">
-                <svg
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                version="1.1"
-              >
-                <g
-                  id="Stockholm-icons-/-Files-/-Download"
-                  stroke="none"
-                  stroke-width="1"
-                  fill="none"
-                  fill-rule="evenodd"
-                >
-                  <rect id="bound" x="0" y="0" width="24" height="24"></rect>
-                  <path
-                    d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z"
-                    id="Path-57"
-                    fill="#3699FF"
-                    fill-rule="nonzero"
-                    opacity="0.3"
-                  ></path>
-                  <rect
-                    id="Rectangle"
-                    fill="#3699FF"
-                    opacity="0.3"
-                    transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                    x="11"
-                    y="1"
-                    width="2"
-                    height="14"
-                    rx="1"
-                  ></rect>
-                  <path
-                    d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z"
-                    id="Path-102"
-                    fill="#3699FF"
-                    fill-rule="nonzero"
-                    transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) "
-                  ></path>
-                </g>
-              </svg>
-              <span>Processed</span>
+<div class="relative overflow-x-auto shadow-md rounded-lg">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3">Status</th>
+        <th scope="col" class="px-6 py-3">Vehicle</th>
+        <th scope="col" class="px-6 py-3">Engine</th>
+        <th scope="col" class="px-6 py-3">ECU</th>
+        <th scope="col" class="px-6 py-3">Process</th>
+        <th scope="col" class="px-6 py-3">Last updated</th>
+        <th scope="col" class="px-6 py-3">Files</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if requested_file_data %}
+        {% for file in requested_file_data %}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row"
+                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ file.status_long }}</span>
+            </th>
+            <td class="px-6 py-4">{{ file.vehicle.vehicle_long }}</td>
+            <td class="px-6 py-4">{{ file.vehicle.vehicle_version }}</td>
+            <td class="px-6 py-4">{{ file.vehicle.ecu_model }}</td>
+            <td class="px-6 py-4">{{ file.processes_string }}</td>
+            <td class="px-6 py-4">{{ file.updated_at }}</td>
+            <td class="px-6 py-4">
+              <div class="flex flex-row justify-around">
+                <a href="/app/download?file_type=request&which=original&id={{ file.id }}"
+                   download>
+                  <div class="download-div column">
+                    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g id="Stockholm-icons-/-Files-/-Download" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+                      <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z" id="Path-57" fill="#3699FF" fill-rule="nonzero" opacity="0.3">
+                      </path>
+                      <rect id="Rectangle" fill="#3699FF" opacity="0.3" transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) " x="11" y="1" width="2" height="14" rx="1"></rect>
+                      <path d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z" id="Path-102" fill="#3699FF" fill-rule="nonzero" transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) ">
+                      </path>
+                      </g>
+                    </svg>
+                    <span>Original</span>
+                  </div>
+                </a>
+                {% if file.processed_file %}
+                  <a href="/app/download?file_type=request&which=processed&id={{ file.id }}"
+                     download>
+                    <div class="download-div column">
+                      <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                        <g id="Stockholm-icons-/-Files-/-Download" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+                        <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z" id="Path-57" fill="#3699FF" fill-rule="nonzero" opacity="0.3">
+                        </path>
+                        <rect id="Rectangle" fill="#3699FF" opacity="0.3" transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) " x="11" y="1" width="2" height="14" rx="1"></rect>
+                        <path d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z" id="Path-102" fill="#3699FF" fill-rule="nonzero" transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) ">
+                        </path>
+                        </g>
+                      </svg>
+                      <span>Processed</span>
+                    </div>
+                  </a>
+                {% else %}
+                  <div class="download-div column">
+                    <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g id="Stockholm-icons-/-Files-/-Download" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <rect id="bound" x="0" y="0" width="24" height="24"></rect>
+                      <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z" id="Path-57" fill="
+                      {% if file.status_long == "Done" %}
+                        #3699FF
+                      {% else %}
+                        #777
+                      {% endif %}
+                      " fill-rule="nonzero" opacity="0.3"></path>
+                      <rect id="Rectangle" fill="
+                      {% if file.status_long == "Done" %}
+                        #3699FF
+                      {% else %}
+                        #777
+                      {% endif %}
+                      " opacity="0.3" transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) " x="11" y="1" width="2" height="14" rx="1"></rect>
+                      <path d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z" id="Path-102" fill="
+                      {% if file.status_long == "Done" %}
+                        #3699FF
+                      {% else %}
+                        #777
+                      {% endif %}
+                      " fill-rule="nonzero" transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) ">
+                      </path>
+                      </g>
+                    </svg>
+                    <span>Processed</span>
+                  </div>
+                {% endif %}
               </div>
-            </a>
-            {% else %}
-            <div class="download-div column">
-              <svg
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                version="1.1"
-              >
-                <g
-                  id="Stockholm-icons-/-Files-/-Download"
-                  stroke="none"
-                  stroke-width="1"
-                  fill="none"
-                  fill-rule="evenodd"
-                >
-                  <rect id="bound" x="0" y="0" width="24" height="24"></rect>
-                  <path
-                    d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z"
-                    id="Path-57"
-                    fill="{% if file.status == "Done" %} #3699FF {% else %} #777 {% endif %}"
-                    fill-rule="nonzero"
-                    opacity="0.3"
-                  ></path>
-                  <rect
-                    id="Rectangle"
-                    fill="{% if file.status == "Done" %} #3699FF {% else %} #777 {% endif %}"
-                    opacity="0.3"
-                    transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) "
-                    x="11"
-                    y="1"
-                    width="2"
-                    height="14"
-                    rx="1"
-                  ></rect>
-                  <path
-                    d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z"
-                    id="Path-102"
-                    fill="{% if file.status == "Done" %} #3699FF {% else %} #777 {% endif %}"
-                    fill-rule="nonzero"
-                    transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) "
-                  ></path>
-                </g>
-              </svg>
-              <span>Processed</span>
-              </div>
-          {% endif %}
-      </div>
-      </td>
-    </tr>
-    {% endfor %}
-  {% else %}
-      <div>No files available</div>
-  {% endif %}
-  </tbody>
-</table>
-<div class="row apart-children">
-  <ul id="pagination-ul" class="row">
-    <li class="pagination-li">
-      <button
-        id="previous-page-button"
-        class="pagination-button"
-        {% if previous_page_disabled %}
-        disabled
-        {% endif %}
-      >
-        Previous page
-      </button>
-    </li>
-    {% for page in page_list %} 
-    <li {% if page == current_page %} id="current-page-li" {% endif %} class="pagination-li">
-        <button 
-        {% if page == current_page %} id="current-page-button" {% endif %}
-        class="pagination-button">
-          {{ page }}
-        </button>
-    </li>
-      {% endfor %}
-    <li class="pagination-li">
-      <button
-        id="following-page-button"
-        class="pagination-button"
-        {% if following_page_disabled %}
-        disabled
-        {% endif %}
-      >
-        Next page
-      </button>
-    </li>
-  </ul>
-  <span>Showing {{ start_index }} - {{ end_index }} of {{ data_amount }}</span>
+            </td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+  {% include "modals/pagination.html" %}
 </div>

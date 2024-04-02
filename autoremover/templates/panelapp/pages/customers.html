@@ -62,17 +62,21 @@
                                         name="pricing_class"
                                         id="customer-pricing-class-select-{{ customer.id }}"
                                         class="text-gray-900 dark:text-white peer block h-10 max-w-64 min-w-48 w-4/6 rounded bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:placeholder:text-neutral-200 border-slate-500 border-2">
-                                    <option value="MT" class="text-gray-800">
-                                        <span {% if customer.pricing_class == "MT" %}class="text-slate-500"{% endif %}>Master TRY</span>
+                                    <option value="MT"
+                                            {% if customer.pricing_class == "MT" %}class="text-slate-500" {% else %} class="text-gray-800" {% endif %}>
+                                        <span>Master TRY</span>
                                     </option>
-                                    <option value="ST" class="text-gray-800">
-                                        <span {% if customer.pricing_class == "ST" %}class="text-slate-500"{% endif %}>Slave TRY</span>
+                                    <option value="ST"
+                                            {% if customer.pricing_class == "ST" %}class="text-slate-500" {% else %} class="text-gray-800" {% endif %}>
+                                        <span>Slave TRY</span>
                                     </option>
-                                    <option value="ME" class="text-gray-800">
-                                        <span {% if customer.pricing_class == "ME" %}class="text-slate-500"{% endif %}>Master EUR</span>
+                                    <option value="ME"
+                                            {% if customer.pricing_class == "ME" %}class="text-slate-500" {% else %} class="text-gray-800" {% endif %}>
+                                        <span>Master EUR</span>
                                     </option>
-                                    <option value="SE" class="text-gray-800">
-                                        <span {% if customer.pricing_class == "SE" %}class="text-slate-500"{% endif %}>Slave EUR</span>
+                                    <option value="SE"
+                                            {% if customer.pricing_class == "SE" %}class="text-slate-500" {% else %} class="text-gray-800" {% endif %}>
+                                        <span>Slave EUR</span>
                                     </option>
                                 </select>
                             </td>

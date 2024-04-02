@@ -27,6 +27,9 @@ def get_vehicle_queries(filters):
         elif key == 'ecu_models':
             q_list.append(Q(ecu_model_id__in=value))
 
+        elif key == 'ids':
+            q_list.append(Q(id__in=value))
+
     return q_list
 
 def vehicle_data_api(request):
