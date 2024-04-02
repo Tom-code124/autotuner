@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.urls import reverse
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 from database.models import *
 
 import requests
@@ -51,6 +52,75 @@ def login_page(request):
 def logout_view(request):
     logout(request)
     return redirect('Panel Login')
+
+@login_required
+@staff_required
+def file_requests_page(request):
+
+    context = {
+        'page_title': 'File Requests',
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+        'script_files': ["file_requests.js"],
+        'is_panel_app': True,
+        }
+    
+    return render(request, 'panelapp/pages/file_requests.html', context)
+
+@login_required
+@staff_required
+def file_requests_modal(request):
+    params = request.GET
+    page_param = params.get('page')
+
+    req_list = FileRequest.objects.order_by("-created_at", "-status")
+    print(req_list)
+
+    if page_param:
+        pagenum = int(page_param)
+    else:
+        pagenum = 1
+
+    paginator = Paginator(req_list, 10)
+    page = paginator.page(int(pagenum))
+    start_page = max(1, page.number - 5)
+    end_page = min(paginator.num_pages, max(page.number + 5, 10))
+    page_list = range(start_page, end_page + 1)
+
+    ip = SystemSetting.objects.all()[0].vehicle_data_backend_ip
+    port = SystemSetting.objects.all()[0].vehicle_data_backend_port
+    url = f"http://{ip}:{port}/api/vehicle_data/"
+
+    payload = {'requests': json.dumps(['vehicle']), 'vehicle_filters': json.dumps({"ids": list(set([d.vehicle for d in page.object_list]))})}
+    response = requests.get(url, params=payload)
+    vehicle_data = response.json().get("data").get("vehicle").get("data")
+
+    reqs_data = []
+    for f in page.object_list:
+        vehicle = [d for d in vehicle_data if d.get("id") == f.vehicle][0]
+        file = {
+            'id': f.id,
+            'status_long': f.status_long,
+            'vehicle': {'vehicle_long': vehicle["vehicle_brand"] + " " + vehicle["vehicle_model"] + " " + str(vehicle["vehicle_year"]), 'vehicle_version': vehicle["vehicle_version"], 'ecu_model': vehicle["ecu_model"]},
+            'processes_string': f.processes_string,
+            'created_at': f.created_at,
+            'customer': f.customer,
+            'employee': f.employee,
+        }
+        reqs_data.append(file)
+
+    context = {
+        'data_amount': paginator.count,
+        'start_index': page.start_index(),
+        'end_index': page.end_index(),
+        'current_page': page.number,
+        'previous_page_disabled': not page.has_previous(),
+        'following_page_disabled': not page.has_next(),
+        'page_list': page_list,
+        'file_requests': reqs_data
+        }
+    
+    return render(request, 'panelapp/modals/file_request_modal.html', context)
 
 @login_required
 @admin_required

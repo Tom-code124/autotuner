@@ -5,6 +5,8 @@ from .views import *
 urlpatterns = [
     path('login/', login_page, name="Panel Login"),
     path('logout/', logout_view, name="Panel Logout"),
+    path('file_requests/', file_requests_page, name="Panel File Requests"),
+    path('file_requests/file_requests_modal/', file_requests_modal, name="Panel File Requests Modal"),
     path('manage_customers/', customers_page, name="Panel Manage Customers"),
     path('manage_customers/update_customer/', update_customer, name="Panel Update Customer"),
     path('customer_options/', customer_options, name="Panel Customer Options"),

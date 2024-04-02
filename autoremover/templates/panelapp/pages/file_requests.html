@@ -1,0 +1,15 @@
+{% extends "panelapp/layout.html" %}
+{% block panel_layout %}
+    {% load static %}
+    <div class="bg-white rounded-lg p-6">
+        <div class="flex justify-between flex-col">
+            <div class="flex items-center">
+                <div>
+                    <h5 class="leading-none text-3xl font-bold text-gray-900 pb-1">File Requests</h5>
+                    <p class="text-sm font-normal text-gray-600">See and manage file requests coming from customers</p>
+                </div>
+            </div>
+        </div>
+        <div id="card-body" class="mt-4"></div>
+    </div>
+{% endblock panel_layout %}

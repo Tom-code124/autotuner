@@ -1,0 +1,34 @@
+<div class="relative overflow-x-auto shadow-md rounded-lg mt-2">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">Status</th>
+                <th scope="col" class="px-6 py-3">Vehicle</th>
+                <th scope="col" class="px-6 py-3">Version</th>
+                <th scope="col" class="px-6 py-3">Ecu Model</th>
+                <th scope="col" class="px-6 py-3">Processes</th>
+                <th scope="col" class="px-6 py-3">Customer</th>
+                <th scope="col" class="px-6 py-3">Assignee</th>
+                <th scope="col" class="px-6 py-3">Requested at</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in file_requests %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <span class="p-2 rounded {% if request.status_long == "Ongoing" %} bg-gray-200 dark:bg-gray-700 {% elif request.status_long == "Done" %} bg-lime-600 {% else %} bg-red-600 {% endif %}">{{ request.status_long }}</span>
+                    </th>
+                    <td class="px-6 py-4">{{ request.vehicle.vehicle_long }}</td>
+                    <td class="px-6 py-4">{{ request.vehicle.vehicle_version }}</td>
+                    <td class="px-6 py-4">{{ request.vehicle.ecu_model }}</td>
+                    <td class="px-6 py-4">{{ request.processes_string }}</td>
+                    <td class="px-6 py-4">{{ request.customer }}</td>
+                    <td class="px-6 py-4">{{ request.employee }}</td>
+                    <td class="px-6 py-4">{{ request.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "modals/pagination.html" %}
+</div>
