@@ -8,7 +8,11 @@ You should have PostgreSQL 14.12, Python 3.10, and npm 10.7 installed on your sy
 
 # Data
 
-There are raw vehicle data in the repository. Also, you can find the postgresql db dump there too. You have to insert the data to the database before running the system.
+There are raw vehicle data in the data directory. Also, you can find the postgresql db dump there too. You have to insert the data to the database before running the system.
+
+# Environment
+
+You can find the example activate files in the venv_activate_files directory. You can make use of them while configuring your environment duing setup.
 
 # Setup
 
@@ -94,4 +98,4 @@ npx tailwindcss -i ./static/src/input.css -o ./static/src/output.css
 
 # Additionally
 
-You have to configure the system from the application interface and the django admin interface. There are settings there for connecting 2 applications to each other. Also, you have to set the tax rate and such information too. The applications may give error otherwise. Also, all pricings and contents should be given to the system from admin interfaces before customers start to use the system.
+You have to configure the system from the application interface and the django admin interface. There are settings for connecting 2 applications to each other. Also, you have to set the tax rate and such information too. The applications may give error otherwise. Additionally, all pricings and contents should be given to the system from admin interfaces before customers start to use the system.
