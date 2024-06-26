@@ -24,6 +24,22 @@ function afterFunc() {
   paginationButtons.map((item) => {
     item.addEventListener("click", loadPagination);
   });
+
+  document.querySelectorAll(".file-request-row").forEach((item) => {
+    item.addEventListener("click", openRequestModal);
+  });
+}
+
+function openRequestModal(event) {
+  var modalH3 = document.getElementById("modal-h3");
+  var id = event.currentTarget.id.substring(
+    0,
+    event.currentTarget.id.lastIndexOf("-") + 1
+  );
+  console.log("clicked file request");
+
+  modalH3.innerText = "Request " + id;
+  $("#crud-modal").modal("show");
 }
 
 getAndInject("file_requests_modal", "card-body", undefined, afterFunc);
