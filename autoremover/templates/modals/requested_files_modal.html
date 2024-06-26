@@ -19,7 +19,7 @@
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <th scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              <span class="p-2 rounded bg-gray-200 dark:bg-gray-700">{{ file.status_long }}</span>
+              <span class="p-2 rounded {% if file.status_long == "Ongoing" %} bg-gray-200 dark:bg-gray-700 {% elif file.status_long == "Done" %} bg-lime-600 {% else %} bg-red-600 {% endif %}">{{ file.status_long }}</span>
             </th>
             <td class="px-6 py-4">{{ file.vehicle.vehicle_long }}</td>
             <td class="px-6 py-4">{{ file.vehicle.vehicle_version }}</td>

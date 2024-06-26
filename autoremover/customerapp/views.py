@@ -520,6 +520,19 @@ def process_options_modal(request):
 
 @login_required
 @customer_required
+def vehicle_data_page(request):
+    context = {
+        'page_title': 'Vehicle Data',
+        'styling_files': [],
+        'script_files': [],
+        'file_service_status': 'ONLINE',
+        'file_service_until': datetime.now(),
+    }
+
+    return render(request, "pages/vehicle_data.html", context)
+
+@login_required
+@customer_required
 def shop_page(request):
 
     context = {

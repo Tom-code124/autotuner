@@ -1,18 +1,17 @@
-{% extends "layout.html" %} {% block layout %}
-
-{% if messages %}
-  {% for message in messages %}
-    <p>{{ message }}</p>
-  {% endfor %}
-{% endif %}
-<div id="container" class="column">
-  <form class="row">
+{% extends "layout.html" %}
+{% block layout %}
+  {% if messages %}
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+  {% endif %}
+  <div id="container" class="column">
+    {% comment %} <form class="row">
     <div id="search-box" class="row">
       <input id="search-input" type="text" placeholder="Search..." />
     </div>
     <button type="submit" id="search-button">Search</button>
-  </form>
-  <div id="card-body" class="column"></div>
-</div>
-
+    </form> 
+    <div id="card-body" class="column">
+    </div> {% endcomment %}
+    <div class="w-full text-center">Will be available soon...</div>
+  </div>
 {% endblock layout %}
