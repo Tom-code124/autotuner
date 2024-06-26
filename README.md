@@ -39,13 +39,13 @@ You can find the example activate files in the venv_activate_files directory. Yo
 11. Make autodata migrations by running:
 
 ```bash
-    python manage.py makemigrations
+python manage.py makemigrations
 ```
 
 11. Migrate to autodata database by running:
 
 ```bash
-    python manage.py migrate
+python manage.py migrate
 ```
 
 12. Create admin user by running:
@@ -57,7 +57,7 @@ python manage.py createsuperuser
 13. Run following command to start autodata server on port 5000:
 
 ```bash
-    python manage.py runserver 0.0.0.0:5000
+python manage.py runserver 0.0.0.0:5000
 ```
 
 14. Open a new terminal window and change directory to autoremover.
@@ -69,13 +69,13 @@ python manage.py createsuperuser
 17. Make autoremover migrations by running:
 
 ```bash
-    python manage.py makemigrations
+python manage.py makemigrations
 ```
 
 18. Migrate to autoremover database by running:
 
 ```bash
-    python manage.py migrate
+python manage.py migrate
 ```
 
 19. Install npm modules
@@ -93,7 +93,7 @@ npx tailwindcss -i ./static/src/input.css -o ./static/src/output.css
 21. Run the following command tu start server:
 
 ```bash
-    python manage.py runserver
+python manage.py runserver
 ```
 
 # Additionally
