@@ -3,14 +3,8 @@
 **/migrations/**
 !**/migrations
 !**/migrations/__init__.py
-# autoremover/uploads/
-# autoremover/autoremover-edd1f50d0eac.json
-# autoremover/Dockerfile
-# autoremover/.dockerignore
 autoremover/staticfiles/
-# autoremover/autoremover/.ssh/
 localenv/
 localdataenv/
 autoremover/node_modules/
-# autoremover_db_initial_data/
 **/processing/
