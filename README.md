@@ -1,6 +1,6 @@
 # Autotuner
 
-Autotuner is an ongoing distributed system project for vehicle software technicians to accept files and get payments from their customers. The system consists of 2 applications: Autodata and Autoremover. Autodata is the service for supplying vehicle related data. Autoremover is the main service that is used by the employees and the customers.
+Autotuner is an ongoing distributed platform project for vehicle software technicians to accept files and get payments from their customers. The system consists of 2 applications: Autodata and Autoremover. Autodata is the service for supplying vehicle related data. Autoremover is the main service that is used by the employees and the customers.
 
 # Requirements
 
