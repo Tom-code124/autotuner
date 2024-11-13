@@ -98,4 +98,4 @@ python manage.py runserver
 
 # Additionally
 
-You have to configure the system from the application interface and the django admin interface. There are settings for connecting 2 applications to each other. Also, you have to set the tax rate and such information too. The applications may give error otherwise. Additionally, all pricings and contents should be given to the system from admin interfaces before customers start to use the system.
+You have to configure the system from the application interface and the django admin interface. There are settings for connecting 2 applications to each other. Also, you have to set the tax rate and such information otherwise the applications may give error. Additionally, all pricings and contents should be given to the system from admin interfaces before customers start to use the system.
